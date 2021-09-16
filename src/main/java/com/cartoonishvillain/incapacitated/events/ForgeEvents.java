@@ -22,6 +22,7 @@ import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.living.LivingEntityUseItemEvent;
 import net.minecraftforge.event.entity.living.LivingEvent;
+import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -81,6 +82,7 @@ public class ForgeEvents {
     @SubscribeEvent
     public static void playerTick(TickEvent.PlayerTickEvent event){
         event.player.getCapability(PlayerCapability.INSTANCE).ifPresent(h->{
+            h.countDelay();
             if(h.getIsIncapacitated()) {
                 if(event.player.getForcedPose() == null){event.player.setForcedPose(Pose.SWIMMING);}
                 if(!event.player.level.isClientSide()) {
@@ -138,7 +140,7 @@ public class ForgeEvents {
         if(event.getEntityLiving() instanceof Player && !event.getEntityLiving().level.isClientSide()){
             Player player = (Player) event.getEntityLiving();
             player.getCapability(PlayerCapability.INSTANCE).ifPresent(h ->{
-                if(h.getIsIncapacitated()){
+                if(h.getIsIncapacitated() && h.getJumpDelay() == 0){
                     if(h.giveUpJumpCount()){
                         player.hurt(DamageSource.GENERIC, player.getMaxHealth() * 10);
                         player.setForcedPose(null);
@@ -149,6 +151,16 @@ public class ForgeEvents {
                         IncapacitationMessenger.sendTo(new IncapPacket(player.getId(), false), player);
                     }
                 }
+            });
+        }
+    }
+
+    @SubscribeEvent
+    public static void playerInjured(LivingHurtEvent event){
+        if(event.getEntityLiving() instanceof Player){
+            Player player = (Player) event.getEntityLiving();
+            player.getCapability(PlayerCapability.INSTANCE).ifPresent(h->{
+                h.setJumpDelay(20);
             });
         }
     }
