@@ -9,6 +9,8 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.Pose;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.item.Item;
+import net.minecraft.item.Items;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.ResourceLocation;
@@ -20,7 +22,9 @@ import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
+import net.minecraftforge.event.entity.living.LivingEntityUseItemEvent;
 import net.minecraftforge.event.entity.living.LivingEvent;
+import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -145,6 +149,29 @@ public class ForgeEvents {
                         h.setJumpCount(3);
                         h.setIsIncapacitated(false);
                         incapacitationMessenger.sendTo(new IncapPacket(player.getId(), false), player);
+                    }
+                }
+            });
+        }
+    }
+
+    @SubscribeEvent
+    public static void playerEat(LivingEntityUseItemEvent.Finish event){
+        if(event.getEntityLiving() instanceof PlayerEntity && !event.getEntityLiving().level.isClientSide()){
+            Item item = event.getItem().getItem();
+            PlayerEntity player = (PlayerEntity) event.getEntityLiving();
+            player.getCapability(PlayerCapability.INSTANCE).ifPresent(h->{
+                if(item.equals(Items.GOLDEN_APPLE)) h.setDownsUntilDeath(3);
+                if(h.getIsIncapacitated()){
+                    if(item.equals(Items.ENCHANTED_GOLDEN_APPLE)){
+                        h.setIsIncapacitated(false);
+                        player.setForcedPose(null);
+                        h.setReviveCount(150);
+                        h.setJumpCount(3);
+                        h.setDownsUntilDeath(3);
+                        incapacitationMessenger.sendTo(new IncapPacket(player.getId(), false), player);
+                        player.setHealth(player.getMaxHealth()/3f);
+                        player.level.playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.NOTE_BLOCK_PLING, SoundCategory.PLAYERS, 1, 1);
                     }
                 }
             });
