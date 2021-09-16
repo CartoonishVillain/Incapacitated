@@ -15,6 +15,7 @@ public class PlayerCapabilityManager implements IPlayerCapability, ICapabilityPr
     protected int ticksUntilDeath = 2000;
     protected int downsUntilDeath = 3;
     protected int giveUpJumps = 3;
+    protected int reviveCounter = 150;
     public final LazyOptional<IPlayerCapability> holder = LazyOptional.of(()->this);
     @Override
     public boolean getIsIncapacitated() {
@@ -71,6 +72,22 @@ public class PlayerCapabilityManager implements IPlayerCapability, ICapabilityPr
     @Override
     public void setJumpCount(int jumps) {
         giveUpJumps = jumps;
+    }
+
+    @Override
+    public boolean downReviveCount() {
+        reviveCounter--;
+        return reviveCounter <= 0;
+    }
+
+    @Override
+    public int getReviveCount() {
+        return reviveCounter;
+    }
+
+    @Override
+    public void setReviveCount(int count) {
+        reviveCounter = count;
     }
 
 

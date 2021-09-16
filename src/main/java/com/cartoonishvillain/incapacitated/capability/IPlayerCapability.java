@@ -12,4 +12,7 @@ public interface IPlayerCapability {
     void resetGiveUpJumps();
     int getJumpCount();
     void setJumpCount(int jumps);
+    boolean downReviveCount();
+    int getReviveCount();
+    void setReviveCount(int count);
 }
