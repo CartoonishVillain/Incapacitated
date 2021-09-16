@@ -24,6 +24,7 @@ import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.living.LivingEntityUseItemEvent;
 import net.minecraftforge.event.entity.living.LivingEvent;
+import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -84,6 +85,7 @@ public class ForgeEvents {
     @SubscribeEvent
     public static void playerTick(TickEvent.PlayerTickEvent event){
         event.player.getCapability(PlayerCapability.INSTANCE).ifPresent(h->{
+            h.countDelay();
             if(h.getIsIncapacitated()) {
                 if(event.player.getForcedPose() == null){event.player.setForcedPose(Pose.SWIMMING);}
                 if(!event.player.level.isClientSide()) {
@@ -119,6 +121,7 @@ public class ForgeEvents {
                             event.player.hurt(DamageSource.GENERIC, event.player.getMaxHealth() *2);
                             event.player.setForcedPose(null);
                             h.setReviveCount(150);
+                            h.setTicksUntilDeath(2000);
                             h.setJumpCount(3);
                             h.setIsIncapacitated(false);
                             incapacitationMessenger.sendTo(new IncapPacket(event.player.getId(), false), event.player);
@@ -141,11 +144,12 @@ public class ForgeEvents {
         if(event.getEntityLiving() instanceof PlayerEntity && !event.getEntityLiving().level.isClientSide()){
             PlayerEntity player = (PlayerEntity) event.getEntityLiving();
             player.getCapability(PlayerCapability.INSTANCE).ifPresent(h ->{
-                if(h.getIsIncapacitated()){
+                if(h.getIsIncapacitated() && h.getJumpDelay() == 0){
                     if(h.giveUpJumpCount()){
                         player.hurt(DamageSource.GENERIC, player.getMaxHealth() *2);
                         player.setForcedPose(null);
                         h.setReviveCount(150);
+                        h.setTicksUntilDeath(2000);
                         h.setJumpCount(3);
                         h.setIsIncapacitated(false);
                         incapacitationMessenger.sendTo(new IncapPacket(player.getId(), false), player);
@@ -156,24 +160,37 @@ public class ForgeEvents {
     }
 
     @SubscribeEvent
+    public static void playerInjured(LivingHurtEvent event){
+        if(event.getEntityLiving() instanceof PlayerEntity){
+            PlayerEntity player = (PlayerEntity) event.getEntityLiving();
+            player.getCapability(PlayerCapability.INSTANCE).ifPresent(h->{
+                h.setJumpDelay(20);
+            });
+        }
+    }
+
+
+    @SubscribeEvent
     public static void playerEat(LivingEntityUseItemEvent.Finish event){
         if(event.getEntityLiving() instanceof PlayerEntity && !event.getEntityLiving().level.isClientSide()){
             Item item = event.getItem().getItem();
             PlayerEntity player = (PlayerEntity) event.getEntityLiving();
             player.getCapability(PlayerCapability.INSTANCE).ifPresent(h->{
-                if(item.equals(Items.GOLDEN_APPLE)) h.setDownsUntilDeath(3);
+                if(item.equals(Items.GOLDEN_APPLE)) {h.setDownsUntilDeath(3); h.setTicksUntilDeath(2000);}
                 if(h.getIsIncapacitated()){
                     if(item.equals(Items.ENCHANTED_GOLDEN_APPLE)){
                         h.setIsIncapacitated(false);
                         player.setForcedPose(null);
                         h.setReviveCount(150);
                         h.setJumpCount(3);
+                        h.setTicksUntilDeath(2000);
                         h.setDownsUntilDeath(3);
                         incapacitationMessenger.sendTo(new IncapPacket(player.getId(), false), player);
                         player.setHealth(player.getMaxHealth()/3f);
                         player.level.playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.NOTE_BLOCK_PLING, SoundCategory.PLAYERS, 1, 1);
                     }
                 }
+                else if(item.equals(Items.GOLDEN_APPLE)) {h.setDownsUntilDeath(3); h.setTicksUntilDeath(2000);}
             });
         }
     }

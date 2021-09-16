@@ -15,4 +15,7 @@ public interface IPlayerCapability {
     boolean downReviveCount();
     int getReviveCount();
     void setReviveCount(int count);
+    int getJumpDelay();
+    void setJumpDelay(int delay);
+    void countDelay();
 }
