@@ -2,15 +2,10 @@ package com.cartoonishvillain.incapacitated.networking;
 
 import com.cartoonishvillain.incapacitated.capability.PlayerCapability;
 import net.minecraft.client.Minecraft;
-import net.minecraft.entity.Entity;
-import net.minecraft.network.INetHandler;
-import net.minecraft.network.IPacket;
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.network.play.server.SUpdateHealthPacket;
-import net.minecraft.world.World;
-import net.minecraftforge.fml.network.NetworkEvent;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.world.entity.Entity;
+import net.minecraftforge.fmllegacy.network.NetworkEvent;
 
-import java.io.IOException;
 import java.util.function.Supplier;
 
 public class IncapPacket {
@@ -23,17 +18,17 @@ public class IncapPacket {
         this.isIncapacitated = isIncapacitated;
     }
 
-    public IncapPacket(PacketBuffer packetBuffer) {
+    public IncapPacket(FriendlyByteBuf packetBuffer) {
         ID = packetBuffer.readInt();
         isIncapacitated = packetBuffer.readBoolean();
     }
 
-    public void encode(PacketBuffer buffer){
+    public void encode(FriendlyByteBuf buffer){
         buffer.writeInt(ID);
         buffer.writeBoolean(isIncapacitated);
     }
 
-    public static IncapPacket decode(PacketBuffer buf) {
+    public static IncapPacket decode(FriendlyByteBuf buf) {
         return new IncapPacket(buf);
     }
 

@@ -4,27 +4,24 @@ import com.cartoonishvillain.incapacitated.Incapacitated;
 import com.cartoonishvillain.incapacitated.capability.PlayerCapability;
 import com.cartoonishvillain.incapacitated.capability.PlayerCapabilityManager;
 import com.cartoonishvillain.incapacitated.networking.IncapPacket;
-import com.cartoonishvillain.incapacitated.networking.incapacitationMessenger;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.Pose;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.item.Item;
-import net.minecraft.item.Items;
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.util.DamageSource;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.SoundCategory;
-import net.minecraft.util.SoundEvents;
-import net.minecraft.util.text.StringTextComponent;
-import net.minecraft.util.text.TextFormatting;
+import com.cartoonishvillain.incapacitated.networking.IncapacitationMessenger;
+import net.minecraft.ChatFormatting;
+import net.minecraft.network.chat.TextComponent;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.Pose;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.Items;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.living.LivingEntityUseItemEvent;
 import net.minecraftforge.event.entity.living.LivingEvent;
-import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -37,7 +34,7 @@ public class ForgeEvents {
 
     @SubscribeEvent
     public static void playerRegister(AttachCapabilitiesEvent<Entity> event){
-        if(event.getObject() instanceof PlayerEntity){
+        if(event.getObject() instanceof Player){
             PlayerCapabilityManager provider = new PlayerCapabilityManager();
             event.addCapability(new ResourceLocation(Incapacitated.MODID, "incapacitated"), provider);
         }
@@ -45,8 +42,8 @@ public class ForgeEvents {
 
     @SubscribeEvent(priority = EventPriority.LOWEST)
     public static void playerDeath(LivingDeathEvent event) {
-        if (event.getEntityLiving() instanceof PlayerEntity && !event.isCanceled()) {
-            PlayerEntity player = (PlayerEntity) event.getEntityLiving();
+        if (event.getEntityLiving() instanceof Player && !event.isCanceled()) {
+            Player player = (Player) event.getEntityLiving();
             player.getCapability(PlayerCapability.INSTANCE).ifPresent(h -> {
                 //if the player is not already incapacitated
                 if (!h.getIsIncapacitated()) {
@@ -57,12 +54,12 @@ public class ForgeEvents {
                         h.setIsIncapacitated(true);
                         event.setCanceled(true);
                         player.setHealth(player.getMaxHealth());
-                        incapacitationMessenger.sendTo(new IncapPacket(player.getId(), true), player);
+                        IncapacitationMessenger.sendTo(new IncapPacket(player.getId(), true), player);
 
-                        ArrayList<PlayerEntity> playerEntities = (ArrayList<PlayerEntity>) player.level.getEntitiesOfClass(PlayerEntity.class, player.getBoundingBox().inflate(50));
+                        ArrayList<Player> playerEntities = (ArrayList<Player>) player.level.getEntitiesOfClass(Player.class, player.getBoundingBox().inflate(50));
 
-                        for(PlayerEntity players : playerEntities) {
-                            players.displayClientMessage(new StringTextComponent(player.getScoreboardName() + " is incapacitated!"), false);
+                        for(Player players : playerEntities) {
+                            players.displayClientMessage(new TextComponent(player.getScoreboardName() + " is incapacitated!"), false);
                         }
 
                     }
@@ -73,10 +70,10 @@ public class ForgeEvents {
 
     @SubscribeEvent
     public static void PlayerJoinEvent(EntityJoinWorldEvent event){
-        if(event.getEntity() instanceof PlayerEntity && !event.getWorld().isClientSide()){
-            PlayerEntity player = (PlayerEntity) event.getEntity();
+        if(event.getEntity() instanceof Player && !event.getWorld().isClientSide()){
+            Player player = (Player) event.getEntity();
             player.getCapability(PlayerCapability.INSTANCE).ifPresent(h->{
-                incapacitationMessenger.sendTo(new IncapPacket(player.getId(), h.getIsIncapacitated()), player);
+                IncapacitationMessenger.sendTo(new IncapPacket(player.getId(), h.getIsIncapacitated()), player);
             });
         }
     }
@@ -87,11 +84,11 @@ public class ForgeEvents {
             if(h.getIsIncapacitated()) {
                 if(event.player.getForcedPose() == null){event.player.setForcedPose(Pose.SWIMMING);}
                 if(!event.player.level.isClientSide()) {
-                    ArrayList<PlayerEntity> playerEntities = (ArrayList<PlayerEntity>) event.player.level.getEntitiesOfClass(PlayerEntity.class, event.player.getBoundingBox().inflate(3));
+                    ArrayList<Player> playerEntities = (ArrayList<Player>) event.player.level.getEntitiesOfClass(Player.class, event.player.getBoundingBox().inflate(3));
                     boolean reviving = false;
 
-                    PlayerEntity revivingPlayer = null;
-                    for(PlayerEntity player : playerEntities) {
+                    Player revivingPlayer = null;
+                    for(Player player : playerEntities) {
                         if (player.isCrouching()) {
                             reviving = true;
                             revivingPlayer = player;
@@ -104,26 +101,26 @@ public class ForgeEvents {
                             h.setIsIncapacitated(false);
                             event.player.setForcedPose(null);
                             h.setReviveCount(150);
-                            h.setJumpCount(3);
-                            incapacitationMessenger.sendTo(new IncapPacket(event.player.getId(), false), event.player);
+                            h.resetGiveUpJumps();
+                            IncapacitationMessenger.sendTo(new IncapPacket(event.player.getId(), false), event.player);
                             event.player.setHealth(event.player.getMaxHealth()/3f);
-                            event.player.level.playSound(null, event.player.getX(), event.player.getY(), event.player.getZ(), SoundEvents.NOTE_BLOCK_PLING, SoundCategory.PLAYERS, 1, 1);
+                            event.player.level.playSound(null, event.player.getX(), event.player.getY(), event.player.getZ(), SoundEvents.NOTE_BLOCK_PLING, SoundSource.PLAYERS, 1, 1);
 
                         }else{
-                            event.player.displayClientMessage(new StringTextComponent("You are being revived! " + (float)h.getReviveCount()/20f + " seconds..").withStyle(TextFormatting.GREEN), true);
-                            revivingPlayer.displayClientMessage(new StringTextComponent("Reviving " + event.player.getScoreboardName() + " " + (float)h.getReviveCount()/20f + " seconds...").withStyle(TextFormatting.GREEN), true);
+                            event.player.displayClientMessage(new TextComponent("You are being revived! " + (float)h.getReviveCount()/20f + " seconds..").withStyle(ChatFormatting.GREEN), true);
+                            revivingPlayer.displayClientMessage(new TextComponent("Reviving " + event.player.getScoreboardName() + " " + (float)h.getReviveCount()/20f + " seconds...").withStyle(ChatFormatting.GREEN), true);
                         }
                     }
                     else {
                         if (h.countTicksUntilDeath()) {
-                            event.player.hurt(DamageSource.GENERIC, event.player.getMaxHealth() *2);
+                            event.player.hurt(DamageSource.GENERIC, event.player.getMaxHealth() * 10);
                             event.player.setForcedPose(null);
                             h.setReviveCount(150);
-                            h.setJumpCount(3);
+                            h.resetGiveUpJumps();
                             h.setIsIncapacitated(false);
-                            incapacitationMessenger.sendTo(new IncapPacket(event.player.getId(), false), event.player);
+                            IncapacitationMessenger.sendTo(new IncapPacket(event.player.getId(), false), event.player);
                         } else if (h.getTicksUntilDeath() % 20 == 0) {
-                            event.player.displayClientMessage(new StringTextComponent("Incapacitated! Call for help or jump " + h.getJumpCount() + " times to give up! " + ((float) h.getTicksUntilDeath() / 20f) + " seconds left!").withStyle(TextFormatting.RED), true);
+                            event.player.displayClientMessage(new TextComponent("Incapacitated! Call for help or jump " + h.getJumpCount() + " times to give up! " + ((float) h.getTicksUntilDeath() / 20f) + " seconds left!").withStyle(ChatFormatting.RED), true);
                         }
 
                         if(h.getReviveCount() != 150) h.setReviveCount(150);
@@ -138,17 +135,18 @@ public class ForgeEvents {
 
     @SubscribeEvent
     public static void playerJump(LivingEvent.LivingJumpEvent event){
-        if(event.getEntityLiving() instanceof PlayerEntity && !event.getEntityLiving().level.isClientSide()){
-            PlayerEntity player = (PlayerEntity) event.getEntityLiving();
+        if(event.getEntityLiving() instanceof Player && !event.getEntityLiving().level.isClientSide()){
+            Player player = (Player) event.getEntityLiving();
             player.getCapability(PlayerCapability.INSTANCE).ifPresent(h ->{
                 if(h.getIsIncapacitated()){
                     if(h.giveUpJumpCount()){
-                        player.hurt(DamageSource.GENERIC, player.getMaxHealth() *2);
+                        player.hurt(DamageSource.GENERIC, player.getMaxHealth() * 10);
                         player.setForcedPose(null);
                         h.setReviveCount(150);
-                        h.setJumpCount(3);
+                        h.resetGiveUpJumps();
+                        h.setTicksUntilDeath(2000);
                         h.setIsIncapacitated(false);
-                        incapacitationMessenger.sendTo(new IncapPacket(player.getId(), false), player);
+                        IncapacitationMessenger.sendTo(new IncapPacket(player.getId(), false), player);
                     }
                 }
             });
@@ -157,23 +155,24 @@ public class ForgeEvents {
 
     @SubscribeEvent
     public static void playerEat(LivingEntityUseItemEvent.Finish event){
-        if(event.getEntityLiving() instanceof PlayerEntity && !event.getEntityLiving().level.isClientSide()){
+        if(event.getEntityLiving() instanceof Player && !event.getEntityLiving().level.isClientSide()){
             Item item = event.getItem().getItem();
-            PlayerEntity player = (PlayerEntity) event.getEntityLiving();
+            Player player = (Player) event.getEntityLiving();
             player.getCapability(PlayerCapability.INSTANCE).ifPresent(h->{
-                if(item.equals(Items.GOLDEN_APPLE)) h.setDownsUntilDeath(3);
+                if(item.equals(Items.GOLDEN_APPLE)) {h.setDownsUntilDeath(3); h.setTicksUntilDeath(2000);}
                 if(h.getIsIncapacitated()){
                     if(item.equals(Items.ENCHANTED_GOLDEN_APPLE)){
                         h.setIsIncapacitated(false);
                         player.setForcedPose(null);
                         h.setReviveCount(150);
-                        h.setJumpCount(3);
+                        h.resetGiveUpJumps();
                         h.setDownsUntilDeath(3);
-                        incapacitationMessenger.sendTo(new IncapPacket(player.getId(), false), player);
+                        h.setTicksUntilDeath(2000);
+                        IncapacitationMessenger.sendTo(new IncapPacket(player.getId(), false), player);
                         player.setHealth(player.getMaxHealth()/3f);
-                        player.level.playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.NOTE_BLOCK_PLING, SoundCategory.PLAYERS, 1, 1);
+                        player.level.playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.NOTE_BLOCK_PLING, SoundSource.PLAYERS, 1, 1);
                     }
-                }
+                }else if(item.equals(Items.ENCHANTED_GOLDEN_APPLE)) {h.setDownsUntilDeath(3); h.setTicksUntilDeath(2000);}
             });
         }
     }

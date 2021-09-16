@@ -1,7 +1,7 @@
 package com.cartoonishvillain.incapacitated.capability;
 
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.util.Direction;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.core.Direction;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.common.util.INBTSerializable;
@@ -10,7 +10,7 @@ import net.minecraftforge.common.util.LazyOptional;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-public class PlayerCapabilityManager implements IPlayerCapability, ICapabilityProvider, INBTSerializable<CompoundNBT> {
+public class PlayerCapabilityManager implements IPlayerCapability, ICapabilityProvider, INBTSerializable<CompoundTag> {
     protected boolean incapacitated = false;
     protected int ticksUntilDeath = 2000;
     protected int downsUntilDeath = 3;
@@ -99,8 +99,8 @@ public class PlayerCapabilityManager implements IPlayerCapability, ICapabilityPr
     }
 
     @Override
-    public CompoundNBT serializeNBT() {
-        CompoundNBT tag = new CompoundNBT();
+    public CompoundTag serializeNBT() {
+        CompoundTag tag = new CompoundTag();
         tag.putBoolean("incapacitation", incapacitated);
         tag.putInt("incapTimer", ticksUntilDeath);
         tag.putInt("incapCounter", downsUntilDeath);
@@ -109,7 +109,7 @@ public class PlayerCapabilityManager implements IPlayerCapability, ICapabilityPr
     }
 
     @Override
-    public void deserializeNBT(CompoundNBT tag) {
+    public void deserializeNBT(CompoundTag tag) {
         incapacitated = tag.getBoolean("incapacitation");
         ticksUntilDeath = tag.getInt("incapTimer");
         downsUntilDeath = tag.getInt("incapCounter");
