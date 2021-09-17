@@ -57,7 +57,7 @@ public class ForgeEvents {
                         h.setIsIncapacitated(true);
                         event.setCanceled(true);
                         player.setHealth(player.getMaxHealth());
-                        player.addEffect(new MobEffectInstance(MobEffects.GLOWING, 2000, 0));
+                        player.addEffect(new MobEffectInstance(MobEffects.GLOWING, 10000, 0));
                         IncapacitationMessenger.sendTo(new IncapPacket(player.getId(), true), player);
 
                         ArrayList<Player> playerEntities = (ArrayList<Player>) player.level.getEntitiesOfClass(Player.class, player.getBoundingBox().inflate(50));
