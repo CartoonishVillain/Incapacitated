@@ -12,6 +12,8 @@ import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.Items;
 import net.minecraft.network.PacketBuffer;
+import net.minecraft.potion.EffectInstance;
+import net.minecraft.potion.Effects;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundCategory;
@@ -58,6 +60,7 @@ public class ForgeEvents {
                         h.setIsIncapacitated(true);
                         event.setCanceled(true);
                         player.setHealth(player.getMaxHealth());
+                        player.addEffect(new EffectInstance(Effects.GLOWING, 10000, 0));
                         incapacitationMessenger.sendTo(new IncapPacket(player.getId(), true), player);
 
                         ArrayList<PlayerEntity> playerEntities = (ArrayList<PlayerEntity>) player.level.getEntitiesOfClass(PlayerEntity.class, player.getBoundingBox().inflate(50));
@@ -107,6 +110,7 @@ public class ForgeEvents {
                             event.player.setForcedPose(null);
                             h.setReviveCount(150);
                             h.setJumpCount(3);
+                            event.player.removeEffect(Effects.GLOWING);
                             incapacitationMessenger.sendTo(new IncapPacket(event.player.getId(), false), event.player);
                             event.player.setHealth(event.player.getMaxHealth()/3f);
                             event.player.level.playSound(null, event.player.getX(), event.player.getY(), event.player.getZ(), SoundEvents.NOTE_BLOCK_PLING, SoundCategory.PLAYERS, 1, 1);
@@ -123,6 +127,7 @@ public class ForgeEvents {
                             h.setReviveCount(150);
                             h.setTicksUntilDeath(2000);
                             h.setJumpCount(3);
+                            event.player.removeEffect(Effects.GLOWING);
                             h.setIsIncapacitated(false);
                             incapacitationMessenger.sendTo(new IncapPacket(event.player.getId(), false), event.player);
                         } else if (h.getTicksUntilDeath() % 20 == 0) {
@@ -151,6 +156,7 @@ public class ForgeEvents {
                         h.setReviveCount(150);
                         h.setTicksUntilDeath(2000);
                         h.setJumpCount(3);
+                        player.removeEffect(Effects.GLOWING);
                         h.setIsIncapacitated(false);
                         incapacitationMessenger.sendTo(new IncapPacket(player.getId(), false), player);
                     }
@@ -185,6 +191,7 @@ public class ForgeEvents {
                         h.setJumpCount(3);
                         h.setTicksUntilDeath(2000);
                         h.setDownsUntilDeath(3);
+                        player.removeEffect(Effects.GLOWING);
                         incapacitationMessenger.sendTo(new IncapPacket(player.getId(), false), player);
                         player.setHealth(player.getMaxHealth()/3f);
                         player.level.playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.NOTE_BLOCK_PLING, SoundCategory.PLAYERS, 1, 1);
