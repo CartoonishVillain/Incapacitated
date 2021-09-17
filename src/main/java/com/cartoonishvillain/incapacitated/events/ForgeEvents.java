@@ -123,6 +123,7 @@ public class ForgeEvents {
                             event.player.setForcedPose(null);
                             h.setReviveCount(150);
                             h.resetGiveUpJumps();
+                            event.player.removeEffect(MobEffects.GLOWING);
                             h.setIsIncapacitated(false);
                             IncapacitationMessenger.sendTo(new IncapPacket(event.player.getId(), false), event.player);
                         } else if (h.getTicksUntilDeath() % 20 == 0) {
