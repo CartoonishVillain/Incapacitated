@@ -11,6 +11,8 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.Pose;
 import net.minecraft.world.entity.player.Player;
@@ -55,6 +57,7 @@ public class ForgeEvents {
                         h.setIsIncapacitated(true);
                         event.setCanceled(true);
                         player.setHealth(player.getMaxHealth());
+                        player.addEffect(new MobEffectInstance(MobEffects.GLOWING, 2000, 0));
                         IncapacitationMessenger.sendTo(new IncapPacket(player.getId(), true), player);
 
                         ArrayList<Player> playerEntities = (ArrayList<Player>) player.level.getEntitiesOfClass(Player.class, player.getBoundingBox().inflate(50));
@@ -104,6 +107,7 @@ public class ForgeEvents {
                             event.player.setForcedPose(null);
                             h.setReviveCount(150);
                             h.resetGiveUpJumps();
+                            event.player.removeEffect(MobEffects.GLOWING);
                             IncapacitationMessenger.sendTo(new IncapPacket(event.player.getId(), false), event.player);
                             event.player.setHealth(event.player.getMaxHealth()/3f);
                             event.player.level.playSound(null, event.player.getX(), event.player.getY(), event.player.getZ(), SoundEvents.NOTE_BLOCK_PLING, SoundSource.PLAYERS, 1, 1);
@@ -148,6 +152,7 @@ public class ForgeEvents {
                         h.resetGiveUpJumps();
                         h.setTicksUntilDeath(2000);
                         h.setIsIncapacitated(false);
+                        player.removeEffect(MobEffects.GLOWING);
                         IncapacitationMessenger.sendTo(new IncapPacket(player.getId(), false), player);
                     }
                 }
@@ -179,6 +184,7 @@ public class ForgeEvents {
                         h.setReviveCount(150);
                         h.resetGiveUpJumps();
                         h.setDownsUntilDeath(3);
+                        player.removeEffect(MobEffects.GLOWING);
                         h.setTicksUntilDeath(2000);
                         IncapacitationMessenger.sendTo(new IncapPacket(player.getId(), false), player);
                         player.setHealth(player.getMaxHealth()/3f);
