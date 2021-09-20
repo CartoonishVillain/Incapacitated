@@ -182,9 +182,9 @@ public class ForgeEvents {
             Item item = event.getItem().getItem();
             PlayerEntity player = (PlayerEntity) event.getEntityLiving();
             player.getCapability(PlayerCapability.INSTANCE).ifPresent(h->{
-                if(item.equals(Items.GOLDEN_APPLE)) {h.setDownsUntilDeath(Incapacitated.config.DOWNCOUNT.get()); h.setTicksUntilDeath(Incapacitated.config.DOWNTICKS.get());}
+                if(Incapacitated.HealingFoods.contains(item.getRegistryName())) {h.setDownsUntilDeath(Incapacitated.config.DOWNCOUNT.get()); h.setTicksUntilDeath(Incapacitated.config.DOWNTICKS.get());}
                 if(h.getIsIncapacitated()){
-                    if(item.equals(Items.ENCHANTED_GOLDEN_APPLE)){
+                    if(Incapacitated.ReviveFoods.contains(item.getRegistryName())){
                         h.setIsIncapacitated(false);
                         player.setForcedPose(null);
                         h.setReviveCount(Incapacitated.config.REVIVETICKS.get());
@@ -197,7 +197,7 @@ public class ForgeEvents {
                         player.level.playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.NOTE_BLOCK_PLING, SoundCategory.PLAYERS, 1, 1);
                     }
                 }
-                else if(item.equals(Items.GOLDEN_APPLE)) {h.setDownsUntilDeath(Incapacitated.config.DOWNCOUNT.get()); h.setTicksUntilDeath(Incapacitated.config.DOWNTICKS.get());}
+                else if(Incapacitated.ReviveFoods.contains(item.getRegistryName())) {h.setDownsUntilDeath(Incapacitated.config.DOWNCOUNT.get()); h.setTicksUntilDeath(Incapacitated.config.DOWNTICKS.get());}
             });
         }
     }
