@@ -1,5 +1,6 @@
 package com.cartoonishvillain.incapacitated.capability;
 
+import com.cartoonishvillain.incapacitated.Incapacitated;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.core.Direction;
 import net.minecraftforge.common.capabilities.Capability;
@@ -12,10 +13,10 @@ import javax.annotation.Nullable;
 
 public class PlayerCapabilityManager implements IPlayerCapability, ICapabilityProvider, INBTSerializable<CompoundTag> {
     protected boolean incapacitated = false;
-    protected int ticksUntilDeath = 2000;
-    protected int downsUntilDeath = 3;
+    protected int ticksUntilDeath = Incapacitated.config.DOWNTICKS.get();
+    protected int downsUntilDeath = Incapacitated.config.DOWNCOUNT.get();
     protected int giveUpJumps = 3;
-    protected int reviveCounter = 150;
+    protected int reviveCounter = Incapacitated.config.REVIVETICKS.get();
     protected int jumpDelay = 0;
     public final LazyOptional<IPlayerCapability> holder = LazyOptional.of(()->this);
     @Override
