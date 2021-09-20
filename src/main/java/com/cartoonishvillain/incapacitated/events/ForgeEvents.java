@@ -60,7 +60,8 @@ public class ForgeEvents {
                         h.setIsIncapacitated(true);
                         event.setCanceled(true);
                         player.setHealth(player.getMaxHealth());
-                        player.addEffect(new EffectInstance(Effects.GLOWING, 10000, 0));
+                        if(Incapacitated.config.GLOWING.get())
+                            player.addEffect(new EffectInstance(Effects.GLOWING, Integer.MAX_VALUE, 0));
                         incapacitationMessenger.sendTo(new IncapPacket(player.getId(), true), player);
 
                         ArrayList<PlayerEntity> playerEntities = (ArrayList<PlayerEntity>) player.level.getEntitiesOfClass(PlayerEntity.class, player.getBoundingBox().inflate(50));
@@ -108,7 +109,7 @@ public class ForgeEvents {
                         if(h.downReviveCount()){
                             h.setIsIncapacitated(false);
                             event.player.setForcedPose(null);
-                            h.setReviveCount(150);
+                            h.setReviveCount(Incapacitated.config.REVIVETICKS.get());
                             h.setJumpCount(3);
                             event.player.removeEffect(Effects.GLOWING);
                             incapacitationMessenger.sendTo(new IncapPacket(event.player.getId(), false), event.player);
@@ -124,8 +125,8 @@ public class ForgeEvents {
                         if (h.countTicksUntilDeath()) {
                             event.player.hurt(DamageSource.GENERIC, event.player.getMaxHealth() *2);
                             event.player.setForcedPose(null);
-                            h.setReviveCount(150);
-                            h.setTicksUntilDeath(2000);
+                            h.setReviveCount(Incapacitated.config.REVIVETICKS.get());
+                            h.setTicksUntilDeath(Incapacitated.config.DOWNTICKS.get());
                             h.setJumpCount(3);
                             event.player.removeEffect(Effects.GLOWING);
                             h.setIsIncapacitated(false);
@@ -134,7 +135,7 @@ public class ForgeEvents {
                             event.player.displayClientMessage(new StringTextComponent("Incapacitated! Call for help or jump " + h.getJumpCount() + " times to give up! " + ((float) h.getTicksUntilDeath() / 20f) + " seconds left!").withStyle(TextFormatting.RED), true);
                         }
 
-                        if(h.getReviveCount() != 150) h.setReviveCount(150);
+                        if(h.getReviveCount() != Incapacitated.config.REVIVETICKS.get()) h.setReviveCount(Incapacitated.config.REVIVETICKS.get());
                     }
                 }
             }
@@ -153,8 +154,7 @@ public class ForgeEvents {
                     if(h.giveUpJumpCount()){
                         player.hurt(DamageSource.GENERIC, player.getMaxHealth() *2);
                         player.setForcedPose(null);
-                        h.setReviveCount(150);
-                        h.setTicksUntilDeath(2000);
+                        h.setReviveCount(Incapacitated.config.REVIVETICKS.get());
                         h.setJumpCount(3);
                         player.removeEffect(Effects.GLOWING);
                         h.setIsIncapacitated(false);
@@ -182,22 +182,22 @@ public class ForgeEvents {
             Item item = event.getItem().getItem();
             PlayerEntity player = (PlayerEntity) event.getEntityLiving();
             player.getCapability(PlayerCapability.INSTANCE).ifPresent(h->{
-                if(item.equals(Items.GOLDEN_APPLE)) {h.setDownsUntilDeath(3); h.setTicksUntilDeath(2000);}
+                if(item.equals(Items.GOLDEN_APPLE)) {h.setDownsUntilDeath(Incapacitated.config.DOWNCOUNT.get()); h.setTicksUntilDeath(Incapacitated.config.DOWNTICKS.get());}
                 if(h.getIsIncapacitated()){
                     if(item.equals(Items.ENCHANTED_GOLDEN_APPLE)){
                         h.setIsIncapacitated(false);
                         player.setForcedPose(null);
-                        h.setReviveCount(150);
+                        h.setReviveCount(Incapacitated.config.REVIVETICKS.get());
                         h.setJumpCount(3);
-                        h.setTicksUntilDeath(2000);
-                        h.setDownsUntilDeath(3);
+                        h.setTicksUntilDeath(Incapacitated.config.DOWNTICKS.get());
+                        h.setDownsUntilDeath(Incapacitated.config.DOWNCOUNT.get());
                         player.removeEffect(Effects.GLOWING);
                         incapacitationMessenger.sendTo(new IncapPacket(player.getId(), false), player);
                         player.setHealth(player.getMaxHealth()/3f);
                         player.level.playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.NOTE_BLOCK_PLING, SoundCategory.PLAYERS, 1, 1);
                     }
                 }
-                else if(item.equals(Items.GOLDEN_APPLE)) {h.setDownsUntilDeath(3); h.setTicksUntilDeath(2000);}
+                else if(item.equals(Items.GOLDEN_APPLE)) {h.setDownsUntilDeath(Incapacitated.config.DOWNCOUNT.get()); h.setTicksUntilDeath(Incapacitated.config.DOWNTICKS.get());}
             });
         }
     }
