@@ -25,11 +25,14 @@ import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.living.LivingEntityUseItemEvent;
 import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
+import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
 import java.util.ArrayList;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
 
 
 @Mod.EventBusSubscriber(modid = Incapacitated.MODID, bus = Mod.EventBusSubscriber.Bus.FORGE)
@@ -69,6 +72,34 @@ public class ForgeEvents {
 
                     }
                 }
+            });
+        }
+    }
+
+    @SubscribeEvent
+    public static void playerCloneEvent(PlayerEvent.Clone event){
+        if(!event.isWasDeath()){
+            Player originalPlayer = event.getOriginal();
+            Player newPlayer = event.getPlayer();
+
+            AtomicBoolean incapacitated = new AtomicBoolean(false);
+            AtomicInteger ticksUntilDeath = new AtomicInteger(Integer.MAX_VALUE);
+            AtomicInteger downsUntilDeath = new AtomicInteger(Integer.MAX_VALUE);
+
+            originalPlayer.revive();
+
+            originalPlayer.getCapability(PlayerCapability.INSTANCE).ifPresent(h->{
+                incapacitated.set(h.getIsIncapacitated());
+                ticksUntilDeath.set(h.getTicksUntilDeath());
+                downsUntilDeath.set(h.getDownsUntilDeath());
+            });
+
+            originalPlayer.kill();
+
+            newPlayer.getCapability(PlayerCapability.INSTANCE).ifPresent(h->{
+                h.setIsIncapacitated(incapacitated.get());
+                h.setTicksUntilDeath(ticksUntilDeath.get());
+                h.setDownsUntilDeath(downsUntilDeath.get());
             });
         }
     }
