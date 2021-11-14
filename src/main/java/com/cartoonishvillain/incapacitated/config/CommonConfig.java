@@ -14,6 +14,7 @@ public class CommonConfig {
     public ConfigHelper.ConfigValueListener<Integer> REVIVETICKS;
     public ConfigHelper.ConfigValueListener<Integer> DOWNCOUNT;
     public ConfigHelper.ConfigValueListener<Boolean> GLOWING;
+    public ConfigHelper.ConfigValueListener<Boolean> INVINCIBLEDOWN;
 
     public CommonConfig(ForgeConfigSpec.Builder builder, ConfigHelper.Subscriber subscriber){
         builder.comment("Modify Components that can be handled serverside").push(CCATEGORY_CONFIGS);
@@ -23,6 +24,7 @@ public class CommonConfig {
         this.REVIVETICKS = subscriber.subscribe(builder.comment("How long it takes to revive a downed player manually").defineInRange("reviveTicks", 150, 5, Integer.MAX_VALUE));
         this.DOWNCOUNT = subscriber.subscribe(builder.comment("How many times a player can go down without a healing or revive item, without instantly dying the next time they are supposed to go down.").defineInRange("downCounter", 3, 1, Integer.MAX_VALUE));
         this.GLOWING = subscriber.subscribe(builder.comment("Do players glow while downed to be easier to find?").define("glowingWhileDowned", true));
+        this.INVINCIBLEDOWN = subscriber.subscribe(builder.comment("Are downed players invincible?").define("invincibleWhileDowned", false));
         builder.pop();
     }
 
