@@ -154,7 +154,7 @@ public class ForgeEvents {
                     }
                     else {
                         if (h.countTicksUntilDeath()) {
-                            event.player.hurt(DamageSource.GENERIC, event.player.getMaxHealth() *2);
+                            event.player.hurt(BleedOutDamage.playerOutOfTime(event.player), event.player.getMaxHealth() *2);
                             event.player.setForcedPose(null);
                             h.setReviveCount(Incapacitated.config.REVIVETICKS.get());
                             h.setTicksUntilDeath(Incapacitated.config.DOWNTICKS.get());
@@ -183,7 +183,7 @@ public class ForgeEvents {
             player.getCapability(PlayerCapability.INSTANCE).ifPresent(h ->{
                 if(h.getIsIncapacitated() && h.getJumpDelay() == 0){
                     if(h.giveUpJumpCount()){
-                        player.hurt(DamageSource.GENERIC, player.getMaxHealth() *2);
+                        player.hurt(GiveUpDamage.playerGaveUp(player), player.getMaxHealth() *2);
                         player.setForcedPose(null);
                         h.setReviveCount(Incapacitated.config.REVIVETICKS.get());
                         h.setJumpCount(3);
@@ -201,6 +201,10 @@ public class ForgeEvents {
         if(event.getEntityLiving() instanceof PlayerEntity){
             PlayerEntity player = (PlayerEntity) event.getEntityLiving();
             player.getCapability(PlayerCapability.INSTANCE).ifPresent(h->{
+                if(h.getIsIncapacitated() && Incapacitated.config.INVINCIBLEDOWN.get() && !(event.getSource().getMsgId().equals("giveup") || event.getSource().getMsgId().equals("bleedout"))){
+                    event.setCanceled(true);
+                    return;
+                }
                 h.setJumpDelay(20);
             });
         }

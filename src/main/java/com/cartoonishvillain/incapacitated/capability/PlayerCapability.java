@@ -16,7 +16,6 @@ public class PlayerCapability {
 
     public static void register(){
         CapabilityManager.INSTANCE.register(IPlayerCapability.class, new Capability.IStorage<IPlayerCapability>() {
-            @Nullable
             @Override
             public INBT writeNBT(Capability<IPlayerCapability> capability, IPlayerCapability instance, Direction side) {
                 CompoundNBT tag = new CompoundNBT();
