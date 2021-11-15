@@ -129,7 +129,11 @@ public class ForgeEvents {
 
                     PlayerEntity revivingPlayer = null;
                     for(PlayerEntity player : playerEntities) {
-                        if (player.isCrouching()) {
+                        AtomicBoolean isdown = new AtomicBoolean(false);
+                        event.player.getCapability(PlayerCapability.INSTANCE).ifPresent(j->{
+                            isdown.set(j.getIsIncapacitated());
+                        });
+                        if (player.isCrouching() && !isdown.get()) {
                             reviving = true;
                             revivingPlayer = player;
                             break;
@@ -148,8 +152,8 @@ public class ForgeEvents {
                             event.player.level.playSound(null, event.player.getX(), event.player.getY(), event.player.getZ(), SoundEvents.NOTE_BLOCK_PLING, SoundCategory.PLAYERS, 1, 1);
 
                         }else{
-                            event.player.displayClientMessage(new StringTextComponent("You are being revived! " + (float)h.getReviveCount()/20f + " seconds..").withStyle(TextFormatting.GREEN), true);
-                            revivingPlayer.displayClientMessage(new StringTextComponent("Reviving " + event.player.getScoreboardName() + " " + (float)h.getReviveCount()/20f + " seconds...").withStyle(TextFormatting.GREEN), true);
+                            event.player.displayClientMessage(new StringTextComponent("You are being revived! " + (int)(h.getReviveCount()/20) + " seconds..").withStyle(TextFormatting.GREEN), true);
+                            revivingPlayer.displayClientMessage(new StringTextComponent("Reviving " + event.player.getScoreboardName() + " " + (int)(h.getReviveCount()/20) + " seconds...").withStyle(TextFormatting.GREEN), true);
                         }
                     }
                     else {
