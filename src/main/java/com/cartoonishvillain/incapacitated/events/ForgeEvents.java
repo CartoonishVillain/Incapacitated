@@ -6,8 +6,10 @@ import com.cartoonishvillain.incapacitated.capability.PlayerCapabilityManager;
 import com.cartoonishvillain.incapacitated.networking.IncapPacket;
 import com.cartoonishvillain.incapacitated.networking.IncapacitationMessenger;
 import net.minecraft.ChatFormatting;
+import net.minecraft.network.chat.ChatType;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.damagesource.DamageSource;
@@ -31,6 +33,7 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
 import java.util.ArrayList;
+import java.util.UUID;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -48,11 +51,10 @@ public class ForgeEvents {
 
     @SubscribeEvent(priority = EventPriority.LOWEST)
     public static void playerDeath(LivingDeathEvent event) {
-        if (event.getEntityLiving() instanceof Player && !event.isCanceled()) {
-            Player player = (Player) event.getEntityLiving();
+        if (event.getEntityLiving() instanceof Player player && !event.isCanceled()) {
             player.getCapability(PlayerCapability.INSTANCE).ifPresent(h -> {
                 //if the player is not already incapacitated
-                if (!h.getIsIncapacitated()) {
+                if (!h.getIsIncapacitated()&& !(Incapacitated.config.SOMEINSTANTKILLS.get() && Incapacitated.instantKillDamageSourcesMessageID.contains(event.getSource().getMsgId()))) {
                     //reduce downs until death
                     h.setDownsUntilDeath(h.getDownsUntilDeath() - 1);
                     //if downs until death is 0 or higher, we can cancel the death event because the user is down.
@@ -64,10 +66,14 @@ public class ForgeEvents {
                         player.addEffect(new MobEffectInstance(MobEffects.GLOWING, Integer.MAX_VALUE, 0));
                         IncapacitationMessenger.sendTo(new IncapPacket(player.getId(), true), player);
 
-                        ArrayList<Player> playerEntities = (ArrayList<Player>) player.level.getEntitiesOfClass(Player.class, player.getBoundingBox().inflate(50));
-
-                        for(Player players : playerEntities) {
-                            players.displayClientMessage(new TextComponent(player.getScoreboardName() + " is incapacitated!"), false);
+                        if(Incapacitated.config.GLOBALINCAPMESSAGES.get()){
+                            broadcast(player.getServer(), new TextComponent(player.getScoreboardName() + " is incapacitated!"));
+                        }
+                        else {
+                            ArrayList<Player> playerEntities = (ArrayList<Player>) player.level.getEntitiesOfClass(Player.class, player.getBoundingBox().inflate(50));
+                            for (Player players : playerEntities) {
+                                players.displayClientMessage(new TextComponent(player.getScoreboardName() + " is incapacitated!"), false);
+                            }
                         }
 
                     }
@@ -233,6 +239,10 @@ public class ForgeEvents {
                 }else if(Incapacitated.ReviveFoods.contains(item.getRegistryName())) {h.setDownsUntilDeath(Incapacitated.config.DOWNCOUNT.get()); h.setTicksUntilDeath(Incapacitated.config.DOWNTICKS.get());}
             });
         }
+    }
+
+    private static void broadcast(MinecraftServer server, TextComponent translationTextComponent){
+        server.getPlayerList().broadcastMessage(translationTextComponent, ChatType.CHAT, UUID.randomUUID());
     }
 
 

@@ -5,6 +5,7 @@ import com.cartoonishvillain.incapacitated.config.ConfigHelper;
 import com.cartoonishvillain.incapacitated.networking.IncapacitationMessenger;
 import net.minecraft.ResourceLocationException;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.damagesource.DamageSource;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.config.ModConfig;
@@ -27,12 +28,14 @@ public class Incapacitated
     public static CommonConfig config;
     public static ArrayList<ResourceLocation> ReviveFoods;
     public static ArrayList<ResourceLocation> HealingFoods;
+    public static ArrayList<String> instantKillDamageSourcesMessageID;
 
     public Incapacitated() {
         IncapacitationMessenger.register();
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::setup);
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::doClientStuff);
         config = ConfigHelper.register(ModConfig.Type.COMMON, CommonConfig::new);
+        instantKillDamageSourcesMessageID = new ArrayList<>(List.of("bleedout", DamageSource.OUT_OF_WORLD.msgId, DamageSource.LAVA.msgId, DamageSource.WITHER.msgId));
 
 
         // Register ourselves for server and other game events we are interested in

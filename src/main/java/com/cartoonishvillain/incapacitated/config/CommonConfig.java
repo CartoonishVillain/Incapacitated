@@ -15,6 +15,8 @@ public class CommonConfig {
     public ConfigHelper.ConfigValueListener<Integer> DOWNCOUNT;
     public ConfigHelper.ConfigValueListener<Boolean> GLOWING;
     public ConfigHelper.ConfigValueListener<Boolean> INVINCIBLEDOWN;
+    public ConfigHelper.ConfigValueListener<Boolean> SOMEINSTANTKILLS;
+    public ConfigHelper.ConfigValueListener<Boolean> GLOBALINCAPMESSAGES;
 
     public CommonConfig(ForgeConfigSpec.Builder builder, ConfigHelper.Subscriber subscriber){
         builder.comment("Modify Components that can be handled serverside").push(CCATEGORY_CONFIGS);
@@ -25,6 +27,8 @@ public class CommonConfig {
         this.DOWNCOUNT = subscriber.subscribe(builder.comment("How many times a player can go down without a healing or revive item, without instantly dying the next time they are supposed to go down.").defineInRange("downCounter", 3, 1, Integer.MAX_VALUE));
         this.GLOWING = subscriber.subscribe(builder.comment("Do players glow while downed to be easier to find?").define("glowingWhileDowned", true));
         this.INVINCIBLEDOWN = subscriber.subscribe(builder.comment("Are downed players invincible?").define("invincibleWhileDowned", false));
+        this.SOMEINSTANTKILLS = subscriber.subscribe(builder.comment("Do some damage types like Lava down players, or instantly kill?").define("someInstantKills", true));
+        this.GLOBALINCAPMESSAGES = subscriber.subscribe(builder.comment("Are incapacitation messages global?").define("globalIncapMessage", true));
         builder.pop();
     }
 
