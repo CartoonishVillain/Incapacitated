@@ -14,10 +14,12 @@ import net.minecraft.item.Items;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.potion.EffectInstance;
 import net.minecraft.potion.Effects;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvents;
+import net.minecraft.util.text.ChatType;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
@@ -34,6 +36,7 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
 import java.util.ArrayList;
+import java.util.UUID;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -55,7 +58,7 @@ public class ForgeEvents {
             PlayerEntity player = (PlayerEntity) event.getEntityLiving();
             player.getCapability(PlayerCapability.INSTANCE).ifPresent(h -> {
                 //if the player is not already incapacitated
-                if (!h.getIsIncapacitated()) {
+                if (!h.getIsIncapacitated()&& !(Incapacitated.config.SOMEINSTANTKILLS.get() && Incapacitated.instantKillDamageSourcesMessageID.contains(event.getSource().getMsgId()))) {
                     //reduce downs until death
                     h.setDownsUntilDeath(h.getDownsUntilDeath() - 1);
                     //if downs until death is 0 or higher, we can cancel the death event because the user is down.
@@ -67,10 +70,14 @@ public class ForgeEvents {
                             player.addEffect(new EffectInstance(Effects.GLOWING, Integer.MAX_VALUE, 0));
                         incapacitationMessenger.sendTo(new IncapPacket(player.getId(), true), player);
 
-                        ArrayList<PlayerEntity> playerEntities = (ArrayList<PlayerEntity>) player.level.getEntitiesOfClass(PlayerEntity.class, player.getBoundingBox().inflate(50));
-
-                        for(PlayerEntity players : playerEntities) {
-                            players.displayClientMessage(new StringTextComponent(player.getScoreboardName() + " is incapacitated!"), false);
+                        if(Incapacitated.config.GLOBALINCAPMESSAGES.get()){
+                            broadcast(player.getServer(), new StringTextComponent(player.getScoreboardName() + " is incapacitated!"));
+                        }
+                        else {
+                            ArrayList<PlayerEntity> playerEntities = (ArrayList<PlayerEntity>) player.level.getEntitiesOfClass(PlayerEntity.class, player.getBoundingBox().inflate(50));
+                            for (PlayerEntity players : playerEntities) {
+                                players.displayClientMessage(new StringTextComponent(player.getScoreboardName() + " is incapacitated!"), false);
+                            }
                         }
 
                     }
@@ -187,7 +194,7 @@ public class ForgeEvents {
             player.getCapability(PlayerCapability.INSTANCE).ifPresent(h ->{
                 if(h.getIsIncapacitated() && h.getJumpDelay() == 0){
                     if(h.giveUpJumpCount()){
-                        player.hurt(GiveUpDamage.playerGaveUp(player), player.getMaxHealth() *2);
+                        player.hurt(BleedOutDamage.playerOutOfTime(player), player.getMaxHealth() *2);
                         player.setForcedPose(null);
                         h.setReviveCount(Incapacitated.config.REVIVETICKS.get());
                         h.setJumpCount(3);
@@ -239,6 +246,10 @@ public class ForgeEvents {
                 else if(Incapacitated.ReviveFoods.contains(item.getRegistryName())) {h.setDownsUntilDeath(Incapacitated.config.DOWNCOUNT.get()); h.setTicksUntilDeath(Incapacitated.config.DOWNTICKS.get());}
             });
         }
+    }
+
+    private static void broadcast(MinecraftServer server, StringTextComponent translationTextComponent){
+        server.getPlayerList().broadcastMessage(translationTextComponent, ChatType.CHAT, UUID.randomUUID());
     }
 
 }
