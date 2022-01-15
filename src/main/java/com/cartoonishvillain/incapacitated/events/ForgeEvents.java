@@ -133,10 +133,14 @@ public class ForgeEvents {
                     Player revivingPlayer = null;
                     for(Player player : playerEntities) {
                         AtomicBoolean isdown = new AtomicBoolean(false);
+                        AtomicBoolean targetIsDown = new AtomicBoolean(false);
                         player.getCapability(PlayerCapability.INSTANCE).ifPresent(j->{
                             isdown.set(j.getIsIncapacitated());
                         });
-                        if (player.isCrouching() && !isdown.get()) {
+                        event.player.getCapability(PlayerCapability.INSTANCE).ifPresent(j->{
+                            targetIsDown.set(j.getIsIncapacitated());
+                        });
+                        if (player.isCrouching() && targetIsDown.get() && !isdown.get()) {
                             reviving = true;
                             revivingPlayer = player;
                             break;
