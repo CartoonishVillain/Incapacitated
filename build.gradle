@@ -7,12 +7,22 @@ buildscript {
         classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '5.1.+', changing: true
     }
 }
+
+repositories {
+    maven {
+        url "https://cfa2.cursemaven.com"
+        content {
+            includeGroup "curse.maven"
+        }
+    }
+}
+
 apply plugin: 'net.minecraftforge.gradle'
 // Only edit below this line, the above code adds and enables the necessary things for Forge to be setup.
 apply plugin: 'eclipse'
 apply plugin: 'maven-publish'
 
-version = '1.16.5-1.2.1'
+version = '1.16.5-1.2.2'
 group = 'com.cartoonishvillain.incapacitated' // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = 'incapacitated'
 
@@ -122,6 +132,7 @@ dependencies {
     // You may put jars on which you depend on in ./libs or you may define them like so..
     // compile "some.group:artifact:version:classifier"
     // compile "some.group:artifact:version"
+//    implementation fg.deobf("curse.maven:corpse-271605:3525317")
 
     // Real examples
     // compile 'com.mod-buildcraft:buildcraft:6.0.8:dev'  // adds buildcraft to the dev env
