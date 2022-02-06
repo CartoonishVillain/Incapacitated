@@ -49,7 +49,7 @@ public class ForgeEvents {
         }
     }
 
-    @SubscribeEvent(priority = EventPriority.LOWEST)
+    @SubscribeEvent
     public static void playerDeath(LivingDeathEvent event) {
         if (event.getEntityLiving() instanceof Player player && !event.isCanceled()) {
             player.getCapability(PlayerCapability.INSTANCE).ifPresent(h -> {
