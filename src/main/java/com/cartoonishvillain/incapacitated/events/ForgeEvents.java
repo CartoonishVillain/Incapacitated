@@ -49,7 +49,7 @@ public class ForgeEvents {
         }
     }
 
-    @SubscribeEvent(priority = EventPriority.LOWEST)
+    @SubscribeEvent
     public static void playerDeath(LivingDeathEvent event) {
         if (event.getEntityLiving() instanceof Player player && !event.isCanceled()) {
             player.getCapability(PlayerCapability.INSTANCE).ifPresent(h -> {
@@ -122,68 +122,71 @@ public class ForgeEvents {
 
     @SubscribeEvent
     public static void playerTick(TickEvent.PlayerTickEvent event){
-        event.player.getCapability(PlayerCapability.INSTANCE).ifPresent(h->{
-            h.countDelay();
-            if(h.getIsIncapacitated()) {
-                if(event.player.getForcedPose() == null){event.player.setForcedPose(Pose.SWIMMING);}
-                if(!event.player.level.isClientSide()) {
-                    ArrayList<Player> playerEntities = (ArrayList<Player>) event.player.level.getEntitiesOfClass(Player.class, event.player.getBoundingBox().inflate(3));
-                    boolean reviving = false;
-
-                    Player revivingPlayer = null;
-                    for(Player player : playerEntities) {
-                        AtomicBoolean isdown = new AtomicBoolean(false);
-                        AtomicBoolean targetIsDown = new AtomicBoolean(false);
-                        player.getCapability(PlayerCapability.INSTANCE).ifPresent(j->{
-                            isdown.set(j.getIsIncapacitated());
-                        });
-                        event.player.getCapability(PlayerCapability.INSTANCE).ifPresent(j->{
-                            targetIsDown.set(j.getIsIncapacitated());
-                        });
-                        if (player.isCrouching() && targetIsDown.get() && !isdown.get()) {
-                            reviving = true;
-                            revivingPlayer = player;
-                            break;
-                        }
+        if(event.phase == TickEvent.Phase.END) {
+            event.player.getCapability(PlayerCapability.INSTANCE).ifPresent(h -> {
+                h.countDelay();
+                if (h.getIsIncapacitated()) {
+                    if (event.player.getForcedPose() == null) {
+                        event.player.setForcedPose(Pose.SWIMMING);
                     }
+                    if (!event.player.level.isClientSide()) {
+                        ArrayList<Player> playerEntities = (ArrayList<Player>) event.player.level.getEntitiesOfClass(Player.class, event.player.getBoundingBox().inflate(3));
+                        boolean reviving = false;
 
-                    if(reviving){
-                        if(h.downReviveCount()){
-                            h.setIsIncapacitated(false);
-                            event.player.setForcedPose(null);
-                            h.setReviveCount(Incapacitated.config.REVIVETICKS.get());
-                            h.resetGiveUpJumps();
-                            event.player.removeEffect(MobEffects.GLOWING);
-                            IncapacitationMessenger.sendTo(new IncapPacket(event.player.getId(), false), event.player);
-                            event.player.setHealth(event.player.getMaxHealth()/3f);
-                            event.player.level.playSound(null, event.player.getX(), event.player.getY(), event.player.getZ(), SoundEvents.NOTE_BLOCK_PLING, SoundSource.PLAYERS, 1, 1);
-
-                        }else{
-                            event.player.displayClientMessage(new TextComponent("You are being revived! " + (int)(h.getReviveCount()/20) + " seconds..").withStyle(ChatFormatting.GREEN), true);
-                            revivingPlayer.displayClientMessage(new TextComponent("Reviving " + event.player.getScoreboardName() + " " + (int)(h.getReviveCount()/20) + " seconds...").withStyle(ChatFormatting.GREEN), true);
-                        }
-                    }
-                    else {
-                        if (h.countTicksUntilDeath()) {
-                            event.player.hurt(BleedOutDamage.playerOutOfTime(event.player), event.player.getMaxHealth() * 10);
-                            event.player.setForcedPose(null);
-                            h.setReviveCount(Incapacitated.config.REVIVETICKS.get());
-                            h.resetGiveUpJumps();
-                            event.player.removeEffect(MobEffects.GLOWING);
-                            h.setIsIncapacitated(false);
-                            IncapacitationMessenger.sendTo(new IncapPacket(event.player.getId(), false), event.player);
-                        } else if (h.getTicksUntilDeath() % 20 == 0) {
-                            event.player.displayClientMessage(new TextComponent("Incapacitated! Call for help or jump " + h.getJumpCount() + " times to give up! " + ((float) h.getTicksUntilDeath() / 20f) + " seconds left!").withStyle(ChatFormatting.RED), true);
+                        Player revivingPlayer = null;
+                        for (Player player : playerEntities) {
+                            AtomicBoolean isdown = new AtomicBoolean(false);
+                            AtomicBoolean targetIsDown = new AtomicBoolean(false);
+                            player.getCapability(PlayerCapability.INSTANCE).ifPresent(j -> {
+                                isdown.set(j.getIsIncapacitated());
+                            });
+                            event.player.getCapability(PlayerCapability.INSTANCE).ifPresent(j -> {
+                                targetIsDown.set(j.getIsIncapacitated());
+                            });
+                            if (player.isCrouching() && targetIsDown.get() && !isdown.get()) {
+                                reviving = true;
+                                revivingPlayer = player;
+                                break;
+                            }
                         }
 
-                        if(h.getReviveCount() != Incapacitated.config.REVIVETICKS.get()) h.setReviveCount(Incapacitated.config.REVIVETICKS.get());
+                        if (reviving) {
+                            if (h.downReviveCount()) {
+                                h.setIsIncapacitated(false);
+                                event.player.setForcedPose(null);
+                                h.setReviveCount(Incapacitated.config.REVIVETICKS.get());
+                                h.resetGiveUpJumps();
+                                event.player.removeEffect(MobEffects.GLOWING);
+                                IncapacitationMessenger.sendTo(new IncapPacket(event.player.getId(), false), event.player);
+                                event.player.setHealth(event.player.getMaxHealth() / 3f);
+                                event.player.level.playSound(null, event.player.getX(), event.player.getY(), event.player.getZ(), SoundEvents.NOTE_BLOCK_PLING, SoundSource.PLAYERS, 1, 1);
+
+                            } else {
+                                event.player.displayClientMessage(new TextComponent("You are being revived! " + (int) (h.getReviveCount() / 20) + " seconds..").withStyle(ChatFormatting.GREEN), true);
+                                revivingPlayer.displayClientMessage(new TextComponent("Reviving " + event.player.getScoreboardName() + " " + (int) (h.getReviveCount() / 20) + " seconds...").withStyle(ChatFormatting.GREEN), true);
+                            }
+                        } else {
+                            if (h.countTicksUntilDeath()) {
+                                event.player.hurt(BleedOutDamage.playerOutOfTime(event.player), event.player.getMaxHealth() * 10);
+                                event.player.setForcedPose(null);
+                                h.setReviveCount(Incapacitated.config.REVIVETICKS.get());
+                                h.resetGiveUpJumps();
+                                event.player.removeEffect(MobEffects.GLOWING);
+                                h.setIsIncapacitated(false);
+                                IncapacitationMessenger.sendTo(new IncapPacket(event.player.getId(), false), event.player);
+                            } else if (h.getTicksUntilDeath() % 20 == 0) {
+                                event.player.displayClientMessage(new TextComponent("Incapacitated! Call for help or jump " + h.getJumpCount() + " times to give up! " + ((float) h.getTicksUntilDeath() / 20f) + " seconds left!").withStyle(ChatFormatting.RED), true);
+                            }
+
+                            if (h.getReviveCount() != Incapacitated.config.REVIVETICKS.get())
+                                h.setReviveCount(Incapacitated.config.REVIVETICKS.get());
+                        }
                     }
+                } else {
+                    if (event.player.getForcedPose() != null) event.player.setForcedPose(null);
                 }
-            }
-            else{
-                if(event.player.getForcedPose() != null) event.player.setForcedPose(null);
-            }
-        });
+            });
+        }
     }
 
     @SubscribeEvent
