@@ -1,7 +1,10 @@
 package com.cartoonishvillain.incapacitated.capability;
 
 import com.cartoonishvillain.incapacitated.Incapacitated;
+import com.cartoonishvillain.incapacitated.events.BleedOutDamage;
+
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.core.Direction;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
@@ -19,6 +22,8 @@ public class PlayerCapabilityManager implements IPlayerCapability, ICapabilityPr
     protected int reviveCounter = Incapacitated.config.REVIVETICKS.get();
     protected int jumpDelay = 0;
     public final LazyOptional<IPlayerCapability> holder = LazyOptional.of(()->this);
+    private DamageSource originalSource;
+    
     @Override
     public boolean getIsIncapacitated() {
         return incapacitated;
@@ -108,6 +113,17 @@ public class PlayerCapabilityManager implements IPlayerCapability, ICapabilityPr
         else if(jumpDelay < 0) jumpDelay = 0;
     }
 
+    @Override
+    public DamageSource getSourceOfDeath() {
+        return originalSource != null
+                ? originalSource
+                : new BleedOutDamage(DamageSource.OUT_OF_WORLD);
+    }
+    
+    @Override
+    public void setSourceOfDeath(DamageSource causeOfDeath) {
+        originalSource = new BleedOutDamage(causeOfDeath);        
+    }
 
     @Nonnull
     @Override
@@ -133,4 +149,5 @@ public class PlayerCapabilityManager implements IPlayerCapability, ICapabilityPr
         downsUntilDeath = tag.getInt("incapCounter");
         giveUpJumps = tag.getInt("jumpCounter");
     }
+
 }

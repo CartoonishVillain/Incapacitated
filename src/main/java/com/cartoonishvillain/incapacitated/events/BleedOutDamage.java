@@ -1,14 +1,20 @@
 package com.cartoonishvillain.incapacitated.events;
 
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.damagesource.EntityDamageSource;
-import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
 
-public class BleedOutDamage extends DamageSource {
-    public BleedOutDamage(String p_i1566_1_) {
-        super(p_i1566_1_);
+public class BleedOutDamage extends DamageSource{
+    private final DamageSource originalSource;
+    public BleedOutDamage(DamageSource originalKillMethod) {
+        super("bleedout");
+        originalSource = originalKillMethod;
     }
-    public static DamageSource playerOutOfTime(Entity entity){
-        return new EntityDamageSource("bleedout", entity).bypassArmor();
+    
+    @Override
+    public Component getLocalizedDeathMessage(LivingEntity player) {
+        Component originalDeathMsg = originalSource.getLocalizedDeathMessage(player);
+        return new TranslatableComponent("death.attack." + this.msgId, originalDeathMsg);        
     }
 }
