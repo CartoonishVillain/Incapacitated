@@ -116,8 +116,8 @@ public class PlayerCapabilityManager implements IPlayerCapability, ICapabilityPr
     @Override
     public DamageSource getSourceOfDeath() {
         return originalSource != null
-                ? originalSource
-                : new BleedOutDamage(DamageSource.OUT_OF_WORLD);
+                ? originalSource.bypassArmor()
+                : new BleedOutDamage(DamageSource.OUT_OF_WORLD).bypassArmor();
     }
     
     @Override
