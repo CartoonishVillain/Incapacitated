@@ -1,5 +1,7 @@
 package com.cartoonishvillain.incapacitated.capability;
 
+import net.minecraft.world.damagesource.DamageSource;
+
 public interface IPlayerCapability {
     boolean getIsIncapacitated();
     void setIsIncapacitated(boolean isIncapacitated);
@@ -18,4 +20,6 @@ public interface IPlayerCapability {
     int getJumpDelay();
     void setJumpDelay(int delay);
     void countDelay();
+    DamageSource getSourceOfDeath();
+    void setSourceOfDeath(DamageSource causeOfDeath);
 }

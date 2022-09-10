@@ -12,14 +12,12 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
-import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.Pose;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
-import net.minecraft.world.item.Items;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
@@ -28,7 +26,6 @@ import net.minecraftforge.event.entity.living.LivingEntityUseItemEvent;
 import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
-import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
@@ -60,6 +57,7 @@ public class ForgeEvents {
                     //if downs until death is 0 or higher, we can cancel the death event because the user is down.
                     if (h.getDownsUntilDeath() > -1) {
                         h.setIsIncapacitated(true);
+                        h.setSourceOfDeath(event.getSource());
                         event.setCanceled(true);
                         player.setHealth(player.getMaxHealth());
                         if(Incapacitated.config.GLOWING.get())
@@ -167,7 +165,7 @@ public class ForgeEvents {
                             }
                         } else {
                             if (h.countTicksUntilDeath()) {
-                                event.player.hurt(BleedOutDamage.playerOutOfTime(event.player), event.player.getMaxHealth() * 10);
+                                event.player.hurt(h.getSourceOfDeath(), event.player.getMaxHealth() * 10);
                                 event.player.setForcedPose(null);
                                 h.setReviveCount(Incapacitated.config.REVIVETICKS.get());
                                 h.resetGiveUpJumps();
@@ -196,7 +194,7 @@ public class ForgeEvents {
             player.getCapability(PlayerCapability.INSTANCE).ifPresent(h ->{
                 if(h.getIsIncapacitated() && h.getJumpDelay() == 0){
                     if(h.giveUpJumpCount()){
-                        player.hurt(BleedOutDamage.playerOutOfTime(player), player.getMaxHealth() * 10);
+                        player.hurt(h.getSourceOfDeath(), player.getMaxHealth() * 10);
                         player.setForcedPose(null);
                         h.setReviveCount(Incapacitated.config.DOWNCOUNT.get());
                         h.resetGiveUpJumps();
