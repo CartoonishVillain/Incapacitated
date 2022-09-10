@@ -6,8 +6,7 @@ import com.cartoonishvillain.incapacitated.capability.PlayerCapabilityManager;
 import com.cartoonishvillain.incapacitated.networking.IncapPacket;
 import com.cartoonishvillain.incapacitated.networking.IncapacitationMessenger;
 import net.minecraft.ChatFormatting;
-import net.minecraft.network.chat.ChatType;
-import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.sounds.SoundEvents;
@@ -20,7 +19,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.TickEvent;
-import net.minecraftforge.event.entity.EntityJoinWorldEvent;
+import net.minecraftforge.event.entity.EntityJoinLevelEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.living.LivingEntityUseItemEvent;
 import net.minecraftforge.event.entity.living.LivingEvent;
@@ -30,7 +29,6 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
 import java.util.ArrayList;
-import java.util.UUID;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -48,7 +46,7 @@ public class ForgeEvents {
 
     @SubscribeEvent
     public static void playerDeath(LivingDeathEvent event) {
-        if (event.getEntityLiving() instanceof Player player && !event.isCanceled()) {
+        if (event.getEntity() instanceof Player player && !event.isCanceled()) {
             player.getCapability(PlayerCapability.INSTANCE).ifPresent(h -> {
                 //if the player is not already incapacitated
                 if (!h.getIsIncapacitated()&& !(Incapacitated.config.SOMEINSTANTKILLS.get() && Incapacitated.instantKillDamageSourcesMessageID.contains(event.getSource().getMsgId()))) {
@@ -61,16 +59,16 @@ public class ForgeEvents {
                         event.setCanceled(true);
                         player.setHealth(player.getMaxHealth());
                         if(Incapacitated.config.GLOWING.get())
-                        player.addEffect(new MobEffectInstance(MobEffects.GLOWING, Integer.MAX_VALUE, 0));
+                            player.addEffect(new MobEffectInstance(MobEffects.GLOWING, Integer.MAX_VALUE, 0));
                         IncapacitationMessenger.sendTo(new IncapPacket(player.getId(), true), player);
 
                         if(Incapacitated.config.GLOBALINCAPMESSAGES.get()){
-                            broadcast(player.getServer(), new TextComponent(player.getScoreboardName() + " is incapacitated!"));
+                            broadcast(player.getServer(), Component.literal(player.getScoreboardName() + " is incapacitated!"));
                         }
                         else {
                             ArrayList<Player> playerEntities = (ArrayList<Player>) player.level.getEntitiesOfClass(Player.class, player.getBoundingBox().inflate(50));
                             for (Player players : playerEntities) {
-                                players.displayClientMessage(new TextComponent(player.getScoreboardName() + " is incapacitated!"), false);
+                                players.displayClientMessage(Component.literal(player.getScoreboardName() + " is incapacitated!"), false);
                             }
                         }
 
@@ -84,7 +82,7 @@ public class ForgeEvents {
     public static void playerCloneEvent(PlayerEvent.Clone event){
         if(!event.isWasDeath()){
             Player originalPlayer = event.getOriginal();
-            Player newPlayer = event.getPlayer();
+            Player newPlayer = event.getEntity();
 
             AtomicBoolean incapacitated = new AtomicBoolean(false);
             AtomicInteger ticksUntilDeath = new AtomicInteger(Integer.MAX_VALUE);
@@ -109,8 +107,8 @@ public class ForgeEvents {
     }
 
     @SubscribeEvent
-    public static void PlayerJoinEvent(EntityJoinWorldEvent event){
-        if(event.getEntity() instanceof Player && !event.getWorld().isClientSide()){
+    public static void PlayerJoinEvent(EntityJoinLevelEvent event){
+        if(event.getEntity() instanceof Player && !event.getLevel().isClientSide()){
             Player player = (Player) event.getEntity();
             player.getCapability(PlayerCapability.INSTANCE).ifPresent(h->{
                 IncapacitationMessenger.sendTo(new IncapPacket(player.getId(), h.getIsIncapacitated()), player);
@@ -160,8 +158,8 @@ public class ForgeEvents {
                                 event.player.level.playSound(null, event.player.getX(), event.player.getY(), event.player.getZ(), SoundEvents.NOTE_BLOCK_PLING, SoundSource.PLAYERS, 1, 1);
 
                             } else {
-                                event.player.displayClientMessage(new TextComponent("You are being revived! " + (int) (h.getReviveCount() / 20) + " seconds..").withStyle(ChatFormatting.GREEN), true);
-                                revivingPlayer.displayClientMessage(new TextComponent("Reviving " + event.player.getScoreboardName() + " " + (int) (h.getReviveCount() / 20) + " seconds...").withStyle(ChatFormatting.GREEN), true);
+                                event.player.displayClientMessage(Component.literal("You are being revived! " + (int) (h.getReviveCount() / 20) + " seconds..").withStyle(ChatFormatting.GREEN), true);
+                                revivingPlayer.displayClientMessage(Component.literal("Reviving " + event.player.getScoreboardName() + " " + (int) (h.getReviveCount() / 20) + " seconds...").withStyle(ChatFormatting.GREEN), true);
                             }
                         } else {
                             if (h.countTicksUntilDeath()) {
@@ -173,7 +171,7 @@ public class ForgeEvents {
                                 h.setIsIncapacitated(false);
                                 IncapacitationMessenger.sendTo(new IncapPacket(event.player.getId(), false), event.player);
                             } else if (h.getTicksUntilDeath() % 20 == 0) {
-                                event.player.displayClientMessage(new TextComponent("Incapacitated! Call for help or jump " + h.getJumpCount() + " times to give up! " + ((float) h.getTicksUntilDeath() / 20f) + " seconds left!").withStyle(ChatFormatting.RED), true);
+                                event.player.displayClientMessage(Component.literal("Incapacitated! Call for help or jump " + h.getJumpCount() + " times to give up! " + ((float) h.getTicksUntilDeath() / 20f) + " seconds left!").withStyle(ChatFormatting.RED), true);
                             }
 
                             if (h.getReviveCount() != Incapacitated.config.REVIVETICKS.get())
@@ -189,8 +187,8 @@ public class ForgeEvents {
 
     @SubscribeEvent
     public static void playerJump(LivingEvent.LivingJumpEvent event){
-        if(event.getEntityLiving() instanceof Player && !event.getEntityLiving().level.isClientSide()){
-            Player player = (Player) event.getEntityLiving();
+        if(event.getEntity() instanceof Player && !event.getEntity().level.isClientSide()){
+            Player player = (Player) event.getEntity();
             player.getCapability(PlayerCapability.INSTANCE).ifPresent(h ->{
                 if(h.getIsIncapacitated() && h.getJumpDelay() == 0){
                     if(h.giveUpJumpCount()){
@@ -209,8 +207,8 @@ public class ForgeEvents {
 
     @SubscribeEvent
     public static void playerInjured(LivingHurtEvent event){
-        if(event.getEntityLiving() instanceof Player){
-            Player player = (Player) event.getEntityLiving();
+        if(event.getEntity() instanceof Player){
+            Player player = (Player) event.getEntity();
             player.getCapability(PlayerCapability.INSTANCE).ifPresent(h->{
                 if(h.getIsIncapacitated() && Incapacitated.config.INVINCIBLEDOWN.get() && !(event.getSource().getMsgId().equals("bleedout"))){
                     event.setCanceled(true);
@@ -223,13 +221,13 @@ public class ForgeEvents {
 
     @SubscribeEvent
     public static void playerEat(LivingEntityUseItemEvent.Finish event){
-        if(event.getEntityLiving() instanceof Player && !event.getEntityLiving().level.isClientSide()){
+        if(event.getEntity() instanceof Player && !event.getEntity().level.isClientSide()){
             Item item = event.getItem().getItem();
-            Player player = (Player) event.getEntityLiving();
+            Player player = (Player) event.getEntity();
             player.getCapability(PlayerCapability.INSTANCE).ifPresent(h->{
-                if(Incapacitated.HealingFoods.contains(item.getRegistryName())) {h.setDownsUntilDeath(Incapacitated.config.DOWNCOUNT.get()); h.setTicksUntilDeath(Incapacitated.config.DOWNTICKS.get());}
+                if(Incapacitated.HealingFoods.contains(item.toString())) {h.setDownsUntilDeath(Incapacitated.config.DOWNCOUNT.get()); h.setTicksUntilDeath(Incapacitated.config.DOWNTICKS.get());}
                 if(h.getIsIncapacitated()){
-                    if(Incapacitated.ReviveFoods.contains(item.getRegistryName())){
+                    if(Incapacitated.ReviveFoods.contains(item.toString())){
                         h.setIsIncapacitated(false);
                         player.setForcedPose(null);
                         h.setReviveCount(Incapacitated.config.REVIVETICKS.get());
@@ -241,13 +239,13 @@ public class ForgeEvents {
                         player.setHealth(player.getMaxHealth()/3f);
                         player.level.playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.NOTE_BLOCK_PLING, SoundSource.PLAYERS, 1, 1);
                     }
-                }else if(Incapacitated.ReviveFoods.contains(item.getRegistryName())) {h.setDownsUntilDeath(Incapacitated.config.DOWNCOUNT.get()); h.setTicksUntilDeath(Incapacitated.config.DOWNTICKS.get());}
+                }else if(Incapacitated.ReviveFoods.contains(item.toString())) {h.setDownsUntilDeath(Incapacitated.config.DOWNCOUNT.get()); h.setTicksUntilDeath(Incapacitated.config.DOWNTICKS.get());}
             });
         }
     }
 
-    private static void broadcast(MinecraftServer server, TextComponent translationTextComponent){
-        server.getPlayerList().broadcastMessage(translationTextComponent, ChatType.CHAT, UUID.randomUUID());
+    private static void broadcast(MinecraftServer server, Component translationTextComponent){
+        server.getPlayerList().broadcastSystemMessage(translationTextComponent, false);
     }
 
 
