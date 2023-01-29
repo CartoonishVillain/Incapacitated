@@ -1,5 +1,6 @@
 package com.cartoonishvillain.incapacitated;
 
+import com.cartoonishvillain.incapacitated.config.ClientConfig;
 import com.cartoonishvillain.incapacitated.config.CommonConfig;
 import com.cartoonishvillain.incapacitated.config.ConfigHelper;
 import com.cartoonishvillain.incapacitated.networking.IncapacitationMessenger;
@@ -26,6 +27,9 @@ public class Incapacitated
     public static final String MODID = "incapacitated";
     private static final Logger LOGGER = LogManager.getLogger();
     public static CommonConfig config;
+    public static ClientConfig clientConfig;
+
+    public static boolean devMode = false;
     public static ArrayList<String> ReviveFoods;
     public static ArrayList<String> HealingFoods;
     public static ArrayList<String> instantKillDamageSourcesMessageID;
@@ -35,6 +39,7 @@ public class Incapacitated
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::setup);
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::doClientStuff);
         config = ConfigHelper.register(ModConfig.Type.COMMON, CommonConfig::new);
+        clientConfig = ConfigHelper.register(ModConfig.Type.CLIENT, ClientConfig::new);
         instantKillDamageSourcesMessageID = new ArrayList<>(List.of("bleedout", DamageSource.OUT_OF_WORLD.msgId, DamageSource.LAVA.msgId, DamageSource.WITHER.msgId));
 
 
@@ -46,7 +51,6 @@ public class Incapacitated
     {
         HealingFoods = getFoodForHealing();
         ReviveFoods = getFoodForReviving();
-
     }
 
     private void doClientStuff(final FMLClientSetupEvent event) {
