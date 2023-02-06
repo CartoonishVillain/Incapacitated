@@ -3,7 +3,9 @@ package com.cartoonishvillain.incapacitated.events;
 import com.cartoonishvillain.incapacitated.Incapacitated;
 import com.cartoonishvillain.incapacitated.capability.PlayerCapability;
 import com.cartoonishvillain.incapacitated.capability.PlayerCapabilityManager;
+import com.cartoonishvillain.incapacitated.commands.GetDownCount;
 import com.cartoonishvillain.incapacitated.commands.IncapDevMode;
+import com.cartoonishvillain.incapacitated.commands.SetDownCount;
 import com.cartoonishvillain.incapacitated.commands.SetIncapacitatedCommand;
 import com.cartoonishvillain.incapacitated.networking.IncapPacket;
 import com.cartoonishvillain.incapacitated.networking.IncapacitationMessenger;
@@ -47,6 +49,8 @@ public class ForgeEvents {
     @SubscribeEvent
     public static void serverLoad(RegisterCommandsEvent event){
         SetIncapacitatedCommand.register(event.getDispatcher());
+        SetDownCount.register(event.getDispatcher());
+        GetDownCount.register(event.getDispatcher());
 
         if(!FMLLoader.isProduction()) {
             IncapDevMode.register(event.getDispatcher());

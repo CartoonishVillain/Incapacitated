@@ -13,6 +13,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
 
 import java.util.ArrayList;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import static com.cartoonishvillain.incapacitated.events.ForgeEvents.broadcast;
 
@@ -90,6 +91,21 @@ public class AbstractedIncapacitation {
             player.setHealth(player.getMaxHealth() / 3f);
             player.level.playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.NOTE_BLOCK_PLING, SoundSource.PLAYERS, 1, 1);
         });
+    }
+
+
+    public static void setDownCount(Player player, short value) {
+        player.getCapability(PlayerCapability.INSTANCE).ifPresent(h -> {
+            h.setDownsUntilDeath(value);
+        });
+    }
+
+    public static short getDownCount(Player player) {
+        AtomicInteger integer = new AtomicInteger(0);
+        player.getCapability(PlayerCapability.INSTANCE).ifPresent(h -> {
+             integer.set(h.getDownsUntilDeath());
+        });
+        return (short) integer.get();
     }
 
 }

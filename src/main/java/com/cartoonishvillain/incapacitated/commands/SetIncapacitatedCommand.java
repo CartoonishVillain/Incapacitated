@@ -9,6 +9,7 @@ import com.mojang.brigadier.arguments.BoolArgumentType;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.commands.arguments.GameProfileArgument;
+import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 
 import java.util.Collection;
@@ -32,8 +33,10 @@ public class SetIncapacitatedCommand {
             if (serverPlayer != null) {
                 if (isIncapped) {
                     downOrKill(serverPlayer);
+                    sourceStack.sendSuccess(Component.translatable("command.return.incapped", serverPlayer.getName()), true);
                 } else {
                     revive(serverPlayer);
+                    sourceStack.sendSuccess(Component.translatable("command.return.revived", serverPlayer.getName()), true);
                 }
             }
         }

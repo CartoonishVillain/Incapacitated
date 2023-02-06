@@ -1,3 +1,7 @@
 {
-  "death.attack.bleedout": "%1$s and bled out"
+  "death.attack.bleedout": "%1$s and bled out",
+  "command.return.incapped": "Forcibly incapacitated %1$s",
+  "command.return.revived": "Forcibly revived %1$s",
+  "command.return.setdowns": "%1$s now has %2$s incapacitations until death",
+  "command.return.getdowns": "%1$s has %2$s incapacitations until death"
 }
