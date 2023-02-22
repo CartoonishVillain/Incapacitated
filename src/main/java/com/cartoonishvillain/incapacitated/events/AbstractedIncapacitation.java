@@ -1,5 +1,6 @@
 package com.cartoonishvillain.incapacitated.events;
 
+import com.cartoonishvillain.incapacitated.IncapEffects;
 import com.cartoonishvillain.incapacitated.Incapacitated;
 import com.cartoonishvillain.incapacitated.capability.PlayerCapability;
 import com.cartoonishvillain.incapacitated.networking.IncapPacket;
@@ -15,6 +16,8 @@ import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import java.util.ArrayList;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import static com.cartoonishvillain.incapacitated.Incapacitated.slow;
+import static com.cartoonishvillain.incapacitated.Incapacitated.weakened;
 import static com.cartoonishvillain.incapacitated.events.ForgeEvents.broadcast;
 
 public class AbstractedIncapacitation {
@@ -30,8 +33,16 @@ public class AbstractedIncapacitation {
                     h.setIsIncapacitated(true);
                     player.setHealth(player.getMaxHealth());
                     if(Incapacitated.config.GLOWING.get())
-                        player.addEffect(new MobEffectInstance(MobEffects.GLOWING, Integer.MAX_VALUE, 0));
+                        player.addEffect(new MobEffectInstance(MobEffects.GLOWING, Integer.MAX_VALUE, 0, true, false));
                     IncapacitationMessenger.sendTo(new IncapPacket(player.getId(), true, (short) h.getDownsUntilDeath()), player);
+
+                    if(slow) {
+                        player.addEffect(new MobEffectInstance(IncapEffects.incapSlow, Integer.MAX_VALUE, 6, true, false));
+                    }
+
+                    if(weakened) {
+                        player.addEffect(new MobEffectInstance(IncapEffects.incapWeak, Integer.MAX_VALUE, 100, true, false));
+                    }
 
                     if(Incapacitated.config.GLOBALINCAPMESSAGES.get()){
                         broadcast(player.getServer(), Component.literal(player.getScoreboardName() + " is incapacitated!"));
@@ -62,8 +73,16 @@ public class AbstractedIncapacitation {
                     event.setCanceled(true);
                     player.setHealth(player.getMaxHealth());
                     if(Incapacitated.config.GLOWING.get())
-                        player.addEffect(new MobEffectInstance(MobEffects.GLOWING, Integer.MAX_VALUE, 0));
+                        player.addEffect(new MobEffectInstance(MobEffects.GLOWING, Integer.MAX_VALUE, 0, true, false));
                     IncapacitationMessenger.sendTo(new IncapPacket(player.getId(), true, (short) h.getDownsUntilDeath()), player);
+
+                    if(slow) {
+                        player.addEffect(new MobEffectInstance(IncapEffects.incapSlow, Integer.MAX_VALUE, 6, true, false));
+                    }
+
+                    if(weakened) {
+                        player.addEffect(new MobEffectInstance(IncapEffects.incapWeak, Integer.MAX_VALUE, 100, true, false));
+                    }
 
                     if(Incapacitated.config.GLOBALINCAPMESSAGES.get()){
                         broadcast(player.getServer(), Component.literal(player.getScoreboardName() + " is incapacitated!"));
@@ -87,6 +106,8 @@ public class AbstractedIncapacitation {
             h.setReviveCount(Incapacitated.config.REVIVETICKS.get());
             h.resetGiveUpJumps();
             player.removeEffect(MobEffects.GLOWING);
+            player.removeEffect(IncapEffects.incapSlow);
+            player.removeEffect(IncapEffects.incapWeak);
             IncapacitationMessenger.sendTo(new IncapPacket(player.getId(), false, (short) h.getDownsUntilDeath()), player);
             player.setHealth(player.getMaxHealth() / 3f);
             player.level.playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.NOTE_BLOCK_PLING, SoundSource.PLAYERS, 1, 1);

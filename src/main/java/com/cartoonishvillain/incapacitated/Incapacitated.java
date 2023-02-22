@@ -34,6 +34,17 @@ public class Incapacitated
     public static ArrayList<String> HealingFoods;
     public static ArrayList<String> instantKillDamageSourcesMessageID;
 
+    //User is invulnerable to damage while down
+    public static Boolean merciful = false;
+    //User can revive when they get a kill
+    public static Boolean hunter = false;
+    //User gets slowed while down
+    public static Boolean slow = false;
+    //User gets weakness while down
+    public static Boolean weakened = false;
+    //When sleeping successfully, users will gain +1 downs
+    public static Boolean regenerating = false;
+
     public Incapacitated() {
         IncapacitationMessenger.register();
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::setup);
@@ -41,6 +52,7 @@ public class Incapacitated
         config = ConfigHelper.register(ModConfig.Type.COMMON, CommonConfig::new);
         clientConfig = ConfigHelper.register(ModConfig.Type.CLIENT, ClientConfig::new);
         instantKillDamageSourcesMessageID = new ArrayList<>(List.of("bleedout", DamageSource.OUT_OF_WORLD.msgId, DamageSource.LAVA.msgId, DamageSource.WITHER.msgId));
+        IncapEffects.init();
 
 
         // Register ourselves for server and other game events we are interested in
@@ -51,6 +63,11 @@ public class Incapacitated
     {
         HealingFoods = getFoodForHealing();
         ReviveFoods = getFoodForReviving();
+        merciful = config.MERCIFUL.get();
+        hunter = config.HUNTER.get();
+        slow = config.SLOW.get();
+        weakened = config.WEAKENED.get();
+        regenerating = config.REGENERATING.get();
     }
 
     private void doClientStuff(final FMLClientSetupEvent event) {

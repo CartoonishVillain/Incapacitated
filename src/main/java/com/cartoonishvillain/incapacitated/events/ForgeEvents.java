@@ -13,6 +13,7 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.effect.MobEffectInstance;
@@ -30,6 +31,7 @@ import net.minecraftforge.event.entity.living.LivingEntityUseItemEvent;
 import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
+import net.minecraftforge.event.entity.player.PlayerWakeUpEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.loading.FMLLoader;
@@ -38,7 +40,7 @@ import java.util.ArrayList;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import static com.cartoonishvillain.incapacitated.Incapacitated.devMode;
+import static com.cartoonishvillain.incapacitated.Incapacitated.*;
 import static com.cartoonishvillain.incapacitated.events.AbstractedIncapacitation.downOrKill;
 import static com.cartoonishvillain.incapacitated.events.AbstractedIncapacitation.revive;
 
@@ -62,6 +64,29 @@ public class ForgeEvents {
         if(event.getObject() instanceof Player){
             PlayerCapabilityManager provider = new PlayerCapabilityManager();
             event.addCapability(new ResourceLocation(Incapacitated.MODID, "incapacitated"), provider);
+        }
+    }
+
+    @SubscribeEvent
+    public static void playerHurtCheck(LivingHurtEvent event) {
+        if(event.getEntity() instanceof ServerPlayer) {
+            //Merciful check
+            event.getEntity().getCapability(PlayerCapability.INSTANCE).ifPresent(h -> {
+                if (h.getIsIncapacitated() && merciful && !(event.getSource().getMsgId().equals("bleedout"))) {
+                    event.setAmount(0);
+                }
+            });
+        }
+    }
+
+    @SubscribeEvent
+    public static void playerKillCheck(LivingDeathEvent event) {
+        if (event.getSource().getEntity() instanceof ServerPlayer && !(event.getEntity() instanceof Player)) {
+            event.getSource().getEntity().getCapability(PlayerCapability.INSTANCE).ifPresent(h -> {
+                if (h.getIsIncapacitated()) {
+                    revive((Player) event.getSource().getEntity());
+                }
+            });
         }
     }
 
@@ -202,11 +227,18 @@ public class ForgeEvents {
         if(event.getEntity() instanceof Player){
             Player player = (Player) event.getEntity();
             player.getCapability(PlayerCapability.INSTANCE).ifPresent(h->{
-                if(h.getIsIncapacitated() && Incapacitated.config.INVINCIBLEDOWN.get() && !(event.getSource().getMsgId().equals("bleedout"))){
-                    event.setCanceled(true);
-                    return;
-                }
                 h.setJumpDelay(20);
+            });
+        }
+    }
+
+    @SubscribeEvent
+    public static void playerRested(PlayerWakeUpEvent event) {
+        if(!event.updateLevel() && !event.wakeImmediately() && regenerating) {
+            event.getEntity().getCapability(PlayerCapability.INSTANCE).ifPresent(h -> {
+                if (h.getDownsUntilDeath() < config.DOWNCOUNT.get()) {
+                    AbstractedIncapacitation.setDownCount(event.getEntity(), (short) (h.getDownsUntilDeath()+1));
+                }
             });
         }
     }

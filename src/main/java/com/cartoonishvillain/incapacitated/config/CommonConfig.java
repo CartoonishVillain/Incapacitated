@@ -7,6 +7,7 @@ import net.minecraftforge.common.ForgeConfigSpec;
 import java.nio.file.Path;
 
 public class CommonConfig {
+    public static final String MODIFIERS = "Modifiers";
     public static final String CCATEGORY_CONFIGS = "Options";
     public ConfigHelper.ConfigValueListener<String> REVIVEFOODS;
     public ConfigHelper.ConfigValueListener<String> HEALINGFOODS;
@@ -14,11 +15,24 @@ public class CommonConfig {
     public ConfigHelper.ConfigValueListener<Integer> REVIVETICKS;
     public ConfigHelper.ConfigValueListener<Integer> DOWNCOUNT;
     public ConfigHelper.ConfigValueListener<Boolean> GLOWING;
-    public ConfigHelper.ConfigValueListener<Boolean> INVINCIBLEDOWN;
     public ConfigHelper.ConfigValueListener<Boolean> SOMEINSTANTKILLS;
     public ConfigHelper.ConfigValueListener<Boolean> GLOBALINCAPMESSAGES;
 
+    public ConfigHelper.ConfigValueListener<Boolean> MERCIFUL;
+    public ConfigHelper.ConfigValueListener<Boolean> HUNTER;
+    public ConfigHelper.ConfigValueListener<Boolean> SLOW;
+    public ConfigHelper.ConfigValueListener<Boolean> WEAKENED;
+    public ConfigHelper.ConfigValueListener<Boolean> REGENERATING;
+
+
     public CommonConfig(ForgeConfigSpec.Builder builder, ConfigHelper.Subscriber subscriber){
+        builder.comment("Toggles that dramatically alter the behavior of incapacitations").push(MODIFIERS);
+        this.MERCIFUL = subscriber.subscribe(builder.comment("Are players immune to damage while downed?").define("merciful", false));
+        this.HUNTER = subscriber.subscribe(builder.comment("Can players revive themselves with a (non-player) kill?").define("hunter", false));
+        this.SLOW = subscriber.subscribe(builder.comment("Are Incapacitated players slowed down dramatically?").define("slow", false));
+        this.WEAKENED = subscriber.subscribe(builder.comment("Are Incapacitated players weakened dramatically?").define("weakened", false));
+        this.REGENERATING = subscriber.subscribe(builder.comment("Does being restful award players with another down?").define("regenerating", false));
+        builder.pop();
         builder.comment("Modify Components that can be handled serverside").push(CCATEGORY_CONFIGS);
         this.REVIVEFOODS = subscriber.subscribe(builder.comment("A list of comma separated item IDs for foods player can eat to revive themselves. IE: minecraft:enchanted_golden_apple,minecraft:apple").define("foodReviveList", "minecraft:enchanted_golden_apple"));
         this.HEALINGFOODS = subscriber.subscribe(builder.comment("A list of comma separated item IDs for foods player can eat to reset their down counters. IE: minecraft:golden_apple,minecraft:golden_carrot").define("foodHealList", "minecraft:golden_apple"));
@@ -26,7 +40,6 @@ public class CommonConfig {
         this.REVIVETICKS = subscriber.subscribe(builder.comment("How long it takes to revive a downed player manually").defineInRange("reviveTicks", 150, 5, Integer.MAX_VALUE));
         this.DOWNCOUNT = subscriber.subscribe(builder.comment("How many times a player can go down without a healing or revive item, without instantly dying the next time they are supposed to go down.").defineInRange("downCounter", 3, 1, Integer.MAX_VALUE));
         this.GLOWING = subscriber.subscribe(builder.comment("Do players glow while downed to be easier to find?").define("glowingWhileDowned", true));
-        this.INVINCIBLEDOWN = subscriber.subscribe(builder.comment("Are downed players invincible?").define("invincibleWhileDowned", false));
         this.SOMEINSTANTKILLS = subscriber.subscribe(builder.comment("Do some damage types like Lava down players, or instantly kill?").define("someInstantKills", true));
         this.GLOBALINCAPMESSAGES = subscriber.subscribe(builder.comment("Are incapacitation messages global?").define("globalIncapMessage", true));
         builder.pop();
