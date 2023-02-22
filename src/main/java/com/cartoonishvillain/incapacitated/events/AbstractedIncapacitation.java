@@ -118,6 +118,7 @@ public class AbstractedIncapacitation {
     public static void setDownCount(Player player, short value) {
         player.getCapability(PlayerCapability.INSTANCE).ifPresent(h -> {
             h.setDownsUntilDeath(value);
+            IncapacitationMessenger.sendTo(new IncapPacket(player.getId(), h.getIsIncapacitated(), (short) h.getDownsUntilDeath()), player);
         });
     }
 
