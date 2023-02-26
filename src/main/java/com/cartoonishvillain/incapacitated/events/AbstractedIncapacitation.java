@@ -16,8 +16,7 @@ import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import java.util.ArrayList;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import static com.cartoonishvillain.incapacitated.Incapacitated.slow;
-import static com.cartoonishvillain.incapacitated.Incapacitated.weakened;
+import static com.cartoonishvillain.incapacitated.Incapacitated.*;
 import static com.cartoonishvillain.incapacitated.events.ForgeEvents.broadcast;
 
 public class AbstractedIncapacitation {
@@ -26,8 +25,10 @@ public class AbstractedIncapacitation {
         player.getCapability(PlayerCapability.INSTANCE).ifPresent(h -> {
             //if the player is not already incapacitated
             if (!h.getIsIncapacitated()) {
-                //reduce downs until death
-                h.setDownsUntilDeath(h.getDownsUntilDeath() - 1);
+                //reduce downs until death, unless unlimitedDowns is on.
+                if (!unlimitedDowns) {
+                    h.setDownsUntilDeath(h.getDownsUntilDeath() - 1);
+                }
                 //if downs until death is 0 or higher, we can cancel the death event because the user is down.
                 if (h.getDownsUntilDeath() > -1) {
                     h.setIsIncapacitated(true);
@@ -64,8 +65,10 @@ public class AbstractedIncapacitation {
         player.getCapability(PlayerCapability.INSTANCE).ifPresent(h -> {
             //if the player is not already incapacitated
             if (!h.getIsIncapacitated()&& !(Incapacitated.config.SOMEINSTANTKILLS.get() && Incapacitated.instantKillDamageSourcesMessageID.contains(event.getSource().getMsgId()))) {
-                //reduce downs until death
-                h.setDownsUntilDeath(h.getDownsUntilDeath() - 1);
+                //reduce downs until death, unless unlimitedDowns is on.
+                if (!unlimitedDowns) {
+                    h.setDownsUntilDeath(h.getDownsUntilDeath() - 1);
+                }
                 //if downs until death is 0 or higher, we can cancel the death event because the user is down.
                 if (h.getDownsUntilDeath() > -1) {
                     h.setIsIncapacitated(true);
@@ -85,12 +88,12 @@ public class AbstractedIncapacitation {
                     }
 
                     if(Incapacitated.config.GLOBALINCAPMESSAGES.get()){
-                        broadcast(player.getServer(), Component.literal(player.getScoreboardName() + " is incapacitated!"));
+                        broadcast(player.getServer(), Component.translatable("message.incap.message", player.getScoreboardName()));
                     }
                     else {
                         ArrayList<Player> playerEntities = (ArrayList<Player>) player.level.getEntitiesOfClass(Player.class, player.getBoundingBox().inflate(50));
                         for (Player players : playerEntities) {
-                            players.displayClientMessage(Component.literal(player.getScoreboardName() + " is incapacitated!"), false);
+                            players.displayClientMessage(Component.translatable("message.incap.message", player.getScoreboardName()), false);
                         }
                     }
 
@@ -111,6 +114,27 @@ public class AbstractedIncapacitation {
             IncapacitationMessenger.sendTo(new IncapPacket(player.getId(), false, (short) h.getDownsUntilDeath()), player);
             player.setHealth(player.getMaxHealth() / 3f);
             player.level.playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.NOTE_BLOCK_PLING, SoundSource.PLAYERS, 1, 1);
+
+            if(config.GLOBALREVIVEMESSAGES.get()){
+                broadcast(player.getServer(), Component.translatable("message.revive.message", player.getScoreboardName()));
+            }
+            else {
+                ArrayList<Player> playerEntities = (ArrayList<Player>) player.level.getEntitiesOfClass(Player.class, player.getBoundingBox().inflate(50));
+                for (Player players : playerEntities) {
+                    players.displayClientMessage(Component.translatable("message.revive.message", player.getScoreboardName()), false);
+                }
+            }
+
+            if(config.REVIVE_MESSAGE.get() && !unlimitedDowns) {
+                if (h.getDownsUntilDeath() > 1) {
+                    player.displayClientMessage(Component.translatable("message.revivecount.normal", h.getDownsUntilDeath()), false);
+                } else if (h.getDownsUntilDeath() == 1) {
+                    player.displayClientMessage(Component.translatable("message.revivecount.one"), false);
+                } else {
+                    player.displayClientMessage(Component.translatable("message.revivecount.zero"), false);
+                }
+            }
+
         });
     }
 

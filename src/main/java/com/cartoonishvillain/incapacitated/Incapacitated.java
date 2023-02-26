@@ -44,6 +44,8 @@ public class Incapacitated
     public static Boolean weakened = false;
     //When sleeping successfully, users will gain +1 downs
     public static Boolean regenerating = false;
+    //Does the down counter go down?
+    public static Boolean unlimitedDowns = false;
 
     public Incapacitated() {
         IncapacitationMessenger.register();
@@ -68,6 +70,7 @@ public class Incapacitated
         slow = config.SLOW.get();
         weakened = config.WEAKENED.get();
         regenerating = config.REGENERATING.get();
+        unlimitedDowns = config.UNLIMITEDDOWNS.get();
     }
 
     private void doClientStuff(final FMLClientSetupEvent event) {

@@ -17,12 +17,15 @@ public class CommonConfig {
     public ConfigHelper.ConfigValueListener<Boolean> GLOWING;
     public ConfigHelper.ConfigValueListener<Boolean> SOMEINSTANTKILLS;
     public ConfigHelper.ConfigValueListener<Boolean> GLOBALINCAPMESSAGES;
+    public ConfigHelper.ConfigValueListener<Boolean> GLOBALREVIVEMESSAGES;
 
     public ConfigHelper.ConfigValueListener<Boolean> MERCIFUL;
     public ConfigHelper.ConfigValueListener<Boolean> HUNTER;
     public ConfigHelper.ConfigValueListener<Boolean> SLOW;
     public ConfigHelper.ConfigValueListener<Boolean> WEAKENED;
     public ConfigHelper.ConfigValueListener<Boolean> REGENERATING;
+    public ConfigHelper.ConfigValueListener<Boolean> UNLIMITEDDOWNS;
+    public ConfigHelper.ConfigValueListener<Boolean> REVIVE_MESSAGE;
 
 
     public CommonConfig(ForgeConfigSpec.Builder builder, ConfigHelper.Subscriber subscriber){
@@ -32,6 +35,8 @@ public class CommonConfig {
         this.SLOW = subscriber.subscribe(builder.comment("Are Incapacitated players slowed down dramatically?").define("slow", false));
         this.WEAKENED = subscriber.subscribe(builder.comment("Are Incapacitated players weakened dramatically?").define("weakened", false));
         this.REGENERATING = subscriber.subscribe(builder.comment("Does being restful award players with another down?").define("regenerating", false));
+        this.UNLIMITEDDOWNS = subscriber.subscribe(builder.comment("Does the player have unlimited downs?").define("unlimitedDowns", false));
+        this.REVIVE_MESSAGE = subscriber.subscribe(builder.comment("Does the player receive a chat message when revived with information").define("reviveMessage", true));
         builder.pop();
         builder.comment("Modify Components that can be handled serverside").push(CCATEGORY_CONFIGS);
         this.REVIVEFOODS = subscriber.subscribe(builder.comment("A list of comma separated item IDs for foods player can eat to revive themselves. IE: minecraft:enchanted_golden_apple,minecraft:apple").define("foodReviveList", "minecraft:enchanted_golden_apple"));
@@ -42,6 +47,7 @@ public class CommonConfig {
         this.GLOWING = subscriber.subscribe(builder.comment("Do players glow while downed to be easier to find?").define("glowingWhileDowned", true));
         this.SOMEINSTANTKILLS = subscriber.subscribe(builder.comment("Do some damage types like Lava down players, or instantly kill?").define("someInstantKills", true));
         this.GLOBALINCAPMESSAGES = subscriber.subscribe(builder.comment("Are incapacitation messages global?").define("globalIncapMessage", true));
+        this.GLOBALREVIVEMESSAGES = subscriber.subscribe(builder.comment("Are revive messages global?").define("globalReviveMessage", true));
         builder.pop();
     }
 
