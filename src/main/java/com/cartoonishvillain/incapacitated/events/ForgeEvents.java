@@ -98,6 +98,17 @@ public class ForgeEvents {
     }
 
     @SubscribeEvent
+    public static void playerLogoutEvent(PlayerEvent.PlayerLoggedOutEvent event) {
+        if (downLogging && event.getEntity() instanceof ServerPlayer) {
+            event.getEntity().getCapability(PlayerCapability.INSTANCE).ifPresent(h -> {
+                if (h.getIsIncapacitated()) {
+                   event.getEntity().kill();
+                }
+            });
+        }
+    }
+
+    @SubscribeEvent
     public static void playerCloneEvent(PlayerEvent.Clone event){
         if(!event.isWasDeath()){
             Player originalPlayer = event.getOriginal();

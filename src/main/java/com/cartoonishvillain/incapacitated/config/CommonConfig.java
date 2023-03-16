@@ -25,6 +25,7 @@ public class CommonConfig {
     public ConfigHelper.ConfigValueListener<Boolean> WEAKENED;
     public ConfigHelper.ConfigValueListener<Boolean> REGENERATING;
     public ConfigHelper.ConfigValueListener<Boolean> UNLIMITEDDOWNS;
+    public ConfigHelper.ConfigValueListener<Boolean> DOWNLOGGING;
     public ConfigHelper.ConfigValueListener<Boolean> REVIVE_MESSAGE;
 
 
@@ -36,6 +37,7 @@ public class CommonConfig {
         this.WEAKENED = subscriber.subscribe(builder.comment("Are Incapacitated players weakened dramatically?").define("weakened", false));
         this.REGENERATING = subscriber.subscribe(builder.comment("Does being restful award players with another down?").define("regenerating", false));
         this.UNLIMITEDDOWNS = subscriber.subscribe(builder.comment("Does the player have unlimited downs?").define("unlimitedDowns", false));
+        this.DOWNLOGGING = subscriber.subscribe(builder.comment("Does the player die when they log out while downed").define("downLogging", false));
         this.REVIVE_MESSAGE = subscriber.subscribe(builder.comment("Does the player receive a chat message when revived with information").define("reviveMessage", true));
         builder.pop();
         builder.comment("Modify Components that can be handled serverside").push(CCATEGORY_CONFIGS);
