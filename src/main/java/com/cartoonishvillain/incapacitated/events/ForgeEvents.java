@@ -190,7 +190,7 @@ public class ForgeEvents {
                             }
                         } else {
                             if (h.countTicksUntilDeath()) {
-                                event.player.hurt(h.getSourceOfDeath(), event.player.getMaxHealth() * 10);
+                                event.player.hurt(h.getSourceOfDeath(event.player.level), event.player.getMaxHealth() * 10);
                                 event.player.setForcedPose(null);
                                 h.setReviveCount(Incapacitated.config.REVIVETICKS.get());
                                 h.resetGiveUpJumps();
@@ -220,7 +220,7 @@ public class ForgeEvents {
             player.getCapability(PlayerCapability.INSTANCE).ifPresent(h ->{
                 if(h.getIsIncapacitated() && h.getJumpDelay() == 0){
                     if(h.giveUpJumpCount()){
-                        player.hurt(h.getSourceOfDeath(), player.getMaxHealth() * 10);
+                        player.hurt(h.getSourceOfDeath(player.level), player.getMaxHealth() * 10);
                         player.setForcedPose(null);
                         h.setReviveCount(Incapacitated.config.DOWNCOUNT.get());
                         h.resetGiveUpJumps();
@@ -276,7 +276,7 @@ public class ForgeEvents {
                         h.setTicksUntilDeath(Incapacitated.config.DOWNTICKS.get());
                         IncapacitationMessenger.sendTo(new IncapPacket(player.getId(), false, (short) h.getDownsUntilDeath()), player);
                         player.setHealth(player.getMaxHealth()/3f);
-                        player.level.playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.NOTE_BLOCK_PLING, SoundSource.PLAYERS, 1, 1);
+                        player.level.playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.NOTE_BLOCK_PLING.value(), SoundSource.PLAYERS, 1, 1);
                     }
                 }else if(Incapacitated.ReviveFoods.contains(item.toString())) {h.setDownsUntilDeath(Incapacitated.config.DOWNCOUNT.get()); h.setTicksUntilDeath(Incapacitated.config.DOWNTICKS.get());}
             });

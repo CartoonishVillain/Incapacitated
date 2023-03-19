@@ -33,25 +33,24 @@ public class AbstractedIncapacitation {
                 if (h.getDownsUntilDeath() > -1) {
                     h.setIsIncapacitated(true);
                     player.setHealth(player.getMaxHealth());
-                    if(Incapacitated.config.GLOWING.get())
+                    if (Incapacitated.config.GLOWING.get())
                         player.addEffect(new MobEffectInstance(MobEffects.GLOWING, Integer.MAX_VALUE, 0, true, false));
                     IncapacitationMessenger.sendTo(new IncapPacket(player.getId(), true, (short) h.getDownsUntilDeath()), player);
 
-                    if(slow) {
+                    if (slow) {
                         player.addEffect(new MobEffectInstance(IncapEffects.incapSlow, Integer.MAX_VALUE, 6, true, false));
                     }
 
-                    if(weakened) {
+                    if (weakened) {
                         player.addEffect(new MobEffectInstance(IncapEffects.incapWeak, Integer.MAX_VALUE, 100, true, false));
                     }
 
-                    if(Incapacitated.config.GLOBALINCAPMESSAGES.get()){
-                        broadcast(player.getServer(), Component.literal(player.getScoreboardName() + " is incapacitated!"));
-                    }
-                    else {
+                    if (Incapacitated.config.GLOBALINCAPMESSAGES.get()) {
+                        broadcast(player.getServer(), Component.translatable("message.incap.message", player.getScoreboardName()));
+                    } else {
                         ArrayList<Player> playerEntities = (ArrayList<Player>) player.level.getEntitiesOfClass(Player.class, player.getBoundingBox().inflate(50));
                         for (Player players : playerEntities) {
-                            players.displayClientMessage(Component.literal(player.getScoreboardName() + " is incapacitated!"), false);
+                            players.displayClientMessage(Component.translatable("message.incap.message", player.getScoreboardName()), false);
                         }
                     }
                 } else {
@@ -64,7 +63,7 @@ public class AbstractedIncapacitation {
     public static void downOrKill(Player player, LivingDeathEvent event) {
         player.getCapability(PlayerCapability.INSTANCE).ifPresent(h -> {
             //if the player is not already incapacitated
-            if (!h.getIsIncapacitated()&& !(Incapacitated.config.SOMEINSTANTKILLS.get() && Incapacitated.instantKillDamageSourcesMessageID.contains(event.getSource().getMsgId()))) {
+            if (!h.getIsIncapacitated() && !(Incapacitated.config.SOMEINSTANTKILLS.get())) {
                 //reduce downs until death, unless unlimitedDowns is on.
                 if (!unlimitedDowns) {
                     h.setDownsUntilDeath(h.getDownsUntilDeath() - 1);
@@ -72,31 +71,72 @@ public class AbstractedIncapacitation {
                 //if downs until death is 0 or higher, we can cancel the death event because the user is down.
                 if (h.getDownsUntilDeath() > -1) {
                     h.setIsIncapacitated(true);
-                    h.setSourceOfDeath(event.getSource());
+                    h.setSourceOfDeath(player.level, event.getSource());
                     event.setCanceled(true);
                     player.setHealth(player.getMaxHealth());
-                    if(Incapacitated.config.GLOWING.get())
+                    if (Incapacitated.config.GLOWING.get())
                         player.addEffect(new MobEffectInstance(MobEffects.GLOWING, Integer.MAX_VALUE, 0, true, false));
                     IncapacitationMessenger.sendTo(new IncapPacket(player.getId(), true, (short) h.getDownsUntilDeath()), player);
 
-                    if(slow) {
+                    if (slow) {
                         player.addEffect(new MobEffectInstance(IncapEffects.incapSlow, Integer.MAX_VALUE, 6, true, false));
                     }
 
-                    if(weakened) {
+                    if (weakened) {
                         player.addEffect(new MobEffectInstance(IncapEffects.incapWeak, Integer.MAX_VALUE, 100, true, false));
                     }
 
-                    if(Incapacitated.config.GLOBALINCAPMESSAGES.get()){
+                    if (Incapacitated.config.GLOBALINCAPMESSAGES.get()) {
                         broadcast(player.getServer(), Component.translatable("message.incap.message", player.getScoreboardName()));
-                    }
-                    else {
+                    } else {
                         ArrayList<Player> playerEntities = (ArrayList<Player>) player.level.getEntitiesOfClass(Player.class, player.getBoundingBox().inflate(50));
                         for (Player players : playerEntities) {
                             players.displayClientMessage(Component.translatable("message.incap.message", player.getScoreboardName()), false);
                         }
                     }
 
+                }
+            } else if (!h.getIsIncapacitated() && (config.SOMEINSTANTKILLS.get())) {
+                boolean notInstantKill = true;
+                //check if the damage type is in the instant kill list, if it does, don't cancel death event.
+                for (String damageType : Incapacitated.instantKillDamageSourcesMessageID) {
+                    if (damageType.contains(event.getSource().getMsgId())) {
+                        notInstantKill = false;
+                    }
+                }
+                if (notInstantKill) {
+                    //reduce downs until death, unless unlimitedDowns is on.
+                    if (!unlimitedDowns) {
+                        h.setDownsUntilDeath(h.getDownsUntilDeath() - 1);
+                    }
+                    //if downs until death is 0 or higher, we can cancel the death event because the user is down.
+                    if (h.getDownsUntilDeath() > -1) {
+                        h.setIsIncapacitated(true);
+                        h.setSourceOfDeath(player.level, event.getSource());
+                        event.setCanceled(true);
+                        player.setHealth(player.getMaxHealth());
+                        if (Incapacitated.config.GLOWING.get())
+                            player.addEffect(new MobEffectInstance(MobEffects.GLOWING, Integer.MAX_VALUE, 0, true, false));
+                        IncapacitationMessenger.sendTo(new IncapPacket(player.getId(), true, (short) h.getDownsUntilDeath()), player);
+
+                        if (slow) {
+                            player.addEffect(new MobEffectInstance(IncapEffects.incapSlow, Integer.MAX_VALUE, 6, true, false));
+                        }
+
+                        if (weakened) {
+                            player.addEffect(new MobEffectInstance(IncapEffects.incapWeak, Integer.MAX_VALUE, 100, true, false));
+                        }
+
+                        if (Incapacitated.config.GLOBALINCAPMESSAGES.get()) {
+                            broadcast(player.getServer(), Component.translatable("message.incap.message", player.getScoreboardName()));
+                        } else {
+                            ArrayList<Player> playerEntities = (ArrayList<Player>) player.level.getEntitiesOfClass(Player.class, player.getBoundingBox().inflate(50));
+                            for (Player players : playerEntities) {
+                                players.displayClientMessage(Component.translatable("message.incap.message", player.getScoreboardName()), false);
+                            }
+                        }
+
+                    }
                 }
             }
         });
@@ -113,19 +153,18 @@ public class AbstractedIncapacitation {
             player.removeEffect(IncapEffects.incapWeak);
             IncapacitationMessenger.sendTo(new IncapPacket(player.getId(), false, (short) h.getDownsUntilDeath()), player);
             player.setHealth(player.getMaxHealth() / 3f);
-            player.level.playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.NOTE_BLOCK_PLING, SoundSource.PLAYERS, 1, 1);
+            player.level.playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.NOTE_BLOCK_PLING.value(), SoundSource.PLAYERS, 1, 1);
 
-            if(config.GLOBALREVIVEMESSAGES.get()){
+            if (config.GLOBALREVIVEMESSAGES.get()) {
                 broadcast(player.getServer(), Component.translatable("message.revive.message", player.getScoreboardName()));
-            }
-            else {
+            } else {
                 ArrayList<Player> playerEntities = (ArrayList<Player>) player.level.getEntitiesOfClass(Player.class, player.getBoundingBox().inflate(50));
                 for (Player players : playerEntities) {
                     players.displayClientMessage(Component.translatable("message.revive.message", player.getScoreboardName()), false);
                 }
             }
 
-            if(config.REVIVE_MESSAGE.get() && !unlimitedDowns) {
+            if (config.REVIVE_MESSAGE.get() && !unlimitedDowns) {
                 if (h.getDownsUntilDeath() > 1) {
                     player.displayClientMessage(Component.translatable("message.revivecount.normal", h.getDownsUntilDeath()), false);
                 } else if (h.getDownsUntilDeath() == 1) {
@@ -149,7 +188,7 @@ public class AbstractedIncapacitation {
     public static short getDownCount(Player player) {
         AtomicInteger integer = new AtomicInteger(0);
         player.getCapability(PlayerCapability.INSTANCE).ifPresent(h -> {
-             integer.set(h.getDownsUntilDeath());
+            integer.set(h.getDownsUntilDeath());
         });
         return (short) integer.get();
     }
