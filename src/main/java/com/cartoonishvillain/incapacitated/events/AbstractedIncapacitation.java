@@ -25,11 +25,11 @@ public class AbstractedIncapacitation {
         player.getCapability(PlayerCapability.INSTANCE).ifPresent(h -> {
             //if the player is not already incapacitated
             if (!h.getIsIncapacitated()) {
-                //reduce downs until death, unless unlimitedDowns is on.
+                //reduce downs until KillPlayer, unless unlimitedDowns is on.
                 if (!unlimitedDowns) {
                     h.setDownsUntilDeath(h.getDownsUntilDeath() - 1);
                 }
-                //if downs until death is 0 or higher, we can cancel the death event because the user is down.
+                //if downs until KillPlayer is 0 or higher, we can cancel the KillPlayer event because the user is down.
                 if (h.getDownsUntilDeath() > -1) {
                     h.setIsIncapacitated(true);
                     player.setHealth(player.getMaxHealth());
@@ -64,11 +64,11 @@ public class AbstractedIncapacitation {
         player.getCapability(PlayerCapability.INSTANCE).ifPresent(h -> {
             //if the player is not already incapacitated
             if (!h.getIsIncapacitated() && !(Incapacitated.config.SOMEINSTANTKILLS.get())) {
-                //reduce downs until death, unless unlimitedDowns is on.
+                //reduce downs until KillPlayer, unless unlimitedDowns is on.
                 if (!unlimitedDowns) {
                     h.setDownsUntilDeath(h.getDownsUntilDeath() - 1);
                 }
-                //if downs until death is 0 or higher, we can cancel the death event because the user is down.
+                //if downs until KillPlayer is 0 or higher, we can cancel the KillPlayer event because the user is down.
                 if (h.getDownsUntilDeath() > -1) {
                     h.setIsIncapacitated(true);
                     h.setSourceOfDeath(player.level, event.getSource());
@@ -98,18 +98,18 @@ public class AbstractedIncapacitation {
                 }
             } else if (!h.getIsIncapacitated() && (config.SOMEINSTANTKILLS.get())) {
                 boolean notInstantKill = true;
-                //check if the damage type is in the instant kill list, if it does, don't cancel death event.
+                //check if the damage type is in the instant kill list, if it does, don't cancel KillPlayer event.
                 for (String damageType : Incapacitated.instantKillDamageSourcesMessageID) {
                     if (damageType.contains(event.getSource().getMsgId())) {
                         notInstantKill = false;
                     }
                 }
                 if (notInstantKill) {
-                    //reduce downs until death, unless unlimitedDowns is on.
+                    //reduce downs until KillPlayer, unless unlimitedDowns is on.
                     if (!unlimitedDowns) {
                         h.setDownsUntilDeath(h.getDownsUntilDeath() - 1);
                     }
-                    //if downs until death is 0 or higher, we can cancel the death event because the user is down.
+                    //if downs until KillPlayer is 0 or higher, we can cancel the KillPlayer event because the user is down.
                     if (h.getDownsUntilDeath() > -1) {
                         h.setIsIncapacitated(true);
                         h.setSourceOfDeath(player.level, event.getSource());

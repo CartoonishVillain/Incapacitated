@@ -17,6 +17,6 @@ public class BleedOutDamage extends DamageSource{
     @Override
     public Component getLocalizedDeathMessage(LivingEntity player) {
         Component originalDeathMsg = originalSource.getLocalizedDeathMessage(player);
-        return Component.translatable("death.attack." + this.getMsgId(), originalDeathMsg);
+        return Component.translatable("KillPlayer.attack." + this.getMsgId(), originalDeathMsg);
     }
 }

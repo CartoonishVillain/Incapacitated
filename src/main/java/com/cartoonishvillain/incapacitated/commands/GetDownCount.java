@@ -19,6 +19,11 @@ public class GetDownCount {
                 .then(Commands.argument("player", GameProfileArgument.gameProfile()).executes(context ->
                         getDownCount(context.getSource(), GameProfileArgument.getGameProfiles(context, "player")))
         )));
+
+        dispatcher.register(Commands.literal("incap").then(Commands.literal("getDownedCount").requires(cs -> cs.hasPermission(0))
+                .then(Commands.argument("player", GameProfileArgument.gameProfile()).executes(context ->
+                        getDownCount(context.getSource(), GameProfileArgument.getGameProfiles(context, "player")))
+                )));
     }
 
     private static int getDownCount(CommandSourceStack sourceStack, Collection<GameProfile> profiles) {

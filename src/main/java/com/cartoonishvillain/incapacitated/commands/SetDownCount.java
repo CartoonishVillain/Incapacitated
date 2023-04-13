@@ -20,6 +20,12 @@ public class SetDownCount {
                         setDownCount(context.getSource(), GameProfileArgument.getGameProfiles(context, "player"),
                         IntegerArgumentType.getInteger(context, "downCount")))
         ))));
+
+        dispatcher.register(Commands.literal("incap").then(Commands.literal("setDownCount").requires(cs -> cs.hasPermission(2))
+                .then(Commands.argument("player", GameProfileArgument.gameProfile()).then(Commands.argument("downCount", IntegerArgumentType.integer(0, 127)).executes(context ->
+                        setDownCount(context.getSource(), GameProfileArgument.getGameProfiles(context, "player"),
+                                IntegerArgumentType.getInteger(context, "downCount")))
+                ))));
     }
 
     private static int setDownCount(CommandSourceStack sourceStack, Collection<GameProfile> profiles, int downCount) {

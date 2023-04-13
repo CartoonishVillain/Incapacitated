@@ -8,5 +8,9 @@
   "message.revive.message": "%1$s has been revived!",
   "message.revivecount.normal": "You have %1$s downs left",
   "message.revivecount.one": "You have 1 down left",
-  "message.revivecount.zero": "You have no downs left"
+  "message.revivecount.zero": "You have no downs left",
+  "message.downindicator.norevive": "Incapacitated! Call for help or run \"%1$s\" to give up! %2$s seconds left!",
+  "message.downindicator.reviving": "You are being revived! %1$s seconds..",
+  "message.reviveindicator.reviving": "Reviving %1$s %2$s seconds..",
+  "KillPlayer.attack.bleedout": "%1$s and bled out"
 }

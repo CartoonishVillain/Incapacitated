@@ -3,10 +3,7 @@ package com.cartoonishvillain.incapacitated.events;
 import com.cartoonishvillain.incapacitated.Incapacitated;
 import com.cartoonishvillain.incapacitated.capability.PlayerCapability;
 import com.cartoonishvillain.incapacitated.capability.PlayerCapabilityManager;
-import com.cartoonishvillain.incapacitated.commands.GetDownCount;
-import com.cartoonishvillain.incapacitated.commands.IncapDevMode;
-import com.cartoonishvillain.incapacitated.commands.SetDownCount;
-import com.cartoonishvillain.incapacitated.commands.SetIncapacitatedCommand;
+import com.cartoonishvillain.incapacitated.commands.*;
 import com.cartoonishvillain.incapacitated.networking.IncapPacket;
 import com.cartoonishvillain.incapacitated.networking.IncapacitationMessenger;
 import net.minecraft.ChatFormatting;
@@ -53,6 +50,7 @@ public class ForgeEvents {
         SetIncapacitatedCommand.register(event.getDispatcher());
         SetDownCount.register(event.getDispatcher());
         GetDownCount.register(event.getDispatcher());
+        KillPlayer.register(event.getDispatcher());
 
         if(!FMLLoader.isProduction()) {
             IncapDevMode.register(event.getDispatcher());
@@ -185,8 +183,8 @@ public class ForgeEvents {
                             if (h.downReviveCount()) {
                                 revive(event.player);
                             } else {
-                                event.player.displayClientMessage(Component.literal("You are being revived! " + (int) (h.getReviveCount() / 20) + " seconds..").withStyle(ChatFormatting.GREEN), true);
-                                revivingPlayer.displayClientMessage(Component.literal("Reviving " + event.player.getScoreboardName() + " " + (int) (h.getReviveCount() / 20) + " seconds...").withStyle(ChatFormatting.GREEN), true);
+                                event.player.displayClientMessage(Component.translatable("message.downindicator.reviving", (h.getReviveCount() / 20)).withStyle(ChatFormatting.GREEN), true);
+                                revivingPlayer.displayClientMessage(Component.translatable("message.reviveindicator.reviving", event.player.getScoreboardName(), (h.getReviveCount() / 20)).withStyle(ChatFormatting.GREEN), true);
                             }
                         } else {
                             if (h.countTicksUntilDeath()) {
@@ -198,7 +196,7 @@ public class ForgeEvents {
                                 h.setIsIncapacitated(false);
                                 IncapacitationMessenger.sendTo(new IncapPacket(event.player.getId(), false, (short) h.getDownsUntilDeath()), event.player);
                             } else if (h.getTicksUntilDeath() % 20 == 0) {
-                                event.player.displayClientMessage(Component.literal("Incapacitated! Call for help or jump " + h.getJumpCount() + " times to give up! " + ((float) h.getTicksUntilDeath() / 20f) + " seconds left!").withStyle(ChatFormatting.RED), true);
+                                event.player.displayClientMessage(Component.translatable("message.downindicator.norevive", "/incap die", h.getTicksUntilDeath() / 20f).withStyle(ChatFormatting.RED), true);
                             }
 
                             if (h.getReviveCount() != Incapacitated.config.REVIVETICKS.get())
@@ -209,36 +207,6 @@ public class ForgeEvents {
                 } else {
                     if (event.player.getForcedPose() != null) event.player.setForcedPose(null);
                 }
-            });
-        }
-    }
-
-    @SubscribeEvent
-    public static void playerJump(LivingEvent.LivingJumpEvent event){
-        if(event.getEntity() instanceof Player && !event.getEntity().level.isClientSide()){
-            Player player = (Player) event.getEntity();
-            player.getCapability(PlayerCapability.INSTANCE).ifPresent(h ->{
-                if(h.getIsIncapacitated() && h.getJumpDelay() == 0){
-                    if(h.giveUpJumpCount()){
-                        player.hurt(h.getSourceOfDeath(player.level), player.getMaxHealth() * 10);
-                        player.setForcedPose(null);
-                        h.setReviveCount(Incapacitated.config.DOWNCOUNT.get());
-                        h.resetGiveUpJumps();
-                        h.setIsIncapacitated(false);
-                        player.removeEffect(MobEffects.GLOWING);
-                        IncapacitationMessenger.sendTo(new IncapPacket(player.getId(), false, (short) h.getDownsUntilDeath()), player);
-                    }
-                }
-            });
-        }
-    }
-
-    @SubscribeEvent
-    public static void playerInjured(LivingHurtEvent event){
-        if(event.getEntity() instanceof Player){
-            Player player = (Player) event.getEntity();
-            player.getCapability(PlayerCapability.INSTANCE).ifPresent(h->{
-                h.setJumpDelay(20);
             });
         }
     }

@@ -25,6 +25,14 @@ public class SetIncapacitatedCommand {
                             BoolArgumentType.getBool(context, "incapacitated"));
                 })
         ))));
+
+
+        dispatcher.register(Commands.literal("incap").then(Commands.literal("setDowned").requires(cs -> cs.hasPermission(2))
+                .then(Commands.argument("player", GameProfileArgument.gameProfile()).then(Commands.argument("incapacitated", BoolArgumentType.bool()).executes(context -> {
+                            return setIncapped(context.getSource(), GameProfileArgument.getGameProfiles(context, "player"),
+                                    BoolArgumentType.getBool(context, "incapacitated"));
+                        })
+                ))));
     }
 
     private static int setIncapped(CommandSourceStack sourceStack, Collection<GameProfile> profiles, boolean isIncapped) {
