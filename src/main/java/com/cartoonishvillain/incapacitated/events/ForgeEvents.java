@@ -79,7 +79,7 @@ public class ForgeEvents {
 
     @SubscribeEvent
     public static void playerKillCheck(LivingDeathEvent event) {
-        if (event.getSource().getEntity() instanceof ServerPlayer && !(event.getEntity() instanceof Player)) {
+        if (event.getSource().getEntity() instanceof ServerPlayer && !(event.getEntity() instanceof Player) && hunter) {
             event.getSource().getEntity().getCapability(PlayerCapability.INSTANCE).ifPresent(h -> {
                 if (h.getIsIncapacitated()) {
                     revive((Player) event.getSource().getEntity());
@@ -235,18 +235,11 @@ public class ForgeEvents {
                 }
                 if(h.getIsIncapacitated()){
                     if(Incapacitated.ReviveFoods.contains(item.toString())){
-                        h.setIsIncapacitated(false);
-                        player.setForcedPose(null);
-                        h.setReviveCount(Incapacitated.config.REVIVETICKS.get());
-                        h.resetGiveUpJumps();
                         h.setDownsUntilDeath(Incapacitated.config.DOWNCOUNT.get());
-                        player.removeEffect(MobEffects.GLOWING);
                         h.setTicksUntilDeath(Incapacitated.config.DOWNTICKS.get());
-                        IncapacitationMessenger.sendTo(new IncapPacket(player.getId(), false, (short) h.getDownsUntilDeath()), player);
-                        player.setHealth(player.getMaxHealth()/3f);
-                        player.level.playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.NOTE_BLOCK_PLING.value(), SoundSource.PLAYERS, 1, 1);
+                        revive(player);
                     }
-                }else if(Incapacitated.ReviveFoods.contains(item.toString())) {h.setDownsUntilDeath(Incapacitated.config.DOWNCOUNT.get()); h.setTicksUntilDeath(Incapacitated.config.DOWNTICKS.get());}
+                }
             });
         }
     }
