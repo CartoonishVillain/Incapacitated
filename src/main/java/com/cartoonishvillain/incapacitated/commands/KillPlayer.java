@@ -7,6 +7,7 @@ import com.cartoonishvillain.incapacitated.networking.IncapPacket;
 import com.cartoonishvillain.incapacitated.networking.IncapacitationMessenger;
 import com.mojang.authlib.GameProfile;
 import com.mojang.brigadier.CommandDispatcher;
+import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.commands.arguments.GameProfileArgument;
@@ -30,19 +31,23 @@ public class KillPlayer {
     }
 
     private static int killPlayerIfDown(CommandSourceStack sourceStack) {
-        Player player = sourceStack.getPlayer();
-        if (player != null) {
-            sourceStack.getPlayer().getCapability(PlayerCapability.INSTANCE).ifPresent(h -> {
+        Player player = null;
+        try {
+            player = sourceStack.getPlayerOrException();
+            Player finalPlayer = player;
+            player.getCapability(PlayerCapability.INSTANCE).ifPresent(h -> {
                 if (h.getIsIncapacitated()) {
-                    player.hurt(h.getSourceOfDeath(player.level), player.getMaxHealth() * 10);
-                    player.setForcedPose(null);
+                    finalPlayer.hurt(h.getSourceOfDeath(), finalPlayer.getMaxHealth() * 10);
+                    finalPlayer.setForcedPose(null);
                     h.setReviveCount(Incapacitated.config.DOWNCOUNT.get());
                     h.resetGiveUpJumps();
                     h.setIsIncapacitated(false);
-                    player.removeEffect(MobEffects.GLOWING);
-                    IncapacitationMessenger.sendTo(new IncapPacket(player.getId(), false, (short) h.getDownsUntilDeath()), player);
+                    finalPlayer.removeEffect(MobEffects.GLOWING);
+                    IncapacitationMessenger.sendTo(new IncapPacket(finalPlayer.getId(), false, (short) h.getDownsUntilDeath()), finalPlayer);
                 }
             });
+        } catch (CommandSyntaxException e) {
+
         }
         return 0;
     }

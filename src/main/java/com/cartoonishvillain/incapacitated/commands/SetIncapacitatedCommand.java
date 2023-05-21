@@ -1,15 +1,12 @@
 package com.cartoonishvillain.incapacitated.commands;
 
-import com.cartoonishvillain.incapacitated.capability.PlayerCapability;
-import com.cartoonishvillain.incapacitated.networking.IncapPacket;
-import com.cartoonishvillain.incapacitated.networking.IncapacitationMessenger;
 import com.mojang.authlib.GameProfile;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.BoolArgumentType;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.commands.arguments.GameProfileArgument;
-import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.server.level.ServerPlayer;
 
 import java.util.Collection;
@@ -41,10 +38,10 @@ public class SetIncapacitatedCommand {
             if (serverPlayer != null) {
                 if (isIncapped) {
                     downOrKill(serverPlayer);
-                    sourceStack.sendSuccess(Component.translatable("command.return.incapped", serverPlayer.getName()), true);
+                    sourceStack.sendSuccess(new TranslatableComponent("command.return.incapped", serverPlayer.getName()), true);
                 } else {
                     revive(serverPlayer);
-                    sourceStack.sendSuccess(Component.translatable("command.return.revived", serverPlayer.getName()), true);
+                    sourceStack.sendSuccess(new TranslatableComponent("command.return.revived", serverPlayer.getName()), true);
                 }
             }
         }

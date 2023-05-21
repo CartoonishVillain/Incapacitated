@@ -8,6 +8,7 @@ import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.commands.arguments.GameProfileArgument;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.server.level.ServerPlayer;
 
 import java.util.Collection;
@@ -31,7 +32,7 @@ public class GetDownCount {
             ServerPlayer serverPlayer = sourceStack.getServer().getPlayerList().getPlayer(gameProfile.getId());
             if (serverPlayer != null) {
                 short amount = AbstractedIncapacitation.getDownCount(serverPlayer);
-                sourceStack.sendSuccess(Component.translatable("command.return.getdowns", serverPlayer.getName(), amount), true);
+                sourceStack.sendSuccess(new TranslatableComponent("command.return.getdowns", serverPlayer.getName(), amount), true);
             }
         }
         return 0;

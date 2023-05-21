@@ -19,7 +19,9 @@ public class IncapacitationMessenger {
     }
 
     public static void sendTo(Object message, Player player) {
-        INSTANCE.send(PacketDistributor.PLAYER.with(() -> (ServerPlayer) player), message);
+        if (player instanceof ServerPlayer) {
+            INSTANCE.send(PacketDistributor.PLAYER.with(() -> (ServerPlayer) player), message);
+        }
     }
 
     private static int nextID(){

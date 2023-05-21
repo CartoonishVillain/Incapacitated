@@ -24,7 +24,7 @@ public class IncapEffects {
 
         protected ModdedPotionEffects(MobEffectCategory p_19451_, int p_19452_, ResourceLocation location) {
             super(p_19451_, p_19452_);
-            ForgeRegistries.MOB_EFFECTS.register(location, this);
+            ForgeRegistries.MOB_EFFECTS.register(this.setRegistryName(location));
         }
     }
 
@@ -32,7 +32,7 @@ public class IncapEffects {
 
         protected AttackModdedPotionEffects(MobEffectCategory p_19426_, int p_19427_, double p_19428_, ResourceLocation location) {
             super(p_19426_, p_19427_, p_19428_);
-            ForgeRegistries.MOB_EFFECTS.register(location, this);
+            ForgeRegistries.MOB_EFFECTS.register(this.setRegistryName(location));
         }
     }
 }

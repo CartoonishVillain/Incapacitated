@@ -3,7 +3,7 @@ package com.cartoonishvillain.incapacitated.commands;
 import com.mojang.brigadier.CommandDispatcher;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
-import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TextComponent;
 
 import static com.cartoonishvillain.incapacitated.Incapacitated.devMode;
 
@@ -18,10 +18,10 @@ public class IncapDevMode {
     private static int setIncapped(CommandSourceStack sourceStack) {
         if(devMode) {
             devMode = false;
-            sourceStack.sendSuccess(Component.literal("Dev mode disabled."), false);
+            sourceStack.sendSuccess(new TextComponent("Dev mode disabled."), false);
         } else {
             devMode = true;
-            sourceStack.sendSuccess(Component.literal("Dev mode enabled"), true);
+            sourceStack.sendSuccess(new TextComponent("Dev mode enabled"), true);
         }
         return 0;
     }
