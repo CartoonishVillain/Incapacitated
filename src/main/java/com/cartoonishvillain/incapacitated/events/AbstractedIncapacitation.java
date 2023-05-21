@@ -34,15 +34,15 @@ public class AbstractedIncapacitation {
                     h.setIsIncapacitated(true);
                     player.setHealth(player.getMaxHealth());
                     if (Incapacitated.config.GLOWING.get())
-                        player.addEffect(new MobEffectInstance(MobEffects.GLOWING, Integer.MAX_VALUE, 0, true, false));
+                        player.addEffect(new MobEffectInstance(MobEffects.GLOWING, -1, 0, true, false));
                     IncapacitationMessenger.sendTo(new IncapPacket(player.getId(), true, (short) h.getDownsUntilDeath()), player);
 
                     if (slow) {
-                        player.addEffect(new MobEffectInstance(IncapEffects.incapSlow, Integer.MAX_VALUE, 6, true, false));
+                        player.addEffect(new MobEffectInstance(IncapEffects.incapSlow, -1, 6, true, false));
                     }
 
                     if (weakened) {
-                        player.addEffect(new MobEffectInstance(IncapEffects.incapWeak, Integer.MAX_VALUE, 100, true, false));
+                        player.addEffect(new MobEffectInstance(IncapEffects.incapWeak, -1, 100, true, false));
                     }
 
                     if (Incapacitated.config.GLOBALINCAPMESSAGES.get()) {
@@ -75,15 +75,15 @@ public class AbstractedIncapacitation {
                     event.setCanceled(true);
                     player.setHealth(player.getMaxHealth());
                     if (Incapacitated.config.GLOWING.get())
-                        player.addEffect(new MobEffectInstance(MobEffects.GLOWING, Integer.MAX_VALUE, 0, true, false));
+                        player.addEffect(new MobEffectInstance(MobEffects.GLOWING, -1, 0, true, false));
                     IncapacitationMessenger.sendTo(new IncapPacket(player.getId(), true, (short) h.getDownsUntilDeath()), player);
 
                     if (slow) {
-                        player.addEffect(new MobEffectInstance(IncapEffects.incapSlow, Integer.MAX_VALUE, 6, true, false));
+                        player.addEffect(new MobEffectInstance(IncapEffects.incapSlow, -1, 6, true, false));
                     }
 
                     if (weakened) {
-                        player.addEffect(new MobEffectInstance(IncapEffects.incapWeak, Integer.MAX_VALUE, 100, true, false));
+                        player.addEffect(new MobEffectInstance(IncapEffects.incapWeak, -1, 100, true, false));
                     }
 
                     if (Incapacitated.config.GLOBALINCAPMESSAGES.get()) {
@@ -116,15 +116,15 @@ public class AbstractedIncapacitation {
                         event.setCanceled(true);
                         player.setHealth(player.getMaxHealth());
                         if (Incapacitated.config.GLOWING.get())
-                            player.addEffect(new MobEffectInstance(MobEffects.GLOWING, Integer.MAX_VALUE, 0, true, false));
+                            player.addEffect(new MobEffectInstance(MobEffects.GLOWING, -1, 0, true, false));
                         IncapacitationMessenger.sendTo(new IncapPacket(player.getId(), true, (short) h.getDownsUntilDeath()), player);
 
                         if (slow) {
-                            player.addEffect(new MobEffectInstance(IncapEffects.incapSlow, Integer.MAX_VALUE, 6, true, false));
+                            player.addEffect(new MobEffectInstance(IncapEffects.incapSlow, -1, 6, true, false));
                         }
 
                         if (weakened) {
-                            player.addEffect(new MobEffectInstance(IncapEffects.incapWeak, Integer.MAX_VALUE, 100, true, false));
+                            player.addEffect(new MobEffectInstance(IncapEffects.incapWeak, -1, 100, true, false));
                         }
 
                         if (Incapacitated.config.GLOBALINCAPMESSAGES.get()) {
