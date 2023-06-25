@@ -6,7 +6,7 @@ import com.cartoonishvillain.incapacitated.config.ConfigHelper;
 import com.cartoonishvillain.incapacitated.networking.IncapacitationMessenger;
 import net.minecraft.ResourceLocationException;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.damagesource.DamageTypes;
+import net.minecraft.world.damagesource.DamageSource;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.config.ModConfig;
@@ -19,7 +19,6 @@ import org.apache.logging.log4j.Logger;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.cartoonishvillain.incapacitated.events.IncapacitatedDamageSources.BLEEDOUT;
 
 // The value here should match an entry in the META-INF/mods.toml file
 @Mod("incapacitated")
@@ -57,7 +56,7 @@ public class Incapacitated
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::doClientStuff);
         config = ConfigHelper.register(ModConfig.Type.COMMON, CommonConfig::new);
         clientConfig = ConfigHelper.register(ModConfig.Type.CLIENT, ClientConfig::new);
-        instantKillDamageSourcesMessageID = new ArrayList<>(List.of(BLEEDOUT.location.getPath(), DamageTypes.OUT_OF_WORLD.location.getPath(), DamageTypes.LAVA.location.getPath(), DamageTypes.WITHER.location.getPath(), "outOfWorld" ));
+        instantKillDamageSourcesMessageID = new ArrayList<>(List.of("bleedout", DamageSource.OUT_OF_WORLD.msgId, DamageSource.LAVA.msgId, DamageSource.WITHER.msgId));
         IncapEffects.init();
 
 

@@ -29,6 +29,7 @@ import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.entity.player.PlayerWakeUpEvent;
+import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.loading.FMLLoader;
@@ -188,7 +189,7 @@ public class ForgeEvents {
                             }
                         } else {
                             if (h.countTicksUntilDeath()) {
-                                event.player.hurt(h.getSourceOfDeath(event.player.level), event.player.getMaxHealth() * 10);
+                                event.player.hurt(h.getSourceOfDeath(), event.player.getMaxHealth() * 10);
                                 event.player.setForcedPose(null);
                                 h.setReviveCount(Incapacitated.config.REVIVETICKS.get());
                                 h.resetGiveUpJumps();

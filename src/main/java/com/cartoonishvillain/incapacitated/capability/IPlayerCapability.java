@@ -21,6 +21,6 @@ public interface IPlayerCapability {
     int getJumpDelay();
     void setJumpDelay(int delay);
     void countDelay();
-    DamageSource getSourceOfDeath(Level level);
-    void setSourceOfDeath(Level level, DamageSource causeOfDeath);
+    DamageSource getSourceOfDeath();
+    void setSourceOfDeath(DamageSource causeOfDeath);
 }

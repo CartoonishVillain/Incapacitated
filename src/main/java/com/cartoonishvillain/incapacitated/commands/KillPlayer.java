@@ -34,7 +34,7 @@ public class KillPlayer {
         if (player != null) {
             sourceStack.getPlayer().getCapability(PlayerCapability.INSTANCE).ifPresent(h -> {
                 if (h.getIsIncapacitated()) {
-                    player.hurt(h.getSourceOfDeath(player.level), player.getMaxHealth() * 10);
+                    player.hurt(h.getSourceOfDeath(), player.getMaxHealth() * 10);
                     player.setForcedPose(null);
                     h.setReviveCount(Incapacitated.config.DOWNCOUNT.get());
                     h.resetGiveUpJumps();

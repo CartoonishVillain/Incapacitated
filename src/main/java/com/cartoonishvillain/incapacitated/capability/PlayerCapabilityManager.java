@@ -2,15 +2,9 @@ package com.cartoonishvillain.incapacitated.capability;
 
 import com.cartoonishvillain.incapacitated.Incapacitated;
 import com.cartoonishvillain.incapacitated.events.BleedOutDamage;
-
-import net.minecraft.core.Holder;
-import net.minecraft.core.registries.Registries;
+import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.core.Direction;
-import net.minecraft.world.damagesource.DamageType;
-import net.minecraft.world.damagesource.DamageTypes;
-import net.minecraft.world.level.Level;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.common.util.INBTSerializable;
@@ -18,8 +12,6 @@ import net.minecraftforge.common.util.LazyOptional;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-
-import static com.cartoonishvillain.incapacitated.events.IncapacitatedDamageSources.BLEEDOUT;
 
 public class PlayerCapabilityManager implements IPlayerCapability, ICapabilityProvider, INBTSerializable<CompoundTag> {
     protected boolean incapacitated = false;
@@ -121,27 +113,15 @@ public class PlayerCapabilityManager implements IPlayerCapability, ICapabilityPr
     }
 
     @Override
-    public DamageSource getSourceOfDeath(Level level) {
-        Holder.Reference<DamageType> damageType = level.registryAccess()
-                .registryOrThrow(Registries.DAMAGE_TYPE)
-                .getHolderOrThrow(BLEEDOUT);
-
-        Holder.Reference<DamageType> fallOutOfWorld = level.registryAccess()
-                .registryOrThrow(Registries.DAMAGE_TYPE)
-                .getHolderOrThrow(DamageTypes.OUT_OF_WORLD);
-
+    public DamageSource getSourceOfDeath() {
         return originalSource != null
-                ? originalSource
-                : new BleedOutDamage(damageType, new DamageSource(fallOutOfWorld));
+                ? originalSource.bypassArmor()
+                : new BleedOutDamage(DamageSource.OUT_OF_WORLD).bypassArmor();
     }
     
     @Override
-    public void setSourceOfDeath(Level level, DamageSource causeOfDeath) {
-        Holder.Reference<DamageType> damageType = level.registryAccess()
-                .registryOrThrow(Registries.DAMAGE_TYPE)
-                .getHolderOrThrow(BLEEDOUT);
-
-        originalSource = new BleedOutDamage(damageType, causeOfDeath);
+    public void setSourceOfDeath(DamageSource causeOfDeath) {
+        originalSource = new BleedOutDamage(causeOfDeath);
     }
 
     @Nonnull
