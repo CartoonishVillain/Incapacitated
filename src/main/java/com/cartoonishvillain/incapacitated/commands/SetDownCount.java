@@ -33,7 +33,7 @@ public class SetDownCount {
             ServerPlayer serverPlayer = sourceStack.getServer().getPlayerList().getPlayer(gameProfile.getId());
             if (serverPlayer != null) {
                 AbstractedIncapacitation.setDownCount(serverPlayer, (short) downCount);
-                sourceStack.sendSuccess(Component.translatable("command.return.setdowns", serverPlayer.getName(), downCount), true);
+                sourceStack.sendSuccess(() -> Component.translatable("command.return.setdowns", serverPlayer.getName(), downCount), true);
             }
         }
         return 0;

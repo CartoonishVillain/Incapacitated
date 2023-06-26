@@ -31,7 +31,7 @@ public class GetDownCount {
             ServerPlayer serverPlayer = sourceStack.getServer().getPlayerList().getPlayer(gameProfile.getId());
             if (serverPlayer != null) {
                 short amount = AbstractedIncapacitation.getDownCount(serverPlayer);
-                sourceStack.sendSuccess(Component.translatable("command.return.getdowns", serverPlayer.getName(), amount), true);
+                sourceStack.sendSuccess(() -> Component.translatable("command.return.getdowns", serverPlayer.getName(), amount), true);
             }
         }
         return 0;

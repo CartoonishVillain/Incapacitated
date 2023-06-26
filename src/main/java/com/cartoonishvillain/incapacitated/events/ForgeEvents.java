@@ -152,14 +152,14 @@ public class ForgeEvents {
                     if (event.player.getForcedPose() == null) {
                         event.player.setForcedPose(Pose.SWIMMING);
                     }
-                    if (!event.player.level.isClientSide()) {
+                    if (!event.player.level().isClientSide()) {
 
                         if (devMode) {
                             if(h.getJumpCount() == 2) {
                                 revive(event.player);
                             }
                         } else {
-                        ArrayList<Player> playerEntities = (ArrayList<Player>) event.player.level.getEntitiesOfClass(Player.class, event.player.getBoundingBox().inflate(3));
+                        ArrayList<Player> playerEntities = (ArrayList<Player>) event.player.level().getEntitiesOfClass(Player.class, event.player.getBoundingBox().inflate(3));
                         boolean reviving = false;
 
                         Player revivingPlayer = null;
@@ -188,7 +188,7 @@ public class ForgeEvents {
                             }
                         } else {
                             if (h.countTicksUntilDeath()) {
-                                event.player.hurt(h.getSourceOfDeath(event.player.level), event.player.getMaxHealth() * 10);
+                                event.player.hurt(h.getSourceOfDeath(event.player.level()), event.player.getMaxHealth() * 10);
                                 event.player.setForcedPose(null);
                                 h.setReviveCount(Incapacitated.config.REVIVETICKS.get());
                                 h.resetGiveUpJumps();
@@ -224,7 +224,7 @@ public class ForgeEvents {
 
     @SubscribeEvent
     public static void playerEat(LivingEntityUseItemEvent.Finish event){
-        if(event.getEntity() instanceof Player && !event.getEntity().level.isClientSide()){
+        if(event.getEntity() instanceof Player && !event.getEntity().level().isClientSide()){
             Item item = event.getItem().getItem();
             Player player = (Player) event.getEntity();
             player.getCapability(PlayerCapability.INSTANCE).ifPresent(h->{

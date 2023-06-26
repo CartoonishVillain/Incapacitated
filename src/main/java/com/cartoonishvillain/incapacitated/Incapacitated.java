@@ -57,7 +57,7 @@ public class Incapacitated
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::doClientStuff);
         config = ConfigHelper.register(ModConfig.Type.COMMON, CommonConfig::new);
         clientConfig = ConfigHelper.register(ModConfig.Type.CLIENT, ClientConfig::new);
-        instantKillDamageSourcesMessageID = new ArrayList<>(List.of(BLEEDOUT.location.getPath(), DamageTypes.OUT_OF_WORLD.location.getPath(), DamageTypes.LAVA.location.getPath(), DamageTypes.WITHER.location.getPath(), "outOfWorld" ));
+        instantKillDamageSourcesMessageID = new ArrayList<>(List.of(BLEEDOUT.location.getPath(), DamageTypes.FELL_OUT_OF_WORLD.location.getPath(), DamageTypes.LAVA.location.getPath(), DamageTypes.WITHER.location.getPath(), "outOfWorld" ));
         IncapEffects.init();
 
 

@@ -18,10 +18,10 @@ public class IncapDevMode {
     private static int setIncapped(CommandSourceStack sourceStack) {
         if(devMode) {
             devMode = false;
-            sourceStack.sendSuccess(Component.literal("Dev mode disabled."), false);
+            sourceStack.sendSuccess(() -> Component.literal("Dev mode disabled."), false);
         } else {
             devMode = true;
-            sourceStack.sendSuccess(Component.literal("Dev mode enabled"), true);
+            sourceStack.sendSuccess(() -> Component.literal("Dev mode enabled"), true);
         }
         return 0;
     }

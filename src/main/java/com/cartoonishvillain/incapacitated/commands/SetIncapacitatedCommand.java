@@ -41,10 +41,10 @@ public class SetIncapacitatedCommand {
             if (serverPlayer != null) {
                 if (isIncapped) {
                     downOrKill(serverPlayer);
-                    sourceStack.sendSuccess(Component.translatable("command.return.incapped", serverPlayer.getName()), true);
+                    sourceStack.sendSuccess(() -> Component.translatable("command.return.incapped", serverPlayer.getName()), true);
                 } else {
                     revive(serverPlayer);
-                    sourceStack.sendSuccess(Component.translatable("command.return.revived", serverPlayer.getName()), true);
+                    sourceStack.sendSuccess(() -> Component.translatable("command.return.revived", serverPlayer.getName()), true);
                 }
             }
         }

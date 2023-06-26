@@ -48,7 +48,7 @@ public class AbstractedIncapacitation {
                     if (Incapacitated.config.GLOBALINCAPMESSAGES.get()) {
                         broadcast(player.getServer(), Component.translatable("message.incap.message", player.getScoreboardName()));
                     } else {
-                        ArrayList<Player> playerEntities = (ArrayList<Player>) player.level.getEntitiesOfClass(Player.class, player.getBoundingBox().inflate(50));
+                        ArrayList<Player> playerEntities = (ArrayList<Player>) player.level().getEntitiesOfClass(Player.class, player.getBoundingBox().inflate(50));
                         for (Player players : playerEntities) {
                             players.displayClientMessage(Component.translatable("message.incap.message", player.getScoreboardName()), false);
                         }
@@ -71,7 +71,7 @@ public class AbstractedIncapacitation {
                 //if downs until KillPlayer is 0 or higher, we can cancel the KillPlayer event because the user is down.
                 if (h.getDownsUntilDeath() > -1) {
                     h.setIsIncapacitated(true);
-                    h.setSourceOfDeath(player.level, event.getSource());
+                    h.setSourceOfDeath(player.level(), event.getSource());
                     event.setCanceled(true);
                     player.setHealth(player.getMaxHealth());
                     if (Incapacitated.config.GLOWING.get())
@@ -89,7 +89,7 @@ public class AbstractedIncapacitation {
                     if (Incapacitated.config.GLOBALINCAPMESSAGES.get()) {
                         broadcast(player.getServer(), Component.translatable("message.incap.message", player.getScoreboardName()));
                     } else {
-                        ArrayList<Player> playerEntities = (ArrayList<Player>) player.level.getEntitiesOfClass(Player.class, player.getBoundingBox().inflate(50));
+                        ArrayList<Player> playerEntities = (ArrayList<Player>) player.level().getEntitiesOfClass(Player.class, player.getBoundingBox().inflate(50));
                         for (Player players : playerEntities) {
                             players.displayClientMessage(Component.translatable("message.incap.message", player.getScoreboardName()), false);
                         }
@@ -112,7 +112,7 @@ public class AbstractedIncapacitation {
                     //if downs until KillPlayer is 0 or higher, we can cancel the KillPlayer event because the user is down.
                     if (h.getDownsUntilDeath() > -1) {
                         h.setIsIncapacitated(true);
-                        h.setSourceOfDeath(player.level, event.getSource());
+                        h.setSourceOfDeath(player.level(), event.getSource());
                         event.setCanceled(true);
                         player.setHealth(player.getMaxHealth());
                         if (Incapacitated.config.GLOWING.get())
@@ -130,7 +130,7 @@ public class AbstractedIncapacitation {
                         if (Incapacitated.config.GLOBALINCAPMESSAGES.get()) {
                             broadcast(player.getServer(), Component.translatable("message.incap.message", player.getScoreboardName()));
                         } else {
-                            ArrayList<Player> playerEntities = (ArrayList<Player>) player.level.getEntitiesOfClass(Player.class, player.getBoundingBox().inflate(50));
+                            ArrayList<Player> playerEntities = (ArrayList<Player>) player.level().getEntitiesOfClass(Player.class, player.getBoundingBox().inflate(50));
                             for (Player players : playerEntities) {
                                 players.displayClientMessage(Component.translatable("message.incap.message", player.getScoreboardName()), false);
                             }
@@ -153,12 +153,12 @@ public class AbstractedIncapacitation {
             player.removeEffect(IncapEffects.incapWeak);
             IncapacitationMessenger.sendTo(new IncapPacket(player.getId(), false, (short) h.getDownsUntilDeath()), player);
             player.setHealth(player.getMaxHealth() / 3f);
-            player.level.playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.NOTE_BLOCK_PLING.value(), SoundSource.PLAYERS, 1, 1);
+            player.level().playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.NOTE_BLOCK_PLING.value(), SoundSource.PLAYERS, 1, 1);
 
             if (config.GLOBALREVIVEMESSAGES.get()) {
                 broadcast(player.getServer(), Component.translatable("message.revive.message", player.getScoreboardName()));
             } else {
-                ArrayList<Player> playerEntities = (ArrayList<Player>) player.level.getEntitiesOfClass(Player.class, player.getBoundingBox().inflate(50));
+                ArrayList<Player> playerEntities = (ArrayList<Player>) player.level().getEntitiesOfClass(Player.class, player.getBoundingBox().inflate(50));
                 for (Player players : playerEntities) {
                     players.displayClientMessage(Component.translatable("message.revive.message", player.getScoreboardName()), false);
                 }

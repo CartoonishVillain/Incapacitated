@@ -128,7 +128,7 @@ public class PlayerCapabilityManager implements IPlayerCapability, ICapabilityPr
 
         Holder.Reference<DamageType> fallOutOfWorld = level.registryAccess()
                 .registryOrThrow(Registries.DAMAGE_TYPE)
-                .getHolderOrThrow(DamageTypes.OUT_OF_WORLD);
+                .getHolderOrThrow(DamageTypes.FELL_OUT_OF_WORLD);
 
         return originalSource != null
                 ? originalSource
