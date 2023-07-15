@@ -206,8 +206,6 @@ public class ForgeEvents {
                         }
                     }
                     }
-                } else {
-                    if (event.player.getForcedPose() != null) event.player.setForcedPose(null);
                 }
             });
         }
