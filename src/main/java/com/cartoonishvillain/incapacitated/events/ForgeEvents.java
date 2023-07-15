@@ -202,10 +202,8 @@ public class ForgeEvents {
                             if (h.getReviveCount() != Incapacitated.config.REVIVETICKS.get())
                                 h.setReviveCount(Incapacitated.config.REVIVETICKS.get());
                         }
+                        }
                     }
-                    }
-                } else {
-                    if (event.player.getForcedPose() != null) event.player.setForcedPose(null);
                 }
             });
         }
