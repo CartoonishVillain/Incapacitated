@@ -12,7 +12,7 @@ apply plugin: 'net.minecraftforge.gradle'
 apply plugin: 'eclipse'
 apply plugin: 'maven-publish'
 
-version = '1.19.4-1.4.4.1'
+version = '1.19.4-1.4.4.2'
 group = 'com.cartoonishvillain.incapacitated' // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = 'incapacitated'
 
