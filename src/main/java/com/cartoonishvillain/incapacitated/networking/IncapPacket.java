@@ -7,6 +7,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.network.NetworkEvent;
 
 
@@ -50,6 +51,10 @@ public class IncapPacket {
                 entity.getCapability(PlayerCapability.INSTANCE).ifPresent(h -> {
                     h.setIsIncapacitated(isIncapacitated);
                     h.setDownsUntilDeath(downCount);
+
+                    if (!isIncapacitated && entity instanceof Player) {
+                        ((Player) entity).setForcedPose(null);
+                    }
 
                     if(Incapacitated.clientConfig.GRAYSCREEN.get()) {
                         if (downCount <= 0) {
