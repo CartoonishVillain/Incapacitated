@@ -1,43 +1,35 @@
 package com.cartoonishvillain.incapacitated.events;
 
 import com.cartoonishvillain.incapacitated.Incapacitated;
+import com.cartoonishvillain.incapacitated.capability.IncapacitatedPlayerData;
 import com.cartoonishvillain.incapacitated.capability.PlayerCapability;
-import com.cartoonishvillain.incapacitated.capability.PlayerCapabilityManager;
 import com.cartoonishvillain.incapacitated.commands.*;
+import com.cartoonishvillain.incapacitated.config.IncapacitatedCommonConfig;
 import com.cartoonishvillain.incapacitated.networking.IncapPacket;
 import com.cartoonishvillain.incapacitated.networking.IncapacitationMessenger;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.sounds.SoundEvents;
-import net.minecraft.sounds.SoundSource;
-import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
-import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.Pose;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
-import net.minecraftforge.event.AttachCapabilitiesEvent;
-import net.minecraftforge.event.RegisterCommandsEvent;
-import net.minecraftforge.event.TickEvent;
-import net.minecraftforge.event.entity.EntityJoinLevelEvent;
-import net.minecraftforge.event.entity.living.LivingDeathEvent;
-import net.minecraftforge.event.entity.living.LivingEntityUseItemEvent;
-import net.minecraftforge.event.entity.living.LivingEvent;
-import net.minecraftforge.event.entity.living.LivingHurtEvent;
-import net.minecraftforge.event.entity.player.PlayerEvent;
-import net.minecraftforge.event.entity.player.PlayerWakeUpEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.loading.FMLLoader;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.Mod;
+import net.neoforged.fml.loading.FMLLoader;
+import net.neoforged.neoforge.event.RegisterCommandsEvent;
+import net.neoforged.neoforge.event.TickEvent;
+import net.neoforged.neoforge.event.entity.EntityJoinLevelEvent;
+import net.neoforged.neoforge.event.entity.living.LivingDeathEvent;
+import net.neoforged.neoforge.event.entity.living.LivingEntityUseItemEvent;
+import net.neoforged.neoforge.event.entity.living.LivingHurtEvent;
+import net.neoforged.neoforge.event.entity.player.PlayerEvent;
+import net.neoforged.neoforge.event.entity.player.PlayerWakeUpEvent;
 
 import java.util.ArrayList;
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicInteger;
-
 import static com.cartoonishvillain.incapacitated.Incapacitated.*;
+import static com.cartoonishvillain.incapacitated.capability.PlayerCapability.INCAP_DATA;
 import static com.cartoonishvillain.incapacitated.events.AbstractedIncapacitation.downOrKill;
 import static com.cartoonishvillain.incapacitated.events.AbstractedIncapacitation.revive;
 
@@ -58,33 +50,23 @@ public class ForgeEvents {
     }
 
     @SubscribeEvent
-    public static void playerRegister(AttachCapabilitiesEvent<Entity> event){
-        if(event.getObject() instanceof Player){
-            PlayerCapabilityManager provider = new PlayerCapabilityManager();
-            event.addCapability(new ResourceLocation(Incapacitated.MODID, "incapacitated"), provider);
-        }
-    }
-
-    @SubscribeEvent
     public static void playerHurtCheck(LivingHurtEvent event) {
         if(event.getEntity() instanceof ServerPlayer) {
             //Merciful check
-            event.getEntity().getCapability(PlayerCapability.INSTANCE).ifPresent(h -> {
-                if (h.getIsIncapacitated() && merciful && !(event.getSource().getMsgId().equals("bleedout"))) {
-                    event.setAmount(0);
-                }
-            });
+            IncapacitatedPlayerData data = event.getEntity().getData(INCAP_DATA);
+            if (data.isIncapacitated() && Incapacitated.merciful && !(event.getSource().getMsgId().equals("bleedout"))) {
+                event.setAmount(0);
+            }
         }
     }
 
     @SubscribeEvent
     public static void playerKillCheck(LivingDeathEvent event) {
         if (event.getSource().getEntity() instanceof ServerPlayer && !(event.getEntity() instanceof Player) && hunter) {
-            event.getSource().getEntity().getCapability(PlayerCapability.INSTANCE).ifPresent(h -> {
-                if (h.getIsIncapacitated()) {
-                    revive((Player) event.getSource().getEntity());
-                }
-            });
+            IncapacitatedPlayerData data = event.getSource().getEntity().getData(INCAP_DATA);
+            if (data.isIncapacitated()) {
+                revive((Player) event.getSource().getEntity());
+            }
         }
     }
 
@@ -95,16 +77,16 @@ public class ForgeEvents {
         }
     }
 
-    @SubscribeEvent
-    public static void playerLogoutEvent(PlayerEvent.PlayerLoggedOutEvent event) {
-        if (downLogging && event.getEntity() instanceof ServerPlayer) {
-            event.getEntity().getCapability(PlayerCapability.INSTANCE).ifPresent(h -> {
-                if (h.getIsIncapacitated()) {
-                   event.getEntity().kill();
-                }
-            });
-        }
-    }
+
+//    @SubscribeEvent
+//    public static void playerLogoutEvent(PlayerEvent.PlayerLoggedOutEvent event) {
+//        if (downLogging && event.getEntity() instanceof ServerPlayer) {
+//            IncapacitatedPlayerData data = event.getEntity().getData(INCAP_DATA);
+//            if (data.isIncapacitated()) {
+//                downOrKill(event.getEntity());
+//            }
+//        }
+//    }
 
     @SubscribeEvent
     public static void playerCloneEvent(PlayerEvent.Clone event){
@@ -112,133 +94,128 @@ public class ForgeEvents {
             Player originalPlayer = event.getOriginal();
             Player newPlayer = event.getEntity();
 
-            AtomicBoolean incapacitated = new AtomicBoolean(false);
-            AtomicInteger ticksUntilDeath = new AtomicInteger(Integer.MAX_VALUE);
-            AtomicInteger downsUntilDeath = new AtomicInteger(Integer.MAX_VALUE);
-
             originalPlayer.revive();
 
-            originalPlayer.getCapability(PlayerCapability.INSTANCE).ifPresent(h->{
-                incapacitated.set(h.getIsIncapacitated());
-                ticksUntilDeath.set(h.getTicksUntilDeath());
-                downsUntilDeath.set(h.getDownsUntilDeath());
-            });
+            IncapacitatedPlayerData playerData = originalPlayer.getData(INCAP_DATA);
 
             originalPlayer.kill();
 
-            newPlayer.getCapability(PlayerCapability.INSTANCE).ifPresent(h->{
-                h.setIsIncapacitated(incapacitated.get());
-                h.setTicksUntilDeath(ticksUntilDeath.get());
-                h.setDownsUntilDeath(downsUntilDeath.get());
-            });
+            newPlayer.setData(INCAP_DATA, playerData);
         }
     }
 
     @SubscribeEvent
     public static void PlayerJoinEvent(EntityJoinLevelEvent event){
         if(event.getEntity() instanceof Player player && !event.getLevel().isClientSide()){
-            player.getCapability(PlayerCapability.INSTANCE).ifPresent(h->{
-                IncapacitationMessenger.sendTo(new IncapPacket(player.getId(), h.getIsIncapacitated(), (short) h.getDownsUntilDeath()), player);
-            });
+            IncapacitatedPlayerData playerData = event.getEntity().getData(INCAP_DATA);
+            IncapacitationMessenger.sendTo(new IncapPacket(player.getId(), playerData.isIncapacitated(), (short) playerData.getDownsUntilDeath()), player);
         }
     }
 
     @SubscribeEvent
     public static void playerTick(TickEvent.PlayerTickEvent event){
         if(event.phase == TickEvent.Phase.END) {
-            event.player.getCapability(PlayerCapability.INSTANCE).ifPresent(h -> {
-                h.countDelay();
-                if (h.getIsIncapacitated()) {
-                    if (event.player.getForcedPose() == null) {
-                        event.player.setForcedPose(Pose.SWIMMING);
-                    }
-                    if (!event.player.level().isClientSide()) {
+            //Given event player's data
+            IncapacitatedPlayerData playerData = event.player.getData(INCAP_DATA);
 
-                        if (devMode) {
-                            if(h.getJumpCount() == 2) {
-                                revive(event.player);
-                            }
-                        } else {
-                        ArrayList<Player> playerEntities = (ArrayList<Player>) event.player.level().getEntitiesOfClass(Player.class, event.player.getBoundingBox().inflate(3));
-                        boolean reviving = false;
+            //If the player is down, run all the code associated every tick, otherwise don't.
+            if(playerData.isIncapacitated()) {
+                //If the player isn't already in a forced pose, force them into the swimming pose every tick.
+                //This is to prevent conflicts with other mods that use this forced pose. There is no priority system to
+                //ensure we get this forced pose uncontested, so if other mods are also setting their poses every tick, we could cause a major issue if we don't yield.
 
-                        Player revivingPlayer = null;
-                        for (Player player : playerEntities) {
-                            AtomicBoolean isdown = new AtomicBoolean(false);
-                            AtomicBoolean targetIsDown = new AtomicBoolean(false);
-                            player.getCapability(PlayerCapability.INSTANCE).ifPresent(j -> {
-                                isdown.set(j.getIsIncapacitated());
-                            });
-                            event.player.getCapability(PlayerCapability.INSTANCE).ifPresent(j -> {
-                                targetIsDown.set(j.getIsIncapacitated());
-                            });
-                            if (player.isCrouching() && targetIsDown.get() && !isdown.get()) {
-                                reviving = true;
-                                revivingPlayer = player;
-                                break;
-                            }
-                        }
+                //When we are the only one forcing poses though, this leaves a player on the ground while incapacitated.
+                if (event.player.getForcedPose() == null) {
+                    event.player.setForcedPose(Pose.SWIMMING);
+                }
 
-                        if (reviving) {
-                            if (h.downReviveCount()) {
-                                revive(event.player);
-                            } else {
-                                event.player.displayClientMessage(Component.translatable("message.downindicator.reviving", (h.getReviveCount() / 20)).withStyle(ChatFormatting.GREEN), true);
-                                revivingPlayer.displayClientMessage(Component.translatable("message.reviveindicator.reviving", event.player.getScoreboardName(), (h.getReviveCount() / 20)).withStyle(ChatFormatting.GREEN), true);
-                            }
-                        } else {
-                            if (h.countTicksUntilDeath()) {
-                                event.player.hurt(h.getSourceOfDeath(event.player.level()), event.player.getMaxHealth() * 10);
-                                event.player.setForcedPose(null);
-                                h.setReviveCount(Incapacitated.config.REVIVETICKS.get());
-                                h.resetGiveUpJumps();
-                                event.player.removeEffect(MobEffects.GLOWING);
-                                h.setIsIncapacitated(false);
-                                IncapacitationMessenger.sendTo(new IncapPacket(event.player.getId(), false, (short) h.getDownsUntilDeath()), event.player);
-                            } else if (h.getTicksUntilDeath() % 20 == 0) {
-                                event.player.displayClientMessage(Component.translatable("message.downindicator.norevive", "/incap die", h.getTicksUntilDeath() / 20f).withStyle(ChatFormatting.RED), true);
-                            }
+                //Scan for any players nearby
+                ArrayList<Player> playerEntities = (ArrayList<Player>) event.player.level().getEntitiesOfClass(Player.class, event.player.getBoundingBox().inflate(3));
+                boolean reviving = false;
+                Player revivingPlayer = null;
 
-                            if (h.getReviveCount() != Incapacitated.config.REVIVETICKS.get())
-                                h.setReviveCount(Incapacitated.config.REVIVETICKS.get());
-                        }
-                    }
+                //Loop through nearby players to check if any are reviving the downed player successfully
+                for (Player player : playerEntities) {
+                    boolean isdown = false;
+                    IncapacitatedPlayerData potentialHeroData = player.getData(INCAP_DATA);
+                    isdown = potentialHeroData.isIncapacitated();
+
+                    //Since we are here, we know the event player is down. So if a nearby player is crouching and not down themselves, we set the reviving state and
+                    //mark the reviving player.
+                    if (player.isCrouching() && !isdown) {
+                        reviving = true;
+                        revivingPlayer = player;
+                        break;
                     }
                 }
-            });
+
+                //If our event player is actively being revived.
+                if (reviving) {
+                    //Count down the revive timer. Returns true if the timer is 0, at which point the player is revived.
+                    if (playerData.downReviveCount()) {
+                        revive(event.player);
+                    } else {
+                        //If the timer is not 0 on the revive timer, tell both parties that the revive is occuring, and how much longer until it is done.
+                        event.player.displayClientMessage(Component.translatable("message.downindicator.reviving", (playerData.getReviveCounter() / 20)).withStyle(ChatFormatting.GREEN), true);
+                        revivingPlayer.displayClientMessage(Component.translatable("message.reviveindicator.reviving", event.player.getScoreboardName(), (playerData.getReviveCounter() / 20)).withStyle(ChatFormatting.GREEN), true);
+                    }
+                } else {
+                    //If our event player is not being revived, count down the timer until; their death. Returns true when the player runs out of time.
+                    if (playerData.countTicksUntilDeath()) {
+                        event.player.hurt(playerData.getDamageSource(event.player.level()), event.player.getMaxHealth() * 10);
+                        event.player.setForcedPose(null);
+                        playerData.setReviveCounter(IncapacitatedCommonConfig.REVIVETICKS.get());
+                        event.player.removeEffect(MobEffects.GLOWING);
+                        playerData.setIncapacitated(false);
+                        event.player.setData(INCAP_DATA, playerData);
+                        IncapacitationMessenger.sendTo(new IncapPacket(event.player.getId(), false, (short) playerData.getDownsUntilDeath()), event.player);
+                    } else if (playerData.getTicksUntilDeath() % 20 == 0) {
+                        //Otherwise, every 20 ticks (1 second) send the dying player a message about how long, in seconds, they have until death.
+                        event.player.displayClientMessage(Component.translatable("message.downindicator.norevive", "/incap die", playerData.getTicksUntilDeath() / 20f).withStyle(ChatFormatting.RED), true);
+                    }
+
+                    //Additionally, if the user is not reviving, make sure the revive timer is reset.
+                    if (playerData.getReviveCounter() != IncapacitatedCommonConfig.REVIVETICKS.get()) {
+                        playerData.setReviveCounter(IncapacitatedCommonConfig.REVIVETICKS.get());
+                        event.player.setData(INCAP_DATA, playerData);
+                    }
+                }
+            }
         }
     }
 
     @SubscribeEvent
     public static void playerRested(PlayerWakeUpEvent event) {
         if(!event.updateLevel() && !event.wakeImmediately() && regenerating) {
-            event.getEntity().getCapability(PlayerCapability.INSTANCE).ifPresent(h -> {
-                if (h.getDownsUntilDeath() < config.DOWNCOUNT.get()) {
-                    AbstractedIncapacitation.setDownCount(event.getEntity(), (short) (h.getDownsUntilDeath()+1));
-                }
-            });
+            IncapacitatedPlayerData playerData = event.getEntity().getData(INCAP_DATA);
+            if (playerData.getDownsUntilDeath() < IncapacitatedCommonConfig.DOWNCOUNT.get()) {
+                AbstractedIncapacitation.setDownCount(event.getEntity(), (short) (playerData.getDownsUntilDeath() + 1));
+            }
         }
     }
 
     @SubscribeEvent
     public static void playerEat(LivingEntityUseItemEvent.Finish event){
-        if(event.getEntity() instanceof Player && !event.getEntity().level().isClientSide()){
+        if(event.getEntity() instanceof Player player && !event.getEntity().level().isClientSide()){
             Item item = event.getItem().getItem();
-            Player player = (Player) event.getEntity();
-            player.getCapability(PlayerCapability.INSTANCE).ifPresent(h->{
-                if(Incapacitated.HealingFoods.contains(item.toString())) {
-                    h.setDownsUntilDeath(Incapacitated.config.DOWNCOUNT.get());
-                    h.setTicksUntilDeath(Incapacitated.config.DOWNTICKS.get());
-                    IncapacitationMessenger.sendTo(new IncapPacket(player.getId(), h.getIsIncapacitated(), (short) h.getDownsUntilDeath()), player);
-                }
-                if(h.getIsIncapacitated()){
-                    if(Incapacitated.ReviveFoods.contains(item.toString())){
-                        h.setDownsUntilDeath(Incapacitated.config.DOWNCOUNT.get());
-                        h.setTicksUntilDeath(Incapacitated.config.DOWNTICKS.get());
-                        revive(player);
-                    }
-                }
-            });
+            IncapacitatedPlayerData playerData = player.getData(INCAP_DATA);
+            if (HealingFoods.contains(item.toString())) {
+                playerData.setDownsUntilDeath(IncapacitatedCommonConfig.DOWNCOUNT.get());
+                playerData.setTicksUntilDeath(IncapacitatedCommonConfig.DOWNTICKS.get());
+                player.setData(INCAP_DATA, playerData);
+                IncapacitationMessenger.sendTo(new IncapPacket(player.getId(), playerData.isIncapacitated(), (short) playerData.getDownsUntilDeath()), player);
+            }
+
+            if (ReviveFoods.contains(item.toString())) {
+                playerData.setDownsUntilDeath(IncapacitatedCommonConfig.DOWNCOUNT.get());
+                playerData.setTicksUntilDeath(IncapacitatedCommonConfig.DOWNTICKS.get());
+                player.setData(INCAP_DATA, playerData);
+
+                if (playerData.isIncapacitated())
+                    revive(player);
+                else
+                    IncapacitationMessenger.sendTo(new IncapPacket(player.getId(), playerData.isIncapacitated(), (short) playerData.getDownsUntilDeath()), player);
+            }
         }
     }
 

@@ -1,21 +1,16 @@
 package com.cartoonishvillain.incapacitated.commands;
 
-import com.cartoonishvillain.incapacitated.Incapacitated;
-import com.cartoonishvillain.incapacitated.capability.PlayerCapability;
-import com.cartoonishvillain.incapacitated.events.AbstractedIncapacitation;
+import com.cartoonishvillain.incapacitated.capability.IncapacitatedPlayerData;
+import com.cartoonishvillain.incapacitated.config.IncapacitatedCommonConfig;
 import com.cartoonishvillain.incapacitated.networking.IncapPacket;
 import com.cartoonishvillain.incapacitated.networking.IncapacitationMessenger;
-import com.mojang.authlib.GameProfile;
 import com.mojang.brigadier.CommandDispatcher;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
-import net.minecraft.commands.arguments.GameProfileArgument;
-import net.minecraft.network.chat.Component;
-import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.player.Player;
 
-import java.util.Collection;
+import static com.cartoonishvillain.incapacitated.capability.PlayerCapability.INCAP_DATA;
 
 
 public class KillPlayer {
@@ -32,17 +27,15 @@ public class KillPlayer {
     private static int killPlayerIfDown(CommandSourceStack sourceStack) {
         Player player = sourceStack.getPlayer();
         if (player != null) {
-            sourceStack.getPlayer().getCapability(PlayerCapability.INSTANCE).ifPresent(h -> {
-                if (h.getIsIncapacitated()) {
-                    player.hurt(h.getSourceOfDeath(player.level()), player.getMaxHealth() * 10);
-                    player.setForcedPose(null);
-                    h.setReviveCount(Incapacitated.config.DOWNCOUNT.get());
-                    h.resetGiveUpJumps();
-                    h.setIsIncapacitated(false);
-                    player.removeEffect(MobEffects.GLOWING);
-                    IncapacitationMessenger.sendTo(new IncapPacket(player.getId(), false, (short) h.getDownsUntilDeath()), player);
-                }
-            });
+            IncapacitatedPlayerData playerData = sourceStack.getPlayer().getData(INCAP_DATA);
+            if (playerData.isIncapacitated()) {
+                player.hurt(playerData.getDamageSource(player.level()), player.getMaxHealth() * 10);
+                player.setForcedPose(null);
+                playerData.setReviveCounter(IncapacitatedCommonConfig.DOWNCOUNT.get());
+                playerData.setIncapacitated(false);
+                player.removeEffect(MobEffects.GLOWING);
+                IncapacitationMessenger.sendTo(new IncapPacket(player.getId(), false, (short) playerData.getDownsUntilDeath()), player);
+            }
         }
         return 0;
     }

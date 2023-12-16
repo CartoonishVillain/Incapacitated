@@ -3,7 +3,6 @@ package com.cartoonishvillain.incapacitated.commands;
 import com.cartoonishvillain.incapacitated.events.AbstractedIncapacitation;
 import com.mojang.authlib.GameProfile;
 import com.mojang.brigadier.CommandDispatcher;
-import com.mojang.brigadier.arguments.IntegerArgumentType;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.commands.arguments.GameProfileArgument;

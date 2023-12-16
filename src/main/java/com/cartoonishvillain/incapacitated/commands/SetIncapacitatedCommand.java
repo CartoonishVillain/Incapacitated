@@ -1,8 +1,5 @@
 package com.cartoonishvillain.incapacitated.commands;
 
-import com.cartoonishvillain.incapacitated.capability.PlayerCapability;
-import com.cartoonishvillain.incapacitated.networking.IncapPacket;
-import com.cartoonishvillain.incapacitated.networking.IncapacitationMessenger;
 import com.mojang.authlib.GameProfile;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.BoolArgumentType;

@@ -9,10 +9,7 @@ import static com.cartoonishvillain.incapacitated.Incapacitated.devMode;
 
 public class IncapDevMode {
     public static void register(CommandDispatcher<CommandSourceStack> dispatcher) {
-        dispatcher.register(Commands.literal("incapacitated").then(Commands.literal("devMode").requires(cs -> cs.hasPermission(0)).executes(context -> {
-                            return setIncapped(context.getSource());
-                        })
-                ));
+        dispatcher.register(Commands.literal("incapacitated").then(Commands.literal("devMode").requires(cs -> cs.hasPermission(0)).executes(context -> setIncapped(context.getSource()))));
     }
 
     private static int setIncapped(CommandSourceStack sourceStack) {

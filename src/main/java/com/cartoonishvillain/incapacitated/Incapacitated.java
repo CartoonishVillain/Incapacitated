@@ -1,39 +1,42 @@
 package com.cartoonishvillain.incapacitated;
 
-import com.cartoonishvillain.incapacitated.config.ClientConfig;
-import com.cartoonishvillain.incapacitated.config.CommonConfig;
-import com.cartoonishvillain.incapacitated.config.ConfigHelper;
+import com.cartoonishvillain.incapacitated.capability.PlayerCapability;
+import com.cartoonishvillain.incapacitated.config.IncapacitatedClientConfig;
+import com.cartoonishvillain.incapacitated.config.IncapacitatedCommonConfig;
 import com.cartoonishvillain.incapacitated.networking.IncapacitationMessenger;
-import net.minecraft.ResourceLocationException;
-import net.minecraft.resources.ResourceLocation;
+import com.mojang.logging.LogUtils;
+
 import net.minecraft.world.damagesource.DamageTypes;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.config.ModConfig;
-import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
-import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
-import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.bus.api.IEventBus;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.ModLoadingContext;
+import net.neoforged.fml.common.Mod;
+import net.neoforged.fml.config.ModConfig;
+import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
+import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
+import net.neoforged.neoforge.common.NeoForge;
+import net.neoforged.neoforge.event.server.ServerStartingEvent;
+import org.slf4j.Logger;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.cartoonishvillain.incapacitated.config.IncapacitatedCommonConfig.*;
 import static com.cartoonishvillain.incapacitated.events.IncapacitatedDamageSources.BLEEDOUT;
 
 // The value here should match an entry in the META-INF/mods.toml file
-@Mod("incapacitated")
+@Mod(Incapacitated.MODID)
 public class Incapacitated
 {
-    // Directly reference a log4j logger.
+    // Define mod id in a common place for everything to reference
     public static final String MODID = "incapacitated";
-    private static final Logger LOGGER = LogManager.getLogger();
-    public static CommonConfig config;
-    public static ClientConfig clientConfig;
+    // Directly reference a slf4j logger
+    public static final Logger LOGGER = LogUtils.getLogger();
 
     public static boolean devMode = false;
-    public static ArrayList<String> ReviveFoods;
-    public static ArrayList<String> HealingFoods;
+    public static List<String> ReviveFoods;
+    public static List<String> HealingFoods;
     public static ArrayList<String> instantKillDamageSourcesMessageID;
 
     //User is invulnerable to damage while down
@@ -48,69 +51,55 @@ public class Incapacitated
     public static Boolean regenerating = false;
     //Does the down counter go down?
     public static Boolean unlimitedDowns = false;
-    //Does disconnecting while down kill the player.
-    public static Boolean downLogging = false;
+//    //Does disconnecting while down kill the player.
+//    public static Boolean downLogging = false;
 
-    public Incapacitated() {
-        IncapacitationMessenger.register();
-        FMLJavaModLoadingContext.get().getModEventBus().addListener(this::setup);
-        FMLJavaModLoadingContext.get().getModEventBus().addListener(this::doClientStuff);
-        config = ConfigHelper.register(ModConfig.Type.COMMON, CommonConfig::new);
-        clientConfig = ConfigHelper.register(ModConfig.Type.CLIENT, ClientConfig::new);
-        instantKillDamageSourcesMessageID = new ArrayList<>(List.of(BLEEDOUT.location.getPath(), DamageTypes.FELL_OUT_OF_WORLD.location.getPath(), DamageTypes.LAVA.location.getPath(), DamageTypes.WITHER.location.getPath(), "outOfWorld" ));
-        IncapEffects.init();
-
+    // The constructor for the mod class is the first code that is run when your mod is loaded.
+    // FML will recognize some parameter types like IEventBus or ModContainer and pass them in automatically.
+    public Incapacitated(IEventBus modEventBus)
+    {
+        // Register the commonSetup method for modloading
+        modEventBus.addListener(this::commonSetup);
+        PlayerCapability.loadDataAttachment(modEventBus);
+        IncapEffects.init(modEventBus);
 
         // Register ourselves for server and other game events we are interested in
-        MinecraftForge.EVENT_BUS.register(this);
+        NeoForge.EVENT_BUS.register(this);
+
+        // Register our mod's ModConfigSpec so that FML can create and load the config file for us
+        ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, IncapacitatedCommonConfig.SPEC);
+        ModLoadingContext.get().registerConfig(ModConfig.Type.CLIENT, IncapacitatedClientConfig.CLIENTSPEC);
+        instantKillDamageSourcesMessageID = new ArrayList<>(List.of(BLEEDOUT.location().getPath(), DamageTypes.FELL_OUT_OF_WORLD.location().getPath(), DamageTypes.LAVA.location().getPath(), DamageTypes.WITHER.location().getPath(), "outOfWorld" ));
     }
 
-    private void setup(final FMLCommonSetupEvent event)
+    private void commonSetup(final FMLCommonSetupEvent event)
     {
-        HealingFoods = getFoodForHealing();
-        ReviveFoods = getFoodForReviving();
-        merciful = config.MERCIFUL.get();
-        hunter = config.HUNTER.get();
-        slow = config.SLOW.get();
-        weakened = config.WEAKENED.get();
-        regenerating = config.REGENERATING.get();
-        unlimitedDowns = config.UNLIMITEDDOWNS.get();
-        downLogging = config.DOWNLOGGING.get();
+        IncapacitationMessenger.register();
     }
 
-    private void doClientStuff(final FMLClientSetupEvent event) {
+    // You can use SubscribeEvent and let the Event Bus discover methods to call
+    @SubscribeEvent
+    public void onServerStarting(ServerStartingEvent event)
+    {
+        Incapacitated.HealingFoods = (List<String>) HEALINGFOODS.get();
+        Incapacitated.ReviveFoods = (List<String>) REVIVEFOODS.get();
+        Incapacitated.merciful = MERCIFUL.get();
+        Incapacitated.hunter = HUNTER.get();
+        Incapacitated.slow = SLOW.get();
+        Incapacitated.weakened = WEAKENED.get();
+        Incapacitated.regenerating = REGENERATING.get();
+        Incapacitated.unlimitedDowns = UNLIMITEDDOWNS.get();
+//        Incapacitated.downLogging = DOWNLOGGING.get();
     }
 
-    private ArrayList<String> getFoodForReviving() {
-        final String FoodList = config.REVIVEFOODS.get();
-        String[] reviveFoods = FoodList.split(",");
-        ArrayList<String> reviveFoodList = new ArrayList<>();
-        try {
-            for(String string : reviveFoods){
-                String food = new ResourceLocation(string).getPath();
-                reviveFoodList.add(food);
-            }
-        }catch(ResourceLocationException e){
-            Incapacitated.LOGGER.error("Incapacitation: Revive foods not parsed. Non [a-z0-9_.-] character in config! Using default...");
-            return new ArrayList<>(List.of("enchanted_golden_apple"));
+    // You can use EventBusSubscriber to automatically register all static methods in the class annotated with @SubscribeEvent
+    @Mod.EventBusSubscriber(modid = MODID, bus = Mod.EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
+    public static class ClientModEvents
+    {
+        @SubscribeEvent
+        public static void onClientSetup(FMLClientSetupEvent event)
+        {
+
         }
-        return reviveFoodList;
     }
-
-    private ArrayList<String> getFoodForHealing() {
-        final String FoodList = config.HEALINGFOODS.get();
-        String[] healFoods = FoodList.split(",");
-        ArrayList<String> healFoodList = new ArrayList<>();
-        try {
-            for(String string : healFoods){
-                String food = new ResourceLocation(string).getPath();
-                healFoodList.add(food);
-            }
-        }catch(ResourceLocationException e){
-            Incapacitated.LOGGER.error("Incapacitation: Healing foods not parsed. Non [a-z0-9_.-] character in config! Using default...");
-            return new ArrayList<>(List.of("golden_apple"));
-        }
-        return healFoodList;
-    }
-
 }
