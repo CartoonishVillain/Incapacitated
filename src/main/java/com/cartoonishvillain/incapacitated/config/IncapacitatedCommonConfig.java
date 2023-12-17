@@ -38,9 +38,9 @@ public class IncapacitatedCommonConfig
             .comment("Does the player receive a chat message when revived with information?")
             .define("reviveMessage", true);
 
-//    private static final ModConfigSpec.BooleanValue DOWNLOGGING = COMMONBUILDER
-//            .comment("Does the player die when they log out while downed?")
-//            .define("downLogging", false);
+    public static final ModConfigSpec.BooleanValue DOWNLOGGING = COMMONBUILDER
+            .comment("Does the player die when they log out while downed?")
+            .define("downLogging", false);
 
     public static final ModConfigSpec.BooleanValue UNLIMITEDDOWNS = COMMONBUILDER
             .comment("Does the player have unlimited downs?")
@@ -62,9 +62,12 @@ public class IncapacitatedCommonConfig
             .comment("Can players revive themselves with a (non-player) kill?")
             .define("hunter", false);
 
-    public static final ModConfigSpec.BooleanValue MERCIFUL = COMMONBUILDER
+    public static final ModConfigSpec.IntValue MERCIFUL = COMMONBUILDER
             .comment("Are players immune to damage while downed?")
-            .define("merciful", false);
+            .comment("0: No, players are not immune to damage while downed.")
+            .comment("1: Yes, but part of the damage received is removed from the down timer")
+            .comment("2: Yes, with no caveats.")
+            .defineInRange("merciful", 0, 0, 2);
 
     public static final ModConfigSpec.IntValue DOWNTICKS = COMMONBUILDER
             .comment("How many ticks a player can be downed without dying.")

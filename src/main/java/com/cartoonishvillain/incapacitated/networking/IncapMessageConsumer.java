@@ -21,9 +21,15 @@ public class IncapMessageConsumer implements MessageFunctions.MessageConsumer<In
                 incapacitatedPlayerData.setIncapacitated(incapPacket.getIncapacitated());
                 incapacitatedPlayerData.setDownsUntilDeath(incapPacket.getDownCount());
 
+                if (incapPacket.getDownTicks() != -1) {
+                    incapacitatedPlayerData.setTicksUntilDeath(incapPacket.getDownTicks());
+                }
+
                 if (!incapPacket.getIncapacitated()) {
                     ((Player) entity).setForcedPose(null);
                 }
+
+                entity.setData(INCAP_DATA, incapacitatedPlayerData);
 
                 if (IncapacitatedClientConfig.GRAYSCREEN.get()) {
                     if (incapPacket.getDownCount() <= 0) {

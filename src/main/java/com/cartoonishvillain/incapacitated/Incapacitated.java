@@ -40,7 +40,7 @@ public class Incapacitated
     public static ArrayList<String> instantKillDamageSourcesMessageID;
 
     //User is invulnerable to damage while down
-    public static Boolean merciful = false;
+    public static int merciful = 0;
     //User can revive when they get a kill
     public static Boolean hunter = false;
     //User gets slowed while down
@@ -51,8 +51,8 @@ public class Incapacitated
     public static Boolean regenerating = false;
     //Does the down counter go down?
     public static Boolean unlimitedDowns = false;
-//    //Does disconnecting while down kill the player.
-//    public static Boolean downLogging = false;
+    //Does disconnecting while down kill the player.
+    public static Boolean downLogging = false;
 
     // The constructor for the mod class is the first code that is run when your mod is loaded.
     // FML will recognize some parameter types like IEventBus or ModContainer and pass them in automatically.
@@ -89,7 +89,7 @@ public class Incapacitated
         Incapacitated.weakened = WEAKENED.get();
         Incapacitated.regenerating = REGENERATING.get();
         Incapacitated.unlimitedDowns = UNLIMITEDDOWNS.get();
-//        Incapacitated.downLogging = DOWNLOGGING.get();
+        Incapacitated.downLogging = DOWNLOGGING.get();
     }
 
     // You can use EventBusSubscriber to automatically register all static methods in the class annotated with @SubscribeEvent

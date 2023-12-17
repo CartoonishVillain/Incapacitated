@@ -8,6 +8,11 @@ public class IncapPacket {
     private final Boolean isIncapacitated;
 
     private final short downCount;
+    private final int downTicks;
+
+    public int getDownTicks() {
+        return downTicks;
+    }
 
     public int getID() {
         return ID;
@@ -21,16 +26,25 @@ public class IncapPacket {
         return downCount;
     }
 
+    public IncapPacket(int id, boolean isIncapacitated, short downCount, int downTicks){
+        this.ID = id;
+        this.isIncapacitated = isIncapacitated;
+        this.downCount = downCount;
+        this.downTicks = downTicks;
+    }
+
     public IncapPacket(int id, boolean isIncapacitated, short downCount){
         this.ID = id;
         this.isIncapacitated = isIncapacitated;
         this.downCount = downCount;
+        this.downTicks = -1;
     }
 
     public IncapPacket(FriendlyByteBuf packetBuffer) {
         ID = packetBuffer.readInt();
         isIncapacitated = packetBuffer.readBoolean();
         downCount = packetBuffer.readShort();
+        this.downTicks = packetBuffer.readInt();
     }
 
     public static IncapPacket decode(FriendlyByteBuf buf) {

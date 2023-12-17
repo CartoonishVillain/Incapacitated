@@ -9,5 +9,6 @@ public class IncapMessageEncoder implements MessageFunctions.MessageEncoder<Inca
         buffer.writeInt(message.getID());
         buffer.writeBoolean(message.getIncapacitated());
         buffer.writeShort(message.getDownCount());
+        buffer.writeInt(message.getDownTicks());
     }
 }

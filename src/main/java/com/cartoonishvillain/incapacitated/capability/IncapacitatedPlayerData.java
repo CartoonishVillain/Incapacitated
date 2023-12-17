@@ -14,6 +14,7 @@ import java.io.Serializable;
 import static com.cartoonishvillain.incapacitated.events.IncapacitatedDamageSources.BLEEDOUT;
 
 public class IncapacitatedPlayerData implements Serializable {
+
     boolean incapacitated = false;
     int ticksUntilDeath = IncapacitatedCommonConfig.DOWNTICKS.get();
     int downsUntilDeath = IncapacitatedCommonConfig.DOWNCOUNT.get();

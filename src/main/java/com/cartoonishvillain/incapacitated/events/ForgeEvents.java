@@ -2,7 +2,6 @@ package com.cartoonishvillain.incapacitated.events;
 
 import com.cartoonishvillain.incapacitated.Incapacitated;
 import com.cartoonishvillain.incapacitated.capability.IncapacitatedPlayerData;
-import com.cartoonishvillain.incapacitated.capability.PlayerCapability;
 import com.cartoonishvillain.incapacitated.commands.*;
 import com.cartoonishvillain.incapacitated.config.IncapacitatedCommonConfig;
 import com.cartoonishvillain.incapacitated.networking.IncapPacket;
@@ -28,6 +27,7 @@ import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerWakeUpEvent;
 
 import java.util.ArrayList;
+
 import static com.cartoonishvillain.incapacitated.Incapacitated.*;
 import static com.cartoonishvillain.incapacitated.capability.PlayerCapability.INCAP_DATA;
 import static com.cartoonishvillain.incapacitated.events.AbstractedIncapacitation.downOrKill;
@@ -54,7 +54,12 @@ public class ForgeEvents {
         if(event.getEntity() instanceof ServerPlayer) {
             //Merciful check
             IncapacitatedPlayerData data = event.getEntity().getData(INCAP_DATA);
-            if (data.isIncapacitated() && Incapacitated.merciful && !(event.getSource().getMsgId().equals("bleedout"))) {
+            if (data.isIncapacitated() && Incapacitated.merciful > 0 && !(event.getSource().getMsgId().equals("bleedout"))) {
+                if (merciful == 1 && !event.getEntity().level().isClientSide) {
+                    data.setTicksUntilDeath((int) (data.getTicksUntilDeath() - event.getAmount()));
+                    IncapacitationMessenger.sendTo(new IncapPacket(event.getEntity().getId(), data.isIncapacitated(), (short) data.getDownsUntilDeath(), data.getTicksUntilDeath()), (Player) event.getEntity());
+                    event.getEntity().setData(INCAP_DATA, data);
+                }
                 event.setAmount(0);
             }
         }
@@ -78,15 +83,22 @@ public class ForgeEvents {
     }
 
 
-//    @SubscribeEvent
-//    public static void playerLogoutEvent(PlayerEvent.PlayerLoggedOutEvent event) {
-//        if (downLogging && event.getEntity() instanceof ServerPlayer) {
-//            IncapacitatedPlayerData data = event.getEntity().getData(INCAP_DATA);
-//            if (data.isIncapacitated()) {
-//                downOrKill(event.getEntity());
-//            }
-//        }
-//    }
+    @SubscribeEvent
+    public static void playerLogoutEvent(PlayerEvent.PlayerLoggedOutEvent event) {
+        if (downLogging && event.getEntity() instanceof ServerPlayer) {
+            IncapacitatedPlayerData data = event.getEntity().getData(INCAP_DATA);
+            if (data.isIncapacitated()) {
+                downOrKill(event.getEntity());
+            }
+        }
+    }
+
+    @SubscribeEvent
+    public static void playerLoginEvent(PlayerEvent.PlayerLoggedInEvent event) {
+        if (!event.getEntity().level().isClientSide) {
+            event.getEntity().sendSystemMessage(Component.translatable("incapacitated.info.joinrevivetutorial"));
+        }
+    }
 
     @SubscribeEvent
     public static void playerCloneEvent(PlayerEvent.Clone event){
@@ -108,7 +120,7 @@ public class ForgeEvents {
     public static void PlayerJoinEvent(EntityJoinLevelEvent event){
         if(event.getEntity() instanceof Player player && !event.getLevel().isClientSide()){
             IncapacitatedPlayerData playerData = event.getEntity().getData(INCAP_DATA);
-            IncapacitationMessenger.sendTo(new IncapPacket(player.getId(), playerData.isIncapacitated(), (short) playerData.getDownsUntilDeath()), player);
+            IncapacitationMessenger.sendTo(new IncapPacket(player.getId(), playerData.isIncapacitated(), (short) playerData.getDownsUntilDeath(), playerData.getTicksUntilDeath()), player);
         }
     }
 
@@ -136,7 +148,7 @@ public class ForgeEvents {
 
                 //Loop through nearby players to check if any are reviving the downed player successfully
                 for (Player player : playerEntities) {
-                    boolean isdown = false;
+                    boolean isdown;
                     IncapacitatedPlayerData potentialHeroData = player.getData(INCAP_DATA);
                     isdown = potentialHeroData.isIncapacitated();
 
@@ -145,7 +157,6 @@ public class ForgeEvents {
                     if (player.isCrouching() && !isdown) {
                         reviving = true;
                         revivingPlayer = player;
-                        break;
                     }
                 }
 
