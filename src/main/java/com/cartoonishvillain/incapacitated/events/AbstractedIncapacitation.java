@@ -154,7 +154,9 @@ public class AbstractedIncapacitation {
         player.removeEffect(IncapEffects.incapSlow.get());
         player.removeEffect(IncapEffects.incapWeak.get());
         player.setData(INCAP_DATA, incapacitatedPlayerData);
-        IncapacitationMessenger.sendTo(new IncapPacket(player.getId(), false, (short) incapacitatedPlayerData.getDownsUntilDeath()), player);
+        if (!player.level().isClientSide) {
+            IncapacitationMessenger.sendTo(new IncapPacket(player.getId(), false, (short) incapacitatedPlayerData.getDownsUntilDeath()), player);
+        }
         player.setHealth(player.getMaxHealth() / 3f);
         player.level().playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.NOTE_BLOCK_PLING.value(), SoundSource.PLAYERS, 1, 1);
 

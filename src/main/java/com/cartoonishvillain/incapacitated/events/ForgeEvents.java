@@ -8,6 +8,7 @@ import com.cartoonishvillain.incapacitated.networking.IncapPacket;
 import com.cartoonishvillain.incapacitated.networking.IncapacitationMessenger;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.effect.MobEffects;
@@ -141,8 +142,9 @@ public class ForgeEvents {
                     event.player.setForcedPose(Pose.SWIMMING);
                 }
 
-                //Scan for any players nearby
-                ArrayList<Player> playerEntities = (ArrayList<Player>) event.player.level().getEntitiesOfClass(Player.class, event.player.getBoundingBox().inflate(3));
+                if (event.side.isServer()) {
+                    //Scan for any players nearby
+                    ArrayList<Player> playerEntities = (ArrayList<Player>) event.player.level().getEntitiesOfClass(Player.class, event.player.getBoundingBox().inflate(3));
                 boolean reviving = false;
                 Player revivingPlayer = null;
 
@@ -167,8 +169,13 @@ public class ForgeEvents {
                         revive(event.player);
                     } else {
                         //If the timer is not 0 on the revive timer, tell both parties that the revive is occuring, and how much longer until it is done.
-                        event.player.displayClientMessage(Component.translatable("message.downindicator.reviving", (playerData.getReviveCounter() / 20)).withStyle(ChatFormatting.GREEN), true);
-                        revivingPlayer.displayClientMessage(Component.translatable("message.reviveindicator.reviving", event.player.getScoreboardName(), (playerData.getReviveCounter() / 20)).withStyle(ChatFormatting.GREEN), true);
+                        if (!IncapacitatedCommonConfig.USESECONDS.get()) {
+                            event.player.displayClientMessage(revivingComponent(playerData, "message.downindicator.revivingbar"), true);
+                            revivingPlayer.displayClientMessage(revivingComponent(playerData, "message.reviveindicator.revivingbar", event.player), true);
+                        } else {
+                            event.player.displayClientMessage(revivingComponent(playerData, "message.downindicator.reviving"), true);
+                            revivingPlayer.displayClientMessage(revivingComponent(playerData, "message.reviveindicator.reviving", event.player), true);
+                        }
                     }
                 } else {
                     //If our event player is not being revived, count down the timer until; their death. Returns true when the player runs out of time.
@@ -192,6 +199,50 @@ public class ForgeEvents {
                     }
                 }
             }
+            }
+        }
+    }
+
+    private static MutableComponent revivingComponent(IncapacitatedPlayerData playerData, String translatable) {
+        if (!IncapacitatedCommonConfig.USESECONDS.get()) {
+            MutableComponent barComponent = Component.literal("[").withStyle(ChatFormatting.GREEN);
+            float percentage = 1 - ((float)playerData.getReviveCounter()/(float)IncapacitatedCommonConfig.REVIVETICKS.get());
+            percentage *= 100;
+            LOGGER.debug("Config amount: " + IncapacitatedCommonConfig.REVIVETICKS.get() + " current revive counter: " + playerData.getReviveCounter() + " calculated: " + (100 - (playerData.getReviveCounter()/IncapacitatedCommonConfig.REVIVETICKS.get())));
+            for (int i = 10; i > 0; i--) {
+                if (percentage >= 10) {
+                    percentage -= 10;
+                    barComponent.append(Component.literal(":").withStyle(ChatFormatting.GOLD));
+                } else {
+                    barComponent.append(Component.literal(":").withStyle(ChatFormatting.DARK_GRAY));
+                }
+            }
+            barComponent.append(Component.literal("]").withStyle(ChatFormatting.GREEN));
+
+            return Component.translatable(translatable, barComponent).withStyle(ChatFormatting.GREEN);
+        } else {
+            return Component.translatable(translatable, (playerData.getReviveCounter() / 20)).withStyle(ChatFormatting.GREEN);
+        }
+    }
+
+    private static MutableComponent revivingComponent(IncapacitatedPlayerData playerData, String translatable, Player player) {
+        if (!IncapacitatedCommonConfig.USESECONDS.get()) {
+            MutableComponent barComponent = Component.literal("[").withStyle(ChatFormatting.GREEN);
+            float percentage = 1 - ((float)playerData.getReviveCounter()/(float)IncapacitatedCommonConfig.REVIVETICKS.get());
+            percentage *= 100;
+            for (int i = 10; i > 0; i--) {
+                if (percentage >= 10) {
+                    percentage -= 10;
+                    barComponent.append(Component.literal(":").withStyle(ChatFormatting.GOLD));
+                } else {
+                    barComponent.append(Component.literal(":").withStyle(ChatFormatting.DARK_GRAY));
+                }
+            }
+            barComponent.append(Component.literal("]").withStyle(ChatFormatting.GREEN));
+
+            return Component.translatable(translatable, player.getScoreboardName(), barComponent).withStyle(ChatFormatting.GREEN);
+        } else {
+            return Component.translatable(translatable, player.getScoreboardName(),(playerData.getReviveCounter() / 20)).withStyle(ChatFormatting.GREEN);
         }
     }
 

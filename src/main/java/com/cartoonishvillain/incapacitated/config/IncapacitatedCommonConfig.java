@@ -22,6 +22,10 @@ public class IncapacitatedCommonConfig
             .comment("Do players glow while downed to be easier to find?")
             .define("glowingWhileDowned", true);
 
+    public static final ModConfigSpec.BooleanValue USESECONDS = COMMONBUILDER
+            .comment("When reviving, do we display seconds until revive instead of the bar?")
+            .define("useSecondsForRevive", false);
+
     public static final ModConfigSpec.BooleanValue SOMEINSTANTKILLS = COMMONBUILDER
             .comment("Do some damage types like Lava down players, or instantly kill?")
             .define("someInstantKills", true);
@@ -83,11 +87,11 @@ public class IncapacitatedCommonConfig
 
     // a list of strings that are treated as resource locations for items
     public static final ModConfigSpec.ConfigValue<List<? extends String>> REVIVEFOODS = COMMONBUILDER
-            .comment("A list of comma separated item IDs for foods player can eat to revive themselves. IE: minecraft:enchanted_golden_apple,minecraft:apple")
+            .comment("A list of comma separated item IDs for foods player can eat to revive themselves.")
             .defineListAllowEmpty("foodReviveList", List.of("minecraft:enchanted_golden_apple"), IncapacitatedCommonConfig::validateItemName);
 
     public static final ModConfigSpec.ConfigValue<List<? extends String>> HEALINGFOODS = COMMONBUILDER
-        .comment("A list of comma separated item IDs for foods player can eat to reset their down counters. IE: minecraft:golden_apple,minecraft:golden_carrot")
+        .comment("A list of comma separated item IDs for foods player can eat to reset their down counters.")
         .defineListAllowEmpty("foodHealList", List.of("minecraft:golden_apple"), IncapacitatedCommonConfig::validateItemName);
 
     public static final ModConfigSpec SPEC = COMMONBUILDER.build();
