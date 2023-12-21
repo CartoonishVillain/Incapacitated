@@ -11,6 +11,8 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.damagesource.DamageTypes;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Pose;
 import net.minecraft.world.entity.player.Player;
@@ -57,11 +59,22 @@ public class ForgeEvents {
             IncapacitatedPlayerData data = event.getEntity().getData(INCAP_DATA);
             if (data.isIncapacitated() && Incapacitated.merciful > 0 && !(event.getSource().getMsgId().equals("bleedout"))) {
                 if (merciful == 1 && !event.getEntity().level().isClientSide) {
-                    data.setTicksUntilDeath((int) (data.getTicksUntilDeath() - event.getAmount()));
+                    int timeToRemove = (int) event.getAmount();
+                    if (timeToRemove > 2000) timeToRemove = 2000;
+                    data.setTicksUntilDeath((int) (data.getTicksUntilDeath() - timeToRemove));
                     IncapacitationMessenger.sendTo(new IncapPacket(event.getEntity().getId(), data.isIncapacitated(), (short) data.getDownsUntilDeath(), data.getTicksUntilDeath()), (Player) event.getEntity());
                     event.getEntity().setData(INCAP_DATA, data);
                 }
-                event.setAmount(0);
+
+                boolean doDamageRegardless = false;
+                for (String damageType : noMercyDamageSourcesMessageID) {
+                    if (damageType.contains(event.getSource().getMsgId())) {
+                        doDamageRegardless = true;
+                        break;
+                    }
+                }
+                if (data.getTicksUntilDeath() > 0 || !doDamageRegardless)
+                    event.setAmount(0);
             }
         }
     }

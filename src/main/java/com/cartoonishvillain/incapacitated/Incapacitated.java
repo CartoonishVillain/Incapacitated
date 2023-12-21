@@ -38,6 +38,7 @@ public class Incapacitated
     public static List<String> ReviveFoods;
     public static List<String> HealingFoods;
     public static ArrayList<String> instantKillDamageSourcesMessageID;
+    public static ArrayList<String> noMercyDamageSourcesMessageID;
 
     //User is invulnerable to damage while down
     public static int merciful = 0;
@@ -70,6 +71,7 @@ public class Incapacitated
         ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, IncapacitatedCommonConfig.SPEC);
         ModLoadingContext.get().registerConfig(ModConfig.Type.CLIENT, IncapacitatedClientConfig.CLIENTSPEC);
         instantKillDamageSourcesMessageID = new ArrayList<>(List.of(BLEEDOUT.location().getPath(), DamageTypes.FELL_OUT_OF_WORLD.location().getPath(), DamageTypes.LAVA.location().getPath(), DamageTypes.WITHER.location().getPath(), "outOfWorld" ));
+        noMercyDamageSourcesMessageID = new ArrayList<>(List.of(BLEEDOUT.location().getPath(), DamageTypes.FELL_OUT_OF_WORLD.location().getPath(), DamageTypes.GENERIC.location().getPath(), DamageTypes.GENERIC_KILL.location().getPath(), DamageTypes.OUTSIDE_BORDER.location().getPath()));
     }
 
     private void commonSetup(final FMLCommonSetupEvent event)
