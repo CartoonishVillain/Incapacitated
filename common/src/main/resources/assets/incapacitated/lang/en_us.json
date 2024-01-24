@@ -1,0 +1,21 @@
+{
+  "death.attack.bleedout": "%1$s and bled out",
+  "command.return.incapped": "Forcibly incapacitated %1$s",
+  "command.return.revived": "Forcibly revived %1$s",
+  "command.return.setdowns": "%1$s now has %2$s incapacitations until death",
+  "command.return.getdowns": "%1$s has %2$s incapacitations until death",
+  "message.incap.message": "%1$s is incapacitated!",
+  "message.revive.message": "%1$s has been revived!",
+  "message.revivecount.normal": "You have %1$s downs left",
+  "message.revivecount.one": "You have 1 down left",
+  "message.revivecount.zero": "You have no downs left",
+  "message.downindicator.norevive": "Incapacitated! Call for help or run \"%1$s\" to give up! %2$s seconds left!",
+  "message.downindicator.reviving": "You are being revived! %1$s seconds..",
+  "message.reviveindicator.reviving": "Reviving %1$s %2$s seconds..",
+  "message.downindicator.revivingbar": "You are being revived! %1$s",
+  "message.reviveindicator.revivingbar": "Reviving %1$s %2$s",
+  "incapacitated.info.joinrevivetutorial": "[Incapacitated] Crouch near incapacitated players to revive them!",
+  "KillPlayer.attack.bleedout": "%1$s and bled out",
+  "effect.incapacitated.incap_slow": "Crippled",
+  "effect.incapacitated.incap_weak": "Defeated"
+}

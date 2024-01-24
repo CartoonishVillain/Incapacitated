@@ -1,0 +1,26 @@
+{
+    "required": true,
+    "minVersion": "0.8",
+    "package": "com.cartoonishvillain.incapacitated.mixin",
+    "refmap": "${mod_id}.refmap.json",
+    "compatibilityLevel": "JAVA_17",
+    "mixins": [
+        "HealingFoodMixin",
+        "LivingEntityDieMixin",
+        "LivingEntityHurtMixin",
+        "PlayerDeathMixin",
+        "PlayerJoinMixin",
+        "PlayerMixin",
+        "PlayerRemoveMixin",
+        "PlayerSleepMixin",
+        "ServerPlayerTickMixin"
+    ],
+    "client": [
+    ],
+    "server": [
+    ],
+    "injectors": {
+        "defaultRequire": 1
+    }
+}
+
