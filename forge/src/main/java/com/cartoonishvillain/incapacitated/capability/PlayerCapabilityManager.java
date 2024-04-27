@@ -1,6 +1,7 @@
 package com.cartoonishvillain.incapacitated.capability;
 
 import com.cartoonishvillain.incapacitated.ForgeIncapacitated;
+import com.cartoonishvillain.incapacitated.Incapacitated;
 import com.cartoonishvillain.incapacitated.damage.BleedOutDamage;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Holder;
@@ -22,9 +23,9 @@ import static com.cartoonishvillain.incapacitated.damage.IncapacitatedDamageSour
 
 public class PlayerCapabilityManager implements IPlayerCapability, ICapabilityProvider, INBTSerializable<CompoundTag> {
     protected boolean incapacitated = false;
-    protected int ticksUntilDeath = ForgeIncapacitated.config.DOWNTICKS.get();
-    protected int downsUntilDeath = ForgeIncapacitated.config.DOWNCOUNT.get();
-    protected int reviveCounter = ForgeIncapacitated.config.REVIVETICKS.get();
+    protected int ticksUntilDeath = Incapacitated.configData.getDownTicks();
+    protected int downsUntilDeath = Incapacitated.configData.getDownCounter();
+    protected int reviveCounter = Incapacitated.configData.getReviveTicks();
     public final LazyOptional<IPlayerCapability> holder = LazyOptional.of(()->this);
     private DamageSource originalSource;
     

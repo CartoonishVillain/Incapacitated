@@ -1,6 +1,7 @@
 package com.cartoonishvillain.incapacitated.component;
 
 import com.cartoonishvillain.incapacitated.FabricIncapacitated;
+import com.cartoonishvillain.incapacitated.Incapacitated;
 import com.cartoonishvillain.incapacitated.damage.BleedOutDamage;
 import dev.onyxstudios.cca.api.v3.component.sync.AutoSyncedComponent;
 import net.minecraft.core.Holder;
@@ -18,9 +19,9 @@ import static com.cartoonishvillain.incapacitated.damage.IncapacitatedDamageSour
 public class IncapacitatedComponent implements IncapacitatedInterface, AutoSyncedComponent {
     private final Object provider;
     protected boolean incapacitated = false;
-    protected int ticksUntilDeath = FabricIncapacitated.downTicks;
-    protected int downsUntilDeath = FabricIncapacitated.downCounter;
-    protected int reviveCounter = FabricIncapacitated.reviveTicks;
+    protected int ticksUntilDeath = Incapacitated.configData.getDownTicks();
+    protected int downsUntilDeath = Incapacitated.configData.getDownCounter();
+    protected int reviveCounter = Incapacitated.configData.getReviveTicks();
     private DamageSource originalSource;
 
     public IncapacitatedComponent(Object provider){this.provider = provider;}

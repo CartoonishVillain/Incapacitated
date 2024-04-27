@@ -216,13 +216,13 @@ public class AbstractedIncapacitation {
         if(entity instanceof Player player && !entity.level().isClientSide()){
             Item item = itemStack.getItem();
             IncapacitatedPlayerData incapacitatedPlayerData = Services.PLATFORM.getPlayerData(player);
-            if(Incapacitated.HealingFoods.contains(item.toString())) {
+            if(Incapacitated.healingFoods.contains(item.toString())) {
                 incapacitatedPlayerData.setDownsUntilDeath(Incapacitated.configData.getDownCounter());
                 incapacitatedPlayerData.setTicksUntilDeath(Incapacitated.configData.getDownTicks());
             }
 
             if(incapacitatedPlayerData.isIncapacitated()) {
-                if(Incapacitated.ReviveFoods.contains(item.toString())){
+                if(Incapacitated.reviveFoods.contains(item.toString())){
                     incapacitatedPlayerData.setIncapacitated(false);
                     incapacitatedPlayerData.setReviveCounter(Incapacitated.configData.getReviveTicks());
                     incapacitatedPlayerData.setDownsUntilDeath(Incapacitated.configData.getDownCounter());
@@ -231,7 +231,7 @@ public class AbstractedIncapacitation {
                     player.setHealth(player.getMaxHealth()/3f);
                     player.level().playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.NOTE_BLOCK_PLING.value(), SoundSource.PLAYERS, 1, 1);
                 }
-            } else if(Incapacitated.ReviveFoods.contains(item.toString())) {
+            } else if(Incapacitated.reviveFoods.contains(item.toString())) {
                 incapacitatedPlayerData.setDownsUntilDeath(Incapacitated.configData.getDownCounter());
                 incapacitatedPlayerData.setTicksUntilDeath(Incapacitated.configData.getDownTicks());
             }

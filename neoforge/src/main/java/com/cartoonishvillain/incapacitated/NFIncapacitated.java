@@ -1,10 +1,8 @@
 package com.cartoonishvillain.incapacitated;
 
-
 import com.cartoonishvillain.incapacitated.capability.PlayerCapability;
 import com.cartoonishvillain.incapacitated.commands.*;
 import com.cartoonishvillain.incapacitated.config.IncapacitatedClientConfig;
-import com.cartoonishvillain.incapacitated.config.IncapacitatedCommonConfig;
 import com.cartoonishvillain.incapacitated.networking.IncapPacket;
 import com.cartoonishvillain.incapacitated.networking.IncapPacketClientHandler;
 import net.neoforged.bus.api.IEventBus;
@@ -15,14 +13,8 @@ import net.neoforged.fml.config.ModConfig;
 import net.neoforged.fml.loading.FMLLoader;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.RegisterCommandsEvent;
-import net.neoforged.neoforge.event.server.ServerStartingEvent;
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlerEvent;
 import net.neoforged.neoforge.network.registration.IPayloadRegistrar;
-
-import java.util.List;
-
-import static com.cartoonishvillain.incapacitated.config.IncapacitatedCommonConfig.HEALINGFOODS;
-import static com.cartoonishvillain.incapacitated.config.IncapacitatedCommonConfig.REVIVEFOODS;
 
 @Mod(Constants.MOD_ID)
 public class NFIncapacitated {
@@ -33,17 +25,11 @@ public class NFIncapacitated {
         PlayerCapability.loadDataAttachment(modEventBus);
         IncapEffects.init(modEventBus);
 
-        ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, IncapacitatedCommonConfig.SPEC);
         ModLoadingContext.get().registerConfig(ModConfig.Type.CLIENT, IncapacitatedClientConfig.CLIENTSPEC);
 
         NeoForge.EVENT_BUS.register(this);
     }
 
-    @SubscribeEvent
-    public void onServerStarting(ServerStartingEvent event) {
-        Incapacitated.HealingFoods = (List<String>) HEALINGFOODS.get();
-        Incapacitated.ReviveFoods = (List<String>) REVIVEFOODS.get();
-    }
 
     @SubscribeEvent
     public void commandLoad(RegisterCommandsEvent event){

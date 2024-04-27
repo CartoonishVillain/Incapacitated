@@ -4,6 +4,7 @@ import com.cartoonishvillain.incapacitated.Incapacitated;
 import com.mojang.brigadier.CommandDispatcher;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
+import net.minecraft.network.chat.Component;
 
 public class ConfigCommands {
     public static void register(CommandDispatcher<CommandSourceStack> dispatcher) {
@@ -20,6 +21,7 @@ public class ConfigCommands {
 
     private static int reloadConfig(CommandSourceStack sourceStack) {
         Incapacitated.loadConfig();
+        sourceStack.sendSuccess(() -> Component.translatable("command.return.config.reload"), true);
         return 0;
     }
 }

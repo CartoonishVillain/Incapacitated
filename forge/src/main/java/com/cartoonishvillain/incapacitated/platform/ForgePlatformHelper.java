@@ -2,6 +2,7 @@ package com.cartoonishvillain.incapacitated.platform;
 
 import com.cartoonishvillain.incapacitated.ForgeIncapEffects;
 import com.cartoonishvillain.incapacitated.ForgeIncapacitated;
+import com.cartoonishvillain.incapacitated.Incapacitated;
 import com.cartoonishvillain.incapacitated.IncapacitatedPlayerData;
 import com.cartoonishvillain.incapacitated.capability.PlayerCapability;
 import com.cartoonishvillain.incapacitated.networking.IncapPacket;
@@ -80,7 +81,7 @@ public class ForgePlatformHelper implements IPlatformHelper {
             if (playerData.getIsIncapacitated()) {
                 player.hurt(playerData.getSourceOfDeath(player.level()), player.getMaxHealth() * 10);
                 player.setForcedPose(null);
-                playerData.setReviveCount(ForgeIncapacitated.config.DOWNCOUNT.get());
+                playerData.setReviveCount(Incapacitated.configData.getDownCounter());
                 playerData.setIsIncapacitated(false);
                 player.removeEffect(MobEffects.GLOWING);
                 IncapacitationMessenger.INSTANCE.send(new IncapPacket(player.getId(), false, (short) playerData.getDownsUntilDeath()), PacketDistributor.PLAYER.with(player));
@@ -101,90 +102,5 @@ public class ForgePlatformHelper implements IPlatformHelper {
     @Override
     public MobEffect getWeakEffect() {
         return ForgeIncapEffects.incapWeak.get();
-    }
-
-    @Override
-    public boolean clientConfigGrayScreen() {
-        return ForgeIncapacitated.clientConfig.GRAYSCREEN.get();
-    }
-
-    @Override
-    public boolean commonConfigGlowing() {
-        return ForgeIncapacitated.config.GLOWING.get();
-    }
-
-    @Override
-    public boolean commonConfigUseSeconds() {
-        return ForgeIncapacitated.config.USESECONDS.get();
-    }
-
-    @Override
-    public boolean commonConfigSomeInstantKills() {
-        return ForgeIncapacitated.config.SOMEINSTANTKILLS.get();
-    }
-
-    @Override
-    public boolean commonConfigUnlimitedDowns() {
-        return ForgeIncapacitated.config.UNLIMITEDDOWNS.get();
-    }
-
-    @Override
-    public boolean commonConfigSlow() {
-        return ForgeIncapacitated.config.SLOW.get();
-    }
-
-    @Override
-    public boolean commonConfigWeak() {
-        return ForgeIncapacitated.config.WEAKENED.get();
-    }
-
-    @Override
-    public boolean commonConfigDownLogging() {
-        return ForgeIncapacitated.config.DOWNLOGGING.get();
-    }
-
-    @Override
-    public boolean commonConfigReviveMessage() {
-        return ForgeIncapacitated.config.REVIVE_MESSAGE.get();
-    }
-
-    @Override
-    public boolean commonConfigGlobalReviveMessage() {
-        return ForgeIncapacitated.config.GLOBALREVIVEMESSAGES.get();
-    }
-
-    @Override
-    public boolean commonConfigGlobalIncapMessage() {
-        return ForgeIncapacitated.config.GLOBALINCAPMESSAGES.get();
-    }
-
-    @Override
-    public boolean commonConfigHunter() {
-        return ForgeIncapacitated.config.HUNTER.get();
-    }
-
-    @Override
-    public boolean commonConfigRegenerating() {
-        return ForgeIncapacitated.config.REGENERATING.get();
-    }
-
-    @Override
-    public int commonConfigMerciful() {
-        return ForgeIncapacitated.config.MERCIFUL.get();
-    }
-
-    @Override
-    public int commonConfigDownTicks() {
-        return ForgeIncapacitated.config.DOWNTICKS.get();
-    }
-
-    @Override
-    public int commonConfigDownCount() {
-        return ForgeIncapacitated.config.DOWNCOUNT.get();
-    }
-
-    @Override
-    public int commonConfigReviveTicks() {
-        return ForgeIncapacitated.config.REVIVETICKS.get();
     }
 }

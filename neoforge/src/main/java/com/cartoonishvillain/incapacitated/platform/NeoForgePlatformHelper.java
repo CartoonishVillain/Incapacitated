@@ -1,13 +1,11 @@
 package com.cartoonishvillain.incapacitated.platform;
 
 import com.cartoonishvillain.incapacitated.IncapEffects;
+import com.cartoonishvillain.incapacitated.Incapacitated;
 import com.cartoonishvillain.incapacitated.IncapacitatedPlayerData;
 import com.cartoonishvillain.incapacitated.capability.NeoForgeIncapacitatedPlayerData;
-import com.cartoonishvillain.incapacitated.config.IncapacitatedClientConfig;
-import com.cartoonishvillain.incapacitated.config.IncapacitatedCommonConfig;
 import com.cartoonishvillain.incapacitated.networking.IncapPacket;
 import com.cartoonishvillain.incapacitated.platform.services.IPlatformHelper;
-import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffect;
@@ -77,7 +75,7 @@ public class NeoForgePlatformHelper implements IPlatformHelper {
         if (playerData.isIncapacitated()) {
             player.hurt(playerData.getDamageSource(player.level()), player.getMaxHealth() * 10);
             player.setForcedPose(null);
-            playerData.setReviveCounter(IncapacitatedCommonConfig.DOWNCOUNT.get());
+            playerData.setReviveCounter(Incapacitated.configData.getDownCounter());
             playerData.setIncapacitated(false);
             player.removeEffect(MobEffects.GLOWING);
             PacketDistributor.PLAYER.with(player).send(new IncapPacket(player.getId(), false, (short) playerData.getDownsUntilDeath()));
