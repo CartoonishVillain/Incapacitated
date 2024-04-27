@@ -24,6 +24,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.util.ArrayList;
 
+import static com.cartoonishvillain.incapacitated.Incapacitated.effectInstances;
 import static com.cartoonishvillain.incapacitated.Incapacitated.noMercyDamageSourcesMessageID;
 
 public class AbstractedIncapacitation {
@@ -51,6 +52,12 @@ public class AbstractedIncapacitation {
 
                     if (Incapacitated.configData.isWeakened()) {
                         player.addEffect(new MobEffectInstance(Services.PLATFORM.getWeakEffect(), -1, 100, true, false));
+                    }
+
+                    if (!Incapacitated.effectInstances.isEmpty()) {
+                        for (MobEffectInstance effectInstance : Incapacitated.effectInstances) {
+                            player.addEffect(effectInstance);
+                        }
                     }
 
                     if (Incapacitated.configData.isGlobalIncapMessage()) {
@@ -98,6 +105,12 @@ public class AbstractedIncapacitation {
                         player.addEffect(new MobEffectInstance(Services.PLATFORM.getWeakEffect(), -1, 100, true, false));
                     }
 
+                    if (!Incapacitated.effectInstances.isEmpty()) {
+                        for (MobEffectInstance effectInstance : Incapacitated.effectInstances) {
+                            player.addEffect(effectInstance);
+                        }
+                    }
+
                     if (Incapacitated.configData.isGlobalIncapMessage()) {
                         broadcast(player.getServer(), Component.translatable("message.incap.message", player.getScoreboardName()));
                     } else {
@@ -140,6 +153,12 @@ public class AbstractedIncapacitation {
                             player.addEffect(new MobEffectInstance(Services.PLATFORM.getWeakEffect(), -1, 100, true, false));
                         }
 
+                        if (!Incapacitated.effectInstances.isEmpty()) {
+                            for (MobEffectInstance effectInstance : Incapacitated.effectInstances) {
+                                player.addEffect(effectInstance);
+                            }
+                        }
+
                         if (Incapacitated.configData.isGlobalIncapMessage()) {
                             broadcast(player.getServer(), Component.translatable("message.incap.message", player.getScoreboardName()));
                         } else {
@@ -173,6 +192,13 @@ public class AbstractedIncapacitation {
         player.removeEffect(MobEffects.GLOWING);
         player.removeEffect(Services.PLATFORM.getSlowEffect());
         player.removeEffect(Services.PLATFORM.getWeakEffect());
+
+        if (!effectInstances.isEmpty()) {
+            for (MobEffectInstance effectInstance : effectInstances) {
+                player.removeEffect(effectInstance.getEffect());
+            }
+        }
+
         Services.PLATFORM.writePlayerData(player, incapacitatedPlayerData);
         if (!player.level().isClientSide) {
             Services.PLATFORM.sendIncapPacket((ServerPlayer) player, player.getId(), false, (short) incapacitatedPlayerData.getDownsUntilDeath());

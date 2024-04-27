@@ -1,6 +1,7 @@
 package com.cartoonishvillain.incapacitated.config;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 
 public class IncapConfigData implements Serializable {
     String info;
@@ -19,6 +20,7 @@ public class IncapConfigData implements Serializable {
     int downCounter;
     boolean glowingWhileDowned;
     boolean someInstantKills;
+    String instantKills;
     boolean globalIncapMessage;
     boolean globalReviveMessage;
     boolean useSecondsForRevive;
@@ -26,9 +28,10 @@ public class IncapConfigData implements Serializable {
     float reviveHealth;
     int reviveHunger;
     float reviveSaturation;
+    ArrayList<IncapEffectData> incapEffectData;
 
-    public IncapConfigData(int merciful, boolean hunter, boolean slow, boolean weakened, boolean regenerating, boolean unlimitedDowns, boolean downLogging, boolean reviveMessage, String foodReviveList, String foodHealList, int downTicks, int reviveTicks, int downCounter, boolean glowingWhileDowned, boolean someInstantKills, boolean globalIncapMessage, boolean globalReviveMessage, boolean useSecondsForRevive,
-    boolean healPercentageOfMaxHealth, float reviveHealth, int reviveHunger, float reviveSaturation) {
+    public IncapConfigData(int merciful, boolean hunter, boolean slow, boolean weakened, boolean regenerating, boolean unlimitedDowns, boolean downLogging, boolean reviveMessage, String foodReviveList, String foodHealList, int downTicks, int reviveTicks, int downCounter, boolean glowingWhileDowned, boolean someInstantKills, String instantKills, boolean globalIncapMessage, boolean globalReviveMessage, boolean useSecondsForRevive,
+    boolean healPercentageOfMaxHealth, float reviveHealth, int reviveHunger, float reviveSaturation, ArrayList<IncapEffectData> incapEffectData) {
         this.info = "For documentation on what each item does, see the readme file on github: https://github.com/CartoonishVillain/Incapacitated";
         this.merciful = merciful;
         this.hunter = hunter;
@@ -45,6 +48,7 @@ public class IncapConfigData implements Serializable {
         this.downCounter = downCounter;
         this.glowingWhileDowned = glowingWhileDowned;
         this.someInstantKills = someInstantKills;
+        this.instantKills = instantKills;
         this.globalIncapMessage = globalIncapMessage;
         this.globalReviveMessage = globalReviveMessage;
         this.useSecondsForRevive = useSecondsForRevive;
@@ -52,6 +56,7 @@ public class IncapConfigData implements Serializable {
         this.reviveHealth = reviveHealth;
         this.reviveHunger = reviveHunger;
         this.reviveSaturation = reviveSaturation;
+        this.incapEffectData = incapEffectData;
     }
 
 
@@ -72,13 +77,15 @@ public class IncapConfigData implements Serializable {
                 3, //downCounter
                 true, //glowingWhileDowned
                 true, //someInstantKills
+                "wither,lava,outOfWorld",
                 true, //globalIncapMessage
                 true, //globalReviveMessage
                 false, //useSecondsForRevive
                 true, //healPercentageOfMaxHealth
                 0.33f, //reviveHealth
                 -1, //reviveHunger
-                -1f //reviveSaturation
+                -1f, //reviveSaturation
+                new ArrayList<>() //incapEffectData
         );
     }
 
@@ -168,5 +175,13 @@ public class IncapConfigData implements Serializable {
 
     public float getReviveSaturation() {
         return reviveSaturation;
+    }
+
+    public String getInstantKills() {
+        return instantKills;
+    }
+
+    public ArrayList<IncapEffectData> getIncapEffectData() {
+        return incapEffectData;
     }
 }

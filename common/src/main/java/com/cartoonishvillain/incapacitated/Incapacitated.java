@@ -1,15 +1,19 @@
 package com.cartoonishvillain.incapacitated;
 
 import com.cartoonishvillain.incapacitated.config.IncapConfigData;
+import com.cartoonishvillain.incapacitated.config.IncapEffectData;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.stream.JsonReader;
 import net.minecraft.ResourceLocationException;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.damagesource.DamageTypes;
+import net.minecraft.world.effect.MobEffect;
+import net.minecraft.world.effect.MobEffectInstance;
 
 import java.io.*;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import static com.cartoonishvillain.incapacitated.damage.IncapacitatedDamageSources.BLEEDOUT;
@@ -30,6 +34,7 @@ public class Incapacitated {
     public static ArrayList<String> noMercyDamageSourcesMessageID;
     public static List<String> reviveFoods;
     public static List<String> healingFoods;
+    public static ArrayList<MobEffectInstance> effectInstances = new ArrayList<>();
     public static void init() {
         loadConfig();
         // It is common for all supported loaders to provide a similar feature that can not be used directly in the
@@ -37,7 +42,6 @@ public class Incapacitated {
         // your own abstraction layer. You can learn more about this in our provided services class. In this example
         // we have an interface in the common code and use a loader specific implementation to delegate our call to
         // the platform specific approach.
-        instantKillDamageSourcesMessageID = new ArrayList<>(List.of(BLEEDOUT.location().getPath(), DamageTypes.FELL_OUT_OF_WORLD.location().getPath(), DamageTypes.LAVA.location().getPath(), DamageTypes.WITHER.location().getPath(), "outOfWorld"));
 
         //I _hate_ this implementation of needing to use these strings, but for some reason the damage type resource keys and the damage sources themselves are desynced, and that's just _the worst_.
         //And I don't know how to get that internal string from the keys so. Here we are, I guess.
@@ -53,6 +57,8 @@ public class Incapacitated {
             if (configData != null) {
                 reviveFoods = getFoodForReviving();
                 healingFoods = getFoodForHealing();
+                instantKillDamageSourcesMessageID = getInstantKills();
+                getEffectInstances();
             }
         } catch (FileNotFoundException e) {
             try (Writer writer = new FileWriter("config/incapacitated.json")) {
@@ -61,6 +67,8 @@ public class Incapacitated {
                 configData = IncapConfigData.buildDefaultConfig();
                 reviveFoods = getFoodForReviving();
                 healingFoods = getFoodForHealing();
+                instantKillDamageSourcesMessageID = getInstantKills();
+                getEffectInstances();
             } catch (IOException ex) {
                 Constants.LOG.error("Incapacitated: Failed to write default data!");
                 throw new RuntimeException(ex);
@@ -99,5 +107,35 @@ public class Incapacitated {
             return new ArrayList<>(List.of("minecraft:golden_apple"));
         }
         return healFoodList;
+    }
+
+    private static ArrayList<String> getInstantKills() {
+        final String instantKillsString = configData.getInstantKills();
+        String[] damageTypes = instantKillsString.split(",");
+        ArrayList<String> instantKills;
+        try {
+            instantKills = new ArrayList<>(Arrays.asList(damageTypes));
+        } catch(ResourceLocationException e){
+            Constants.LOG.error("Incapacitation: Instant Kills. Non [a-z0-9_.-] character in config! Using default...");
+            return new ArrayList<>(List.of("wither", "lava", "outOfWorld"));
+        }
+        return instantKills;
+    }
+
+    private static void getEffectInstances() {
+        effectInstances.clear();
+        for (IncapEffectData effectData : configData.getIncapEffectData()) {
+            MobEffect effect = BuiltInRegistries.MOB_EFFECT.get(new ResourceLocation(effectData.getEffectID()));
+            if (effect != null) {
+                MobEffectInstance effectInstance = new MobEffectInstance(
+                        effect,
+                        -1,
+                        effectData.getAmplifier(),
+                        !effectData.isAmbient(),
+                        !effectData.isAmbient()
+                );
+                effectInstances.add(effectInstance);
+            }
+        }
     }
 }

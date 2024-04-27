@@ -37,6 +37,8 @@ You can reload your config at any time with /incap config reload
 
 * SomeInstantKills - true or false, do some damage types instantly kill the player when they reach 0 hp, regardless of how many downs they have left?
 
+* InstantKills - string, names of damage types that should be a part of "SomeInstantKills". The name used is the translation ID of the death message (such as death.attack.wither -> "wither"). Comma separated, no spaces.
+
 * GlobalIncapMessage - true or false, do messages about players being incapacitated get broadcast globally?
 
 * GlobalReviveMessage - true or false, do messages about players being revived get broadcast globally?
@@ -50,4 +52,30 @@ You can reload your config at any time with /incap config reload
 * ReviveHunger - whole number, how many food points should a user have when revived? Negative numbers avoid adjusting food values.
 
 * ReviveSaturation - number, potentially decimal, what should the hunger saturation of a recently revived player be? Numbers at or below -1 avoid adjusting saturation values.
+
+* IncapEffectData - custom json array, see below for more details on how to set up. Adds additional potion effects to users while they're incapacitated.
+
+
+# IncapEffectData
+IncapEffectData is an array of objects defined as   
+{  
+effectID: String  
+amplifier: Integer  
+ambient:   
+}
+
+An example would look like:  
+  
+incapEffectData: [  
+  {  
+    effectID: "minecraft:speed",    
+    amplifier: 1,    
+    ambient: true  
+  },  
+  {  
+    effectID: "minecraft:resistance",  
+    amplifier: 3,  
+    ambient:false  
+  }  
+]  
 
