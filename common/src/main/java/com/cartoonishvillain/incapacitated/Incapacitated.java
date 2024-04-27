@@ -1,7 +1,12 @@
 package com.cartoonishvillain.incapacitated;
 
+import com.cartoonishvillain.incapacitated.config.IncapConfigData;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.stream.JsonReader;
 import net.minecraft.world.damagesource.DamageTypes;
 
+import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,11 +23,13 @@ public class Incapacitated {
     // code that gets invoked by the entry point of the loader specific projects.
 
     public static boolean devMode = false;
+    public static IncapConfigData configData = null;
     public static ArrayList<String> instantKillDamageSourcesMessageID;
     public static ArrayList<String> noMercyDamageSourcesMessageID;
     public static List<String> ReviveFoods;
     public static List<String> HealingFoods;
     public static void init() {
+        loadConfig();
 
         // It is common for all supported loaders to provide a similar feature that can not be used directly in the
         // common code. A popular way to get around this is using Java's built-in service loader feature to create
@@ -35,5 +42,21 @@ public class Incapacitated {
         //And I don't know how to get that internal string from the keys so. Here we are, I guess.
         noMercyDamageSourcesMessageID = new ArrayList<>(List.of(BLEEDOUT.location().getPath(), "outOfWorld", "generic", "genericKill", "outsideBorder"));
 
+    }
+
+    public static void loadConfig() {
+        Gson gson = new GsonBuilder().setPrettyPrinting().create();
+        try {
+            JsonReader reader = new JsonReader(new FileReader("config/incapacitated.json"));
+            configData = gson.fromJson(reader, IncapConfigData.class);
+        } catch (FileNotFoundException e) {
+            try (Writer writer = new FileWriter("config/incapacitated.json")) {
+                gson.toJson(IncapConfigData.buildDefaultConfig(), writer);
+                loadConfig();
+            } catch (IOException ex) {
+                Constants.LOG.error("Incapacitated: Failed to write default data!");
+                throw new RuntimeException(ex);
+            }
+        }
     }
 }

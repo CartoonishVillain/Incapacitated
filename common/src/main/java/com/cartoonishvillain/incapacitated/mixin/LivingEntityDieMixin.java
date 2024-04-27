@@ -1,5 +1,6 @@
 package com.cartoonishvillain.incapacitated.mixin;
 
+import com.cartoonishvillain.incapacitated.Incapacitated;
 import com.cartoonishvillain.incapacitated.IncapacitatedPlayerData;
 import com.cartoonishvillain.incapacitated.events.AbstractedIncapacitation;
 import com.cartoonishvillain.incapacitated.platform.Services;
@@ -19,7 +20,7 @@ public class LivingEntityDieMixin {
         LivingEntity entity = ((LivingEntity) (Object) this);
         if(!(entity instanceof Player) && !entity.level().isClientSide && damageSource.getEntity() instanceof Player) {
             IncapacitatedPlayerData data = Services.PLATFORM.getPlayerData((Player) damageSource.getEntity());
-            if (data.isIncapacitated() && Services.PLATFORM.commonConfigHunter()) {
+            if (data.isIncapacitated() && Incapacitated.configData.isHunter()) {
                 AbstractedIncapacitation.revive((Player) damageSource.getEntity());
             }
         }

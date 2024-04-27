@@ -59,17 +59,6 @@ public interface IPlatformHelper {
      */
 
     void killPlayerIfIncappedCommand(ServerPlayer player);
-    /*
-                IncapacitatedPlayerData playerData = sourceStack.getPlayer().getData(INCAP_DATA);
-            if (playerData.isIncapacitated()) {
-                player.hurt(playerData.getDamageSource(player.level()), player.getMaxHealth() * 10);
-                player.setForcedPose(null);
-                playerData.setReviveCounter(IncapacitatedCommonConfig.DOWNCOUNT.get());
-                playerData.setIncapacitated(false);
-                player.removeEffect(MobEffects.GLOWING);
-                PacketDistributor.PLAYER.with((ServerPlayer) player).send(new IncapPacket(player.getId(), false, (short) playerData.getDownsUntilDeath()));
-            }
-     */
 
     /*
       INCAPACITATED PACKET
@@ -96,42 +85,4 @@ public interface IPlatformHelper {
      */
     MobEffect getSlowEffect();
     MobEffect getWeakEffect();
-
-    /*
-      INCAPACITATED CONFIG
-     */
-
-    boolean clientConfigGrayScreen();
-
-    boolean commonConfigGlowing();
-
-    boolean commonConfigUseSeconds();
-
-    boolean commonConfigSomeInstantKills();
-
-    boolean commonConfigUnlimitedDowns();
-
-    boolean commonConfigSlow();
-
-    boolean commonConfigWeak();
-
-    boolean commonConfigDownLogging();
-
-    boolean commonConfigReviveMessage();
-
-    boolean commonConfigGlobalReviveMessage();
-
-    boolean commonConfigGlobalIncapMessage();
-
-    boolean commonConfigHunter();
-
-    boolean commonConfigRegenerating();
-
-    int commonConfigMerciful();
-
-    int commonConfigDownTicks();
-
-    int commonConfigDownCount();
-
-    int commonConfigReviveTicks();
 }

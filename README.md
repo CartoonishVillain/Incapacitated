@@ -1,31 +1,44 @@
-# MultiLoader Template
+# Config details
 
-This project provides a Gradle project template that can compile mods for both Forge and Fabric using a common sourceset. This project does not require any third party libraries or dependencies. If you have any questions or want to discuss the project join our [Discord](https://discord.myceliummod.network).
+The following is a description of all of the configs you can change to modify how incapacitated works.
+Note: This does not include client specific configs. Those are their own file.
+You can reload your config at any time with /incap config reload
 
-## Getting Started
+* Merciless - Can be filled with a 0, 1, or a 2, determines if players are immune to damage while downed.
+  * 0 - No, players are not immune to damage while downed.
+  * 1 - Yes, players are immune to damage while downed, but part of the damage is removed from their time to live.
+  * 2 - Yes, players are fully immune to damage while downed.
 
-### IntelliJ IDEA
-This guide will show how to import the MultiLoader Template into IntelliJ IDEA. The setup process is roughly equivalent to setting up Forge and Fabric independently and should be very familiar to anyone who has worked with their MDKs.
+* Hunter - true or false, can players revive themselves with a (non-player) kill
 
-1. Clone or download this repository to your computer.
-2. Configure the project by editing the `group`, `mod_name`, `mod_author`, and `mod_id` properties in the `gradle.properties` file. You will also need to change the `rootProject.name`  property in `settings.gradle`, this should match the folder name of your project, or else IDEA may complain.
-3. Open the template's root folder as a new project in IDEA. This is the folder that contains this README file and the gradlew executable.
-4. If your default JVM/JDK is not Java 17 you will encounter an error when opening the project. This error is fixed by going to `File > Settings > Build, Execution, Deployment > Build Tools > Gradle > Gradle JVM`and changing the value to a valid Java 17 JVM. You will also need to set the Project SDK to Java 17. This can be done by going to `File > Project Structure > Project SDK`. Once both have been set open the Gradle tab in IDEA and click the refresh button to reload the project.
-5. Open the Gradle tab in IDEA if it has not already been opened. Navigate to `Your Project > Common > Tasks > vanilla gradle > decompile`. Run this task to decompile Minecraft.
-6. Open the Gradle tab in IDEA if it has not already been opened. Navigate to `Your Project > Forge > Tasks > forgegradle runs > genIntellijRuns`. Run this task to set up run configurations for Forge.
-7. Open your Run/Debug Configurations. Under the Application category there should now be options to run Forge and Fabric projects. Select one of the client options and try to run it.
-8. Assuming you were able to run the game in step 7 your workspace should now be set up.
+* Slow - true or false, are incapacitated players slowed down dramatically?
 
-### Eclipse
-While it is possible to use this template in Eclipse it is not recommended. During the development of this template multiple critical bugs and quirks related to Eclipse were found at nearly every level of the required build tools. While we continue to work with these tools to report and resolve issues support for projects like these are not there yet. For now Eclipse is considered unsupported by this project. The development cycle for build tools is notoriously slow so there are no ETAs available.
+* Weakened - true or false, are incapacitated players weakened dramatically
 
-## Development Guide
-When using this template the majority of your mod is developed in the Common project. The Common project is compiled against the vanilla game and is used to hold code that is shared between the different loader-specific versions of your mod. The Common project has no knowledge or access to ModLoader specific code, apis, or concepts. Code that requires something from a specific loader must be done through the project that is specific to that loader, such as the Forge or Fabric project.
+* Regenerating - true or false, does sleeping in a bed successfully award players with being able to go down again? (Not above maximum)
 
-Loader specific projects such as the Forge and Fabric project are used to load the Common project into the game. These projects also define code that is specific to that loader. Loader specific projects can access all of the code in the Common project. It is important to remember that the Common project can not access code from loader specific projects.
+* UnlimitedDowns - true or false, does the player have unlimited downs
 
-## Removing Platforms and Loaders
-While the MultiLoader Template includes support for many platforms and loaders you can easily remove support for the ones you don't need. This can be done by deleting the subproject folder and then removing it from the `settings.gradle` file. For example if you wanted to remove support for Forge you would follow the following steps. 
+* DownLogging - true or false, does the player die when they log out, if they are incapacitated.
 
-1. Delete the subproject folder. For example, delete `MultiLoader-Template/forge`.
-2. Remove the project from `settings.gradle`. For example, remove `include("forge")`. 
+* ReviveMessage - true or false, does the player receive information in the chat when revived about their stats?
+
+* FoodReviveList - string, a list of items ids of items that, when consumed, will revive the player (ex: minecraft:enchanted_golden_apple)
+
+* FoodHealList - string, a list of items ids of items that, when consumed, will reset the amount of times a player can go down before instant death (ex: minecraft:golden_apple)
+
+* DownTicks - whole number, how many ticks (20 per second if not lagging) can a player persist incapacitated before dying?
+
+* ReviveTicks - whole number, how many ticks (20 per second if not lagging) does it take to revive another player?
+
+* DownCounter - whole number, how many times can a player be revived without some form of proper healing, before they instantly die if they reach 0 HP again.
+
+* GlowingWhileDowned - true or false, does the player have the glowing effect when incapacitated to be found easier?
+
+* SomeInstantKills - true or false, do some damage types instantly kill the player when they reach 0 hp, regardless of how many downs they have left?
+
+* GlobalIncapMessage - true or false, do messages about players being incapacitated get broadcast globally?
+
+* GlobalReviveMessage - true or false, do messages about players being revived get broadcast globally?
+
+* UseSecondsForRevive - true or false, when reviving a player, should seconds on the revive be displayed instead of the progress bar?

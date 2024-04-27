@@ -51,6 +51,7 @@ public class NFIncapacitated {
         SetDownCount.register(event.getDispatcher());
         GetDownCount.register(event.getDispatcher());
         KillPlayer.register(event.getDispatcher());
+        ConfigCommands.register(event.getDispatcher());
 
         if(!FMLLoader.isProduction()) {
             IncapDevMode.register(event.getDispatcher());

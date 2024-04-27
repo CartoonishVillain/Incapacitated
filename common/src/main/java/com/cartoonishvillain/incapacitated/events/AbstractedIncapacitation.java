@@ -32,27 +32,27 @@ public class AbstractedIncapacitation {
             //if the player is not already incapacitated
             if (!incapacitatedPlayerData.isIncapacitated()) {
                 //reduce downs until KillPlayer, unless unlimitedDowns is on.
-                if (!Services.PLATFORM.commonConfigUnlimitedDowns()) {
+                if (!Incapacitated.configData.isUnlimitedDowns()) {
                     incapacitatedPlayerData.setDownsUntilDeath(incapacitatedPlayerData.getDownsUntilDeath() - 1);
                 }
                 //if downs until KillPlayer is 0 or higher, we can cancel the KillPlayer event because the user is down.
                 if (incapacitatedPlayerData.getDownsUntilDeath() > -1) {
                     incapacitatedPlayerData.setIncapacitated(true);
                     player.setHealth(player.getMaxHealth());
-                    if (Services.PLATFORM.commonConfigGlowing())
+                    if (Incapacitated.configData.isGlowingWhileDowned())
                         player.addEffect(new MobEffectInstance(MobEffects.GLOWING, -1, 0, true, false));
 
                     Services.PLATFORM.sendIncapPacket((ServerPlayer) player, player.getId(), true, (short) incapacitatedPlayerData.getDownsUntilDeath());
 
-                    if (Services.PLATFORM.commonConfigSlow()) {
+                    if (Incapacitated.configData.isSlow()) {
                         player.addEffect(new MobEffectInstance(Services.PLATFORM.getSlowEffect(), -1, 6, true, false));
                     }
 
-                    if (Services.PLATFORM.commonConfigWeak()) {
+                    if (Incapacitated.configData.isWeakened()) {
                         player.addEffect(new MobEffectInstance(Services.PLATFORM.getWeakEffect(), -1, 100, true, false));
                     }
 
-                    if (Services.PLATFORM.commonConfigGlobalIncapMessage()) {
+                    if (Incapacitated.configData.isGlobalIncapMessage()) {
                         broadcast(player.getServer(), Component.translatable("message.incap.message", player.getScoreboardName()));
                     } else {
                         ArrayList<Player> playerEntities = (ArrayList<Player>) player.level().getEntitiesOfClass(Player.class, player.getBoundingBox().inflate(50));
@@ -72,9 +72,9 @@ public class AbstractedIncapacitation {
     public static void downOrKill(Player player, CallbackInfo event, DamageSource damageSource) {
         IncapacitatedPlayerData incapacitatedPlayerData = Services.PLATFORM.getPlayerData(player);
             //if the player is not already incapacitated
-            if (!incapacitatedPlayerData.isIncapacitated() && !(Services.PLATFORM.commonConfigSomeInstantKills())) {
+            if (!incapacitatedPlayerData.isIncapacitated() && !(Incapacitated.configData.isSomeInstantKills())) {
                 //reduce downs until KillPlayer, unless unlimitedDowns is on.
-                if (!Services.PLATFORM.commonConfigUnlimitedDowns()) {
+                if (!Incapacitated.configData.isUnlimitedDowns()) {
                     incapacitatedPlayerData.setDownsUntilDeath(incapacitatedPlayerData.getDownsUntilDeath() - 1);
                 }
                 //if downs until KillPlayer is 0 or higher, we can cancel the KillPlayer event because the user is down.
@@ -84,20 +84,20 @@ public class AbstractedIncapacitation {
                     event.cancel();
                     player.setHealth(player.getMaxHealth());
 
-                    if (Services.PLATFORM.commonConfigGlowing())
+                    if (Incapacitated.configData.isGlowingWhileDowned())
                         player.addEffect(new MobEffectInstance(MobEffects.GLOWING, -1, 0, true, false));
 
                     Services.PLATFORM.sendIncapPacket((ServerPlayer) player, player.getId(), true, (short) incapacitatedPlayerData.getDownsUntilDeath());
 
-                    if (Services.PLATFORM.commonConfigSlow()) {
+                    if (Incapacitated.configData.isSlow()) {
                         player.addEffect(new MobEffectInstance(Services.PLATFORM.getSlowEffect(), -1, 6, true, false));
                     }
 
-                    if (Services.PLATFORM.commonConfigWeak()) {
+                    if (Incapacitated.configData.isWeakened()) {
                         player.addEffect(new MobEffectInstance(Services.PLATFORM.getWeakEffect(), -1, 100, true, false));
                     }
 
-                    if (Services.PLATFORM.commonConfigGlobalIncapMessage()) {
+                    if (Incapacitated.configData.isGlobalIncapMessage()) {
                         broadcast(player.getServer(), Component.translatable("message.incap.message", player.getScoreboardName()));
                     } else {
                         ArrayList<Player> playerEntities = (ArrayList<Player>) player.level().getEntitiesOfClass(Player.class, player.getBoundingBox().inflate(50));
@@ -107,7 +107,7 @@ public class AbstractedIncapacitation {
                     }
                     Services.PLATFORM.writePlayerData(player, incapacitatedPlayerData);
                 }
-            } else if (!incapacitatedPlayerData.isIncapacitated() && (Services.PLATFORM.commonConfigSomeInstantKills())) {
+            } else if (!incapacitatedPlayerData.isIncapacitated() && (Incapacitated.configData.isSomeInstantKills())) {
                 boolean notInstantKill = true;
                 //check if the damage type is in the instant kill list, if it does, don't cancel KillPlayer event.
                 for (String damageType : Incapacitated.instantKillDamageSourcesMessageID) {
@@ -117,7 +117,7 @@ public class AbstractedIncapacitation {
                 }
                 if (notInstantKill) {
                     //reduce downs until KillPlayer, unless unlimitedDowns is on.
-                    if (!Services.PLATFORM.commonConfigUnlimitedDowns()) {
+                    if (!Incapacitated.configData.isUnlimitedDowns()) {
                         incapacitatedPlayerData.setDownsUntilDeath(incapacitatedPlayerData.getDownsUntilDeath() - 1);
                     }
                     //if downs until KillPlayer is 0 or higher, we can cancel the KillPlayer event because the user is down.
@@ -126,20 +126,20 @@ public class AbstractedIncapacitation {
                         Services.PLATFORM.setDamageSource(player.level(), damageSource, player);
                         event.cancel();
                         player.setHealth(player.getMaxHealth());
-                        if (Services.PLATFORM.commonConfigGlowing())
+                        if (Incapacitated.configData.isGlowingWhileDowned())
                             player.addEffect(new MobEffectInstance(MobEffects.GLOWING, -1, 0, true, false));
 
                         Services.PLATFORM.sendIncapPacket((ServerPlayer) player, player.getId(), true, (short) incapacitatedPlayerData.getDownsUntilDeath());
 
-                        if (Services.PLATFORM.commonConfigSlow()) {
+                        if (Incapacitated.configData.isSlow()) {
                             player.addEffect(new MobEffectInstance(Services.PLATFORM.getSlowEffect(), -1, 6, true, false));
                         }
 
-                        if (Services.PLATFORM.commonConfigWeak()) {
+                        if (Incapacitated.configData.isWeakened()) {
                             player.addEffect(new MobEffectInstance(Services.PLATFORM.getWeakEffect(), -1, 100, true, false));
                         }
 
-                        if (Services.PLATFORM.commonConfigGlobalIncapMessage()) {
+                        if (Incapacitated.configData.isGlobalIncapMessage()) {
                             broadcast(player.getServer(), Component.translatable("message.incap.message", player.getScoreboardName()));
                         } else {
                             ArrayList<Player> playerEntities = (ArrayList<Player>) player.level().getEntitiesOfClass(Player.class, player.getBoundingBox().inflate(50));
@@ -168,7 +168,7 @@ public class AbstractedIncapacitation {
     public static void revive(Player player) {
         IncapacitatedPlayerData incapacitatedPlayerData = Services.PLATFORM.getPlayerData(player);
         incapacitatedPlayerData.setIncapacitated(false);
-        incapacitatedPlayerData.setReviveCounter(Services.PLATFORM.commonConfigReviveTicks());
+        incapacitatedPlayerData.setReviveCounter(Incapacitated.configData.getReviveTicks());
         player.removeEffect(MobEffects.GLOWING);
         player.removeEffect(Services.PLATFORM.getSlowEffect());
         player.removeEffect(Services.PLATFORM.getWeakEffect());
@@ -179,7 +179,7 @@ public class AbstractedIncapacitation {
         player.setHealth(player.getMaxHealth() / 3f);
         player.level().playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.NOTE_BLOCK_PLING.value(), SoundSource.PLAYERS, 1, 1);
 
-        if (Services.PLATFORM.commonConfigGlobalReviveMessage()) {
+        if (Incapacitated.configData.isGlobalReviveMessage()) {
                 broadcast(player.getServer(), Component.translatable("message.revive.message", player.getScoreboardName()));
             } else {
                 ArrayList<Player> playerEntities = (ArrayList<Player>) player.level().getEntitiesOfClass(Player.class, player.getBoundingBox().inflate(50));
@@ -188,7 +188,7 @@ public class AbstractedIncapacitation {
                 }
             }
 
-            if (Services.PLATFORM.commonConfigGlobalReviveMessage() && !Services.PLATFORM.commonConfigUnlimitedDowns()) {
+            if (Incapacitated.configData.isGlobalReviveMessage() && !Incapacitated.configData.isUnlimitedDowns()) {
                 if (incapacitatedPlayerData.getDownsUntilDeath() > 1) {
                     player.displayClientMessage(Component.translatable("message.revivecount.normal", incapacitatedPlayerData.getDownsUntilDeath()), false);
                 } else if (incapacitatedPlayerData.getDownsUntilDeath() == 1) {
@@ -217,23 +217,23 @@ public class AbstractedIncapacitation {
             Item item = itemStack.getItem();
             IncapacitatedPlayerData incapacitatedPlayerData = Services.PLATFORM.getPlayerData(player);
             if(Incapacitated.HealingFoods.contains(item.toString())) {
-                incapacitatedPlayerData.setDownsUntilDeath(Services.PLATFORM.commonConfigDownCount());
-                incapacitatedPlayerData.setTicksUntilDeath(Services.PLATFORM.commonConfigDownTicks());
+                incapacitatedPlayerData.setDownsUntilDeath(Incapacitated.configData.getDownCounter());
+                incapacitatedPlayerData.setTicksUntilDeath(Incapacitated.configData.getDownTicks());
             }
 
             if(incapacitatedPlayerData.isIncapacitated()) {
                 if(Incapacitated.ReviveFoods.contains(item.toString())){
                     incapacitatedPlayerData.setIncapacitated(false);
-                    incapacitatedPlayerData.setReviveCounter(Services.PLATFORM.commonConfigReviveTicks());
-                    incapacitatedPlayerData.setDownsUntilDeath(Services.PLATFORM.commonConfigDownCount());
-                    incapacitatedPlayerData.setTicksUntilDeath(Services.PLATFORM.commonConfigDownTicks());
+                    incapacitatedPlayerData.setReviveCounter(Incapacitated.configData.getReviveTicks());
+                    incapacitatedPlayerData.setDownsUntilDeath(Incapacitated.configData.getDownCounter());
+                    incapacitatedPlayerData.setTicksUntilDeath(Incapacitated.configData.getDownTicks());
                     player.removeEffect(MobEffects.GLOWING);
                     player.setHealth(player.getMaxHealth()/3f);
                     player.level().playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.NOTE_BLOCK_PLING.value(), SoundSource.PLAYERS, 1, 1);
                 }
             } else if(Incapacitated.ReviveFoods.contains(item.toString())) {
-                incapacitatedPlayerData.setDownsUntilDeath(Services.PLATFORM.commonConfigDownCount());
-                incapacitatedPlayerData.setTicksUntilDeath(Services.PLATFORM.commonConfigDownTicks());
+                incapacitatedPlayerData.setDownsUntilDeath(Incapacitated.configData.getDownCounter());
+                incapacitatedPlayerData.setTicksUntilDeath(Incapacitated.configData.getDownTicks());
             }
             Services.PLATFORM.sendIncapPacket((ServerPlayer) player, player.getId(), incapacitatedPlayerData.isIncapacitated(), (short) incapacitatedPlayerData.getDownsUntilDeath());
             Services.PLATFORM.writePlayerData(player, incapacitatedPlayerData);
@@ -242,8 +242,8 @@ public class AbstractedIncapacitation {
 
     public static void hurt(Player player, DamageSource damageSource, CallbackInfoReturnable<Boolean> cir, float amount){
         IncapacitatedPlayerData data = Services.PLATFORM.getPlayerData(player);
-        if (data.isIncapacitated() && Services.PLATFORM.commonConfigMerciful() > 0 && !(damageSource.getMsgId().equals("bleedout"))) {
-            if (Services.PLATFORM.commonConfigMerciful() == 1 && !player.level().isClientSide) {
+        if (data.isIncapacitated() && Incapacitated.configData.getMerciful() > 0 && !(damageSource.getMsgId().equals("bleedout"))) {
+            if (Incapacitated.configData.getMerciful() == 1 && !player.level().isClientSide) {
                 int timeToRemove = (int) amount;
                 if (timeToRemove > 2000) timeToRemove = 2000;
                 data.setTicksUntilDeath(data.getTicksUntilDeath() - timeToRemove);
@@ -297,7 +297,7 @@ public class AbstractedIncapacitation {
                         revive(downPlayer);
                     } else {
                         //If the timer is not 0 on the revive timer, tell both parties that the revive is occuring, and how much longer until it is done.
-                        if (!Services.PLATFORM.commonConfigUseSeconds()) {
+                        if (!Incapacitated.configData.isUseSecondsForRevive()) {
                             downPlayer.displayClientMessage(revivingComponent(playerData, "message.downindicator.revivingbar"), true);
                             revivingPlayer.displayClientMessage(revivingComponent(playerData, "message.reviveindicator.revivingbar", downPlayer), true);
                         } else {
@@ -311,7 +311,7 @@ public class AbstractedIncapacitation {
                     if (playerData.countTicksUntilDeath()) {
                         
                         downPlayer.hurt(Services.PLATFORM.getDamageSource(downPlayer, downPlayer.level()), Float.MAX_VALUE);
-                        playerData.setReviveCounter(Services.PLATFORM.commonConfigReviveTicks());
+                        playerData.setReviveCounter(Incapacitated.configData.getReviveTicks());
                         downPlayer.removeEffect(MobEffects.GLOWING);
                         playerData.setIncapacitated(false);
                         Services.PLATFORM.writePlayerData(downPlayer, playerData);
@@ -322,8 +322,8 @@ public class AbstractedIncapacitation {
                     }
 
                     //Additionally, if the user is not reviving, make sure the revive timer is reset.
-                    if (playerData.getReviveCounter() != Services.PLATFORM.commonConfigReviveTicks()) {
-                        playerData.setReviveCounter(Services.PLATFORM.commonConfigReviveTicks());
+                    if (playerData.getReviveCounter() != Incapacitated.configData.getReviveTicks()) {
+                        playerData.setReviveCounter(Incapacitated.configData.getReviveTicks());
                     }
                     Services.PLATFORM.writePlayerData(downPlayer, playerData);
                 }
@@ -332,7 +332,7 @@ public class AbstractedIncapacitation {
     }
 
     public static void downLogging(Player player) {
-        if (Services.PLATFORM.commonConfigDownLogging()) {
+        if (Incapacitated.configData.isDownLogging()) {
             IncapacitatedPlayerData playerData = Services.PLATFORM.getPlayerData(player);
             if (playerData.isIncapacitated()) {
                 downOrKill(player);
@@ -341,18 +341,18 @@ public class AbstractedIncapacitation {
     }
 
     public static void sleep(Player player, boolean wakeImmediately, boolean updateLevel) {
-        if (!updateLevel && !wakeImmediately && Services.PLATFORM.commonConfigRegenerating()) {
+        if (!updateLevel && !wakeImmediately && Incapacitated.configData.isRegenerating()) {
             IncapacitatedPlayerData playerData = Services.PLATFORM.getPlayerData(player);
-            if (playerData.getDownsUntilDeath() < Services.PLATFORM.commonConfigDownCount()) {
+            if (playerData.getDownsUntilDeath() < Incapacitated.configData.getDownCounter()) {
                 AbstractedIncapacitation.setDownCount(player, (short) (playerData.getDownsUntilDeath() + 1));
             }
         }
     }
 
     private static MutableComponent revivingComponent(IncapacitatedPlayerData playerData, String translatable) {
-        if (!Services.PLATFORM.commonConfigUseSeconds()) {
+        if (!Incapacitated.configData.isUseSecondsForRevive()) {
             MutableComponent barComponent = Component.literal("[").withStyle(ChatFormatting.GREEN);
-            float percentage = 1 - ((float)playerData.getReviveCounter()/(float)Services.PLATFORM.commonConfigReviveTicks());
+            float percentage = 1 - ((float)playerData.getReviveCounter()/(float)Incapacitated.configData.getReviveTicks());
             percentage *= 100;
 //            LOGGER.debug("Config amount: " + IncapacitatedCommonConfig.REVIVETICKS.get() + " current revive counter: " + playerData.getReviveCounter() + " calculated: " + (100 - (playerData.getReviveCounter()/IncapacitatedCommonConfig.REVIVETICKS.get())));
             for (int i = 10; i > 0; i--) {
@@ -372,9 +372,9 @@ public class AbstractedIncapacitation {
     }
 
     private static MutableComponent revivingComponent(IncapacitatedPlayerData playerData, String translatable, Player player) {
-        if (!Services.PLATFORM.commonConfigUseSeconds()) {
+        if (!Incapacitated.configData.isUseSecondsForRevive()) {
             MutableComponent barComponent = Component.literal("[").withStyle(ChatFormatting.GREEN);
-            float percentage = 1 - ((float)playerData.getReviveCounter()/(float)Services.PLATFORM.commonConfigReviveTicks());
+            float percentage = 1 - ((float)playerData.getReviveCounter()/(float)Incapacitated.configData.getReviveTicks());
             percentage *= 100;
             for (int i = 10; i > 0; i--) {
                 if (percentage >= 10) {
