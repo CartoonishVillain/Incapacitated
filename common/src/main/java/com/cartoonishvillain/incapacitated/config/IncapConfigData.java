@@ -29,9 +29,10 @@ public class IncapConfigData implements Serializable {
     int reviveHunger;
     float reviveSaturation;
     ArrayList<IncapEffectData> incapEffectData;
+    boolean DANGERDisableGiveUp;
 
     public IncapConfigData(int merciful, boolean hunter, boolean slow, boolean weakened, boolean regenerating, boolean unlimitedDowns, boolean downLogging, boolean reviveMessage, String foodReviveList, String foodHealList, int downTicks, int reviveTicks, int downCounter, boolean glowingWhileDowned, boolean someInstantKills, String instantKills, boolean globalIncapMessage, boolean globalReviveMessage, boolean useSecondsForRevive,
-    boolean healPercentageOfMaxHealth, float reviveHealth, int reviveHunger, float reviveSaturation, ArrayList<IncapEffectData> incapEffectData) {
+    boolean healPercentageOfMaxHealth, float reviveHealth, int reviveHunger, float reviveSaturation, ArrayList<IncapEffectData> incapEffectData, boolean DANGERDisableGiveUp) {
         this.info = "For documentation on what each item does, see the readme file on github: https://github.com/CartoonishVillain/Incapacitated";
         this.merciful = merciful;
         this.hunter = hunter;
@@ -57,6 +58,7 @@ public class IncapConfigData implements Serializable {
         this.reviveHunger = reviveHunger;
         this.reviveSaturation = reviveSaturation;
         this.incapEffectData = incapEffectData;
+        this.DANGERDisableGiveUp = DANGERDisableGiveUp;
     }
 
 
@@ -85,7 +87,8 @@ public class IncapConfigData implements Serializable {
                 0.33f, //reviveHealth
                 -1, //reviveHunger
                 -1f, //reviveSaturation
-                new ArrayList<>() //incapEffectData
+                new ArrayList<>(), //incapEffectData
+                false //DANGERDisableGiveUp
         );
     }
 
@@ -183,5 +186,9 @@ public class IncapConfigData implements Serializable {
 
     public ArrayList<IncapEffectData> getIncapEffectData() {
         return incapEffectData;
+    }
+
+    public boolean isDANGERDisableGiveUp() {
+        return DANGERDisableGiveUp;
     }
 }
