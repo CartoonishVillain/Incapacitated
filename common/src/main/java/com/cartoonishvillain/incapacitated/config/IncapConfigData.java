@@ -22,8 +22,13 @@ public class IncapConfigData implements Serializable {
     boolean globalIncapMessage;
     boolean globalReviveMessage;
     boolean useSecondsForRevive;
+    boolean healPercentageOfMaxHealth;
+    float reviveHealth;
+    int reviveHunger;
+    float reviveSaturation;
 
-    public IncapConfigData(int merciful, boolean hunter, boolean slow, boolean weakened, boolean regenerating, boolean unlimitedDowns, boolean downLogging, boolean reviveMessage, String foodReviveList, String foodHealList, int downTicks, int reviveTicks, int downCounter, boolean glowingWhileDowned, boolean someInstantKills, boolean globalIncapMessage, boolean globalReviveMessage, boolean useSecondsForRevive) {
+    public IncapConfigData(int merciful, boolean hunter, boolean slow, boolean weakened, boolean regenerating, boolean unlimitedDowns, boolean downLogging, boolean reviveMessage, String foodReviveList, String foodHealList, int downTicks, int reviveTicks, int downCounter, boolean glowingWhileDowned, boolean someInstantKills, boolean globalIncapMessage, boolean globalReviveMessage, boolean useSecondsForRevive,
+    boolean healPercentageOfMaxHealth, float reviveHealth, int reviveHunger, float reviveSaturation) {
         this.info = "For documentation on what each item does, see the readme file on github: https://github.com/CartoonishVillain/Incapacitated";
         this.merciful = merciful;
         this.hunter = hunter;
@@ -43,6 +48,10 @@ public class IncapConfigData implements Serializable {
         this.globalIncapMessage = globalIncapMessage;
         this.globalReviveMessage = globalReviveMessage;
         this.useSecondsForRevive = useSecondsForRevive;
+        this.healPercentageOfMaxHealth = healPercentageOfMaxHealth;
+        this.reviveHealth = reviveHealth;
+        this.reviveHunger = reviveHunger;
+        this.reviveSaturation = reviveSaturation;
     }
 
 
@@ -65,7 +74,11 @@ public class IncapConfigData implements Serializable {
                 true, //someInstantKills
                 true, //globalIncapMessage
                 true, //globalReviveMessage
-                false //useSecondsForRevive
+                false, //useSecondsForRevive
+                true, //healPercentageOfMaxHealth
+                0.33f, //reviveHealth
+                -1, //reviveHunger
+                -1f //reviveSaturation
         );
     }
 
@@ -139,5 +152,21 @@ public class IncapConfigData implements Serializable {
 
     public boolean isUseSecondsForRevive() {
         return useSecondsForRevive;
+    }
+
+    public boolean isHealPercentageOfMaxHealth() {
+        return healPercentageOfMaxHealth;
+    }
+
+    public float getReviveHealth() {
+        return reviveHealth;
+    }
+
+    public int getReviveHunger() {
+        return reviveHunger;
+    }
+
+    public float getReviveSaturation() {
+        return reviveSaturation;
     }
 }

@@ -16,6 +16,7 @@ import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Pose;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.food.FoodData;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -176,7 +177,7 @@ public class AbstractedIncapacitation {
         if (!player.level().isClientSide) {
             Services.PLATFORM.sendIncapPacket((ServerPlayer) player, player.getId(), false, (short) incapacitatedPlayerData.getDownsUntilDeath());
         }
-        player.setHealth(player.getMaxHealth() / 3f);
+        healPlayerWhenReviving(player);
         player.level().playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.NOTE_BLOCK_PLING.value(), SoundSource.PLAYERS, 1, 1);
 
         if (Incapacitated.configData.isGlobalReviveMessage()) {
@@ -212,6 +213,23 @@ public class AbstractedIncapacitation {
         return (short) incapacitatedPlayerData.getDownsUntilDeath();
     }
 
+    public static void healPlayerWhenReviving(Player player) {
+        if (Incapacitated.configData.isHealPercentageOfMaxHealth()) {
+            player.setHealth(player.getMaxHealth() * Incapacitated.configData.getReviveHealth());
+        } else {
+            player.setHealth(Incapacitated.configData.getReviveHealth());
+        }
+
+        FoodData foodData = player.getFoodData();
+        if (Incapacitated.configData.getReviveHunger() > -1) {
+            foodData.setFoodLevel(Incapacitated.configData.getReviveHunger());
+        }
+
+        if (Incapacitated.configData.getReviveSaturation() > -1) {
+            foodData.setSaturation(Incapacitated.configData.getReviveSaturation());
+        }
+    }
+
     public static void eat(LivingEntity entity, ItemStack itemStack){
         if(entity instanceof Player player && !entity.level().isClientSide()){
             Item item = itemStack.getItem();
@@ -228,7 +246,7 @@ public class AbstractedIncapacitation {
                     incapacitatedPlayerData.setDownsUntilDeath(Incapacitated.configData.getDownCounter());
                     incapacitatedPlayerData.setTicksUntilDeath(Incapacitated.configData.getDownTicks());
                     player.removeEffect(MobEffects.GLOWING);
-                    player.setHealth(player.getMaxHealth()/3f);
+                    healPlayerWhenReviving(player);
                     player.level().playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.NOTE_BLOCK_PLING.value(), SoundSource.PLAYERS, 1, 1);
                 }
             } else if(Incapacitated.reviveFoods.contains(item.toString())) {

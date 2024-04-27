@@ -42,3 +42,12 @@ You can reload your config at any time with /incap config reload
 * GlobalReviveMessage - true or false, do messages about players being revived get broadcast globally?
 
 * UseSecondsForRevive - true or false, when reviving a player, should seconds on the revive be displayed instead of the progress bar?
+
+* HealPercentageOfMaxHealth - true or false, when true, reviveHealth is a multiplier added to a player's max health, healing them for the result, on false, reviveHealth is the exact amount healed.
+
+* ReviveHealth - number, potentially decimal, depending on HealPercentageOfMaxHealth, a multiplier to the max health to heal by when reviving, or a direct number to heal by.
+
+* ReviveHunger - whole number, how many food points should a user have when revived? Negative numbers avoid adjusting food values.
+
+* ReviveSaturation - number, potentially decimal, what should the hunger saturation of a recently revived player be? Numbers at or below -1 avoid adjusting saturation values.
+
