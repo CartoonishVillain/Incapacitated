@@ -2,7 +2,6 @@ package com.cartoonishvillain.incapacitated.platform;
 
 import com.cartoonishvillain.incapacitated.FabricEffects;
 import com.cartoonishvillain.incapacitated.FabricIncapacitated;
-import com.cartoonishvillain.incapacitated.Incapacitated;
 import com.cartoonishvillain.incapacitated.IncapacitatedPlayerData;
 import com.cartoonishvillain.incapacitated.component.IncapacitatedComponent;
 import com.cartoonishvillain.incapacitated.component.IncapacitatedInterface;
@@ -71,7 +70,7 @@ public class FabricPlatformHelper implements IPlatformHelper {
         IncapacitatedComponent playerData = INCAPACITATEDCOMPONENTINSTANCE.get(player);
         if (playerData.getIsIncapacitated()) {
             player.hurt(playerData.getSourceOfDeath(player.level()), player.getMaxHealth() * 10);
-            playerData.setReviveCount(Incapacitated.configData.getDownCounter());
+            playerData.setReviveCount(FabricIncapacitated.downCounter);
             playerData.setIsIncapacitated(false);
             player.removeEffect(MobEffects.GLOWING);
         }
@@ -90,5 +89,88 @@ public class FabricPlatformHelper implements IPlatformHelper {
     @Override
     public MobEffect getWeakEffect() {
         return FabricEffects.incapWeak;
+    }
+
+    @Override
+    public boolean clientConfigGrayScreen() {
+        return FabricIncapacitated.lastDownDesaturate;
+    }
+
+    @Override
+    public boolean commonConfigGlowing() {
+        return FabricIncapacitated.glowingWhileDowned;
+    }
+
+    @Override
+    public boolean commonConfigUseSeconds() {
+        return FabricIncapacitated.useSecondsForRevive;
+    }
+
+    @Override
+    public boolean commonConfigSomeInstantKills() {
+        return FabricIncapacitated.someInstantKills;
+    }
+
+    @Override
+    public boolean commonConfigUnlimitedDowns() {
+        return FabricIncapacitated.unlimitedDowns;
+    }
+
+    @Override
+    public boolean commonConfigSlow() {
+        return FabricIncapacitated.slow;
+    }
+
+    @Override
+    public boolean commonConfigWeak() {
+        return FabricIncapacitated.weakened;
+    }
+
+    @Override
+    public boolean commonConfigDownLogging() {
+        return FabricIncapacitated.downLogging;
+    }
+
+    @Override
+    public boolean commonConfigReviveMessage() {
+        return FabricIncapacitated.reviveMessage;
+    }
+
+    @Override
+    public boolean commonConfigGlobalReviveMessage() {
+        return FabricIncapacitated.globalReviveMessage;
+    }
+
+    @Override
+    public boolean commonConfigGlobalIncapMessage() {
+        return FabricIncapacitated.globalIncapMessage;
+    }
+
+    @Override
+    public boolean commonConfigHunter() {return FabricIncapacitated.hunter;}
+
+    @Override
+    public boolean commonConfigRegenerating() {
+        return FabricIncapacitated.regenerating;
+    }
+
+    @Override
+    public int commonConfigMerciful() {
+        return FabricIncapacitated.merciful;
+    }
+
+    @Override
+    public int commonConfigDownTicks() {
+        return FabricIncapacitated.downTicks;
+    }
+
+    @Override
+    public int commonConfigDownCount() {
+        return FabricIncapacitated.downCounter;
+    }
+
+    @Override
+    public int commonConfigReviveTicks() {
+        return FabricIncapacitated.reviveTicks;
     }
 }

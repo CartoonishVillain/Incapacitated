@@ -1,6 +1,6 @@
 package com.cartoonishvillain.incapacitated.capability;
 
-import com.cartoonishvillain.incapacitated.Incapacitated;
+import com.cartoonishvillain.incapacitated.config.IncapacitatedCommonConfig;
 import com.cartoonishvillain.incapacitated.damage.BleedOutDamage;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.Registries;
@@ -16,9 +16,9 @@ import static com.cartoonishvillain.incapacitated.damage.IncapacitatedDamageSour
 public class NeoForgeIncapacitatedPlayerData implements Serializable {
 
     boolean incapacitated = false;
-    int ticksUntilDeath = Incapacitated.configData.getDownTicks();
-    int downsUntilDeath = Incapacitated.configData.getDownCounter();
-    int reviveCounter = Incapacitated.configData.getReviveTicks();
+    int ticksUntilDeath = IncapacitatedCommonConfig.DOWNTICKS.get();
+    int downsUntilDeath = IncapacitatedCommonConfig.DOWNCOUNT.get();
+    int reviveCounter = IncapacitatedCommonConfig.REVIVETICKS.get();
     DamageSource damageSource = null;
 
 

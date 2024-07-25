@@ -6,8 +6,8 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
-import net.neoforged.neoforge.network.handling.PlayPayloadContext;
-
+import net.neoforged.neoforge.network.handling.ServerPayloadContext;
+\
 import static com.cartoonishvillain.incapacitated.capability.PlayerCapability.INCAP_DATA;
 
 public class IncapPacketServerHandler {
@@ -17,8 +17,8 @@ public class IncapPacketServerHandler {
         return INSTANCE;
     }
 
-    public void handleData(final IncapPacket incapPacket, final PlayPayloadContext context) {
-        context.workHandler().submitAsync(() ->{
+    public void handleData(final IncapPacket incapPacket, final ServerPayloadContext context) {
+        context.enqueueWork(() ->{
             Entity entity = Minecraft.getInstance().level.getEntity(incapPacket.getID()) ;
             if(entity instanceof Player){
                 NeoForgeIncapacitatedPlayerData incapacitatedPlayerData = entity.getData(INCAP_DATA);
@@ -37,7 +37,7 @@ public class IncapPacketServerHandler {
 
                 if (IncapacitatedClientConfig.GRAYSCREEN.get()) {
                     if (incapPacket.getDownCount() <= 0) {
-                        ResourceLocation resourceLocation = new ResourceLocation("shaders/post/desaturate.json");
+                        ResourceLocation resourceLocation = ResourceLocation.withDefaultNamespace("shaders/post/desaturate.json");
                         Minecraft.getInstance().gameRenderer.loadEffect(resourceLocation);
                     } else {
                         Minecraft.getInstance().gameRenderer.shutdownEffect();
