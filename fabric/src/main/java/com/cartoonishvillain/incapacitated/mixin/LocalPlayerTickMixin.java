@@ -18,11 +18,13 @@ public class LocalPlayerTickMixin {
     @Inject(at = @At("HEAD"), method = "tick")
     private void incapacitatedLocalTick(CallbackInfo ci){
         IncapacitatedComponent playerData = INCAPACITATEDCOMPONENTINSTANCE.get((LocalPlayer) (Object) this);
-        if (FabricIncapacitated.lastDownDesaturate && playerData.getDownsUntilDeath() <= 0) {
+        if (FabricIncapacitated.lastDownDesaturate && playerData.getDownsUntilDeath() <= 0 && !playerData.isShader()) {
             ResourceLocation resourceLocation = new ResourceLocation("shaders/post/desaturate.json");
             ((LoadEffectInvoker) Minecraft.getInstance().gameRenderer).incapacitatedLoadEffect(resourceLocation);
-        } else {
+            playerData.setShader(true);
+        } else if ((!FabricIncapacitated.lastDownDesaturate || !(playerData.getDownsUntilDeath() <= 0)) && playerData.isShader()) {
             Minecraft.getInstance().gameRenderer.shutdownEffect();
+            playerData.setShader(false);
         }
     }
 }

@@ -22,6 +22,7 @@ public class IncapacitatedComponent implements IncapacitatedInterface, AutoSynce
     protected int ticksUntilDeath = Incapacitated.configData.getDownTicks();
     protected int downsUntilDeath = Incapacitated.configData.getDownCounter();
     protected int reviveCounter = Incapacitated.configData.getReviveTicks();
+    protected boolean isShader = false;
     private DamageSource originalSource;
 
     public IncapacitatedComponent(Object provider){this.provider = provider;}
@@ -97,6 +98,14 @@ public class IncapacitatedComponent implements IncapacitatedInterface, AutoSynce
 
         originalSource = new BleedOutDamage(damageType, causeOfDeath);
         ComponentStarter.INCAPACITATEDCOMPONENTINSTANCE.sync(this.provider);
+    }
+
+    public boolean isShader() {
+        return isShader;
+    }
+
+    public void setShader(boolean shader) {
+        isShader = shader;
     }
 
     @Override

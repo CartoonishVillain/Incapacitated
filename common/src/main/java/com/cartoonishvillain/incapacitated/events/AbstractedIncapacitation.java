@@ -2,6 +2,7 @@ package com.cartoonishvillain.incapacitated.events;
 
 import com.cartoonishvillain.incapacitated.Incapacitated;
 import com.cartoonishvillain.incapacitated.IncapacitatedPlayerData;
+import com.cartoonishvillain.incapacitated.mixin.IncapacitatedItemAccessor;
 import com.cartoonishvillain.incapacitated.platform.Services;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
@@ -17,7 +18,6 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Pose;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.food.FoodData;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
@@ -258,15 +258,15 @@ public class AbstractedIncapacitation {
 
     public static void eat(LivingEntity entity, ItemStack itemStack){
         if(entity instanceof Player player && !entity.level().isClientSide()){
-            Item item = itemStack.getItem();
+            String item = ((IncapacitatedItemAccessor) itemStack.getItem()).getBuiltInRegistryHolder().key().location().toString();
             IncapacitatedPlayerData incapacitatedPlayerData = Services.PLATFORM.getPlayerData(player);
-            if(Incapacitated.healingFoods.contains(item.toString())) {
+            if(Incapacitated.healingFoods.contains(item)) {
                 incapacitatedPlayerData.setDownsUntilDeath(Incapacitated.configData.getDownCounter());
                 incapacitatedPlayerData.setTicksUntilDeath(Incapacitated.configData.getDownTicks());
             }
 
             if(incapacitatedPlayerData.isIncapacitated()) {
-                if(Incapacitated.reviveFoods.contains(item.toString())){
+                if(Incapacitated.reviveFoods.contains(item)){
                     incapacitatedPlayerData.setIncapacitated(false);
                     incapacitatedPlayerData.setReviveCounter(Incapacitated.configData.getReviveTicks());
                     incapacitatedPlayerData.setDownsUntilDeath(Incapacitated.configData.getDownCounter());
