@@ -6,9 +6,6 @@ import com.cartoonishvillain.incapacitated.config.SimpleConfig;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.minecraft.ResourceLocationException;
-import net.minecraft.core.Registry;
-import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -49,10 +46,9 @@ public class FabricIncapacitated implements ModInitializer {
 
         // Use Fabric to bootstrap the Common mod.
         Incapacitated.init();
+        FabricEffects.initEffects();
         Incapacitated.HealingFoods = getFoodForHealing();
         Incapacitated.ReviveFoods = getFoodForReviving();
-        Registry.register(BuiltInRegistries.MOB_EFFECT, new ResourceLocation(Constants.MOD_ID, "incap_slow"), FabricEffects.incapSlow);
-        Registry.register(BuiltInRegistries.MOB_EFFECT, new ResourceLocation(Constants.MOD_ID, "incap_weak"), FabricEffects.incapWeak);
 
         CommandRegistrationCallback.EVENT.register(((dispatcher, registryAccess, environment) -> {
             GetDownCount.register(dispatcher);
@@ -69,7 +65,7 @@ public class FabricIncapacitated implements ModInitializer {
         ArrayList<String> reviveFoodList = new ArrayList<>();
         try {
             for(String string : reviveFoods){
-                String food = new ResourceLocation(string).getPath();
+                String food = ResourceLocation.parse(string).toString();
                 reviveFoodList.add(food);
             }
         }catch(ResourceLocationException e){
@@ -85,7 +81,7 @@ public class FabricIncapacitated implements ModInitializer {
         ArrayList<String> healFoodList = new ArrayList<>();
         try {
             for(String string : healFoods){
-                String food = new ResourceLocation(string).getPath();
+                String food = ResourceLocation.parse(string).toString();
                 healFoodList.add(food);
             }
         }catch(ResourceLocationException e){

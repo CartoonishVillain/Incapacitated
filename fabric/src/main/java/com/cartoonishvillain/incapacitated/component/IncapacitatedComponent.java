@@ -2,16 +2,17 @@ package com.cartoonishvillain.incapacitated.component;
 
 import com.cartoonishvillain.incapacitated.FabricIncapacitated;
 import com.cartoonishvillain.incapacitated.damage.BleedOutDamage;
-import dev.onyxstudios.cca.api.v3.component.sync.AutoSyncedComponent;
 import net.minecraft.core.Holder;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.damagesource.DamageType;
 import net.minecraft.world.damagesource.DamageTypes;
 import net.minecraft.world.level.Level;
+import org.ladysnake.cca.api.v3.component.sync.AutoSyncedComponent;
 
 import static com.cartoonishvillain.incapacitated.damage.IncapacitatedDamageSources.BLEEDOUT;
 
@@ -21,6 +22,7 @@ public class IncapacitatedComponent implements IncapacitatedInterface, AutoSynce
     protected int ticksUntilDeath = FabricIncapacitated.downTicks;
     protected int downsUntilDeath = FabricIncapacitated.downCounter;
     protected int reviveCounter = FabricIncapacitated.reviveTicks;
+    protected boolean isShader = false;
     private DamageSource originalSource;
 
     public IncapacitatedComponent(Object provider){this.provider = provider;}
@@ -34,6 +36,14 @@ public class IncapacitatedComponent implements IncapacitatedInterface, AutoSynce
     public void setIsIncapacitated(boolean isIncapacitated) {
         incapacitated = isIncapacitated;
         ComponentStarter.INCAPACITATEDCOMPONENTINSTANCE.sync(this.provider);
+    }
+
+    public boolean isShader() {
+        return isShader;
+    }
+
+    public void setShader(boolean shader) {
+        isShader = shader;
     }
 
     @Override
@@ -98,31 +108,34 @@ public class IncapacitatedComponent implements IncapacitatedInterface, AutoSynce
         ComponentStarter.INCAPACITATEDCOMPONENTINSTANCE.sync(this.provider);
     }
 
-    @Override
-    public void readFromNbt(CompoundTag tag) {
-        incapacitated = tag.getBoolean("incapacitation");
-        ticksUntilDeath = tag.getInt("incapTimer");
-        downsUntilDeath = tag.getInt("incapCounter");
-    }
 
     @Override
-    public void writeToNbt(CompoundTag tag) {
-        tag.putBoolean("incapacitation", incapacitated);
-        tag.putInt("incapTimer", ticksUntilDeath);
-        tag.putInt("incapCounter", downsUntilDeath);
-    }
-
-    @Override
-    public void writeSyncPacket(FriendlyByteBuf buf, ServerPlayer recipient) {
+    public void writeSyncPacket(RegistryFriendlyByteBuf buf, ServerPlayer recipient) {
         buf.writeBoolean(this.getIsIncapacitated());
         buf.writeInt(this.getTicksUntilDeath());
         buf.writeInt(this.getDownsUntilDeath());
     }
 
     @Override
-    public void applySyncPacket(FriendlyByteBuf buf) {
+    public void applySyncPacket(RegistryFriendlyByteBuf buf) {
         this.setIsIncapacitated(buf.readBoolean());
         this.setTicksUntilDeath(buf.readInt());
         this.setDownsUntilDeath(buf.readInt());
+    }
+
+    @Override
+    public void readFromNbt(CompoundTag tag, HolderLookup.Provider registryLookup) {
+        incapacitated = tag.getBoolean("incapacitation");
+        ticksUntilDeath = tag.getInt("incapTimer");
+        downsUntilDeath = tag.getInt("incapCounter");
+        isShader = tag.getBoolean("incapShader");
+    }
+
+    @Override
+    public void writeToNbt(CompoundTag tag, HolderLookup.Provider registryLookup) {
+        tag.putBoolean("incapacitation", incapacitated);
+        tag.putInt("incapTimer", ticksUntilDeath);
+        tag.putInt("incapCounter", downsUntilDeath);
+        tag.putBoolean("incapShader", isShader);
     }
 }

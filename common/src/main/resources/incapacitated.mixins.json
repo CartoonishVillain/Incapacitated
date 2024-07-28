@@ -13,7 +13,8 @@
         "PlayerMixin",
         "PlayerRemoveMixin",
         "PlayerSleepMixin",
-        "ServerPlayerTickMixin"
+        "ServerPlayerTickMixin",
+        "IncapacitatedItemAccessor"
     ],
     "client": [
     ],

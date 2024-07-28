@@ -1,6 +1,7 @@
 package com.cartoonishvillain.incapacitated.events;
 
 import com.cartoonishvillain.incapacitated.Incapacitated;
+import com.cartoonishvillain.incapacitated.mixin.IncapacitatedItemAccessor;
 import com.cartoonishvillain.incapacitated.IncapacitatedPlayerData;
 import com.cartoonishvillain.incapacitated.platform.Services;
 import net.minecraft.ChatFormatting;
@@ -16,7 +17,6 @@ import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Pose;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
@@ -214,7 +214,7 @@ public class AbstractedIncapacitation {
 
     public static void eat(LivingEntity entity, ItemStack itemStack){
         if(entity instanceof Player player && !entity.level().isClientSide()){
-            Item item = itemStack.getItem();
+            String item = ((IncapacitatedItemAccessor) itemStack.getItem()).getBuiltInRegistryHolder().key().location().toString();
             IncapacitatedPlayerData incapacitatedPlayerData = Services.PLATFORM.getPlayerData(player);
             if(Incapacitated.HealingFoods.contains(item.toString())) {
                 incapacitatedPlayerData.setDownsUntilDeath(Services.PLATFORM.commonConfigDownCount());
@@ -222,7 +222,7 @@ public class AbstractedIncapacitation {
             }
 
             if(incapacitatedPlayerData.isIncapacitated()) {
-                if(Incapacitated.ReviveFoods.contains(item.toString())){
+                if(Incapacitated.ReviveFoods.contains(item)){
                     incapacitatedPlayerData.setIncapacitated(false);
                     incapacitatedPlayerData.setReviveCounter(Services.PLATFORM.commonConfigReviveTicks());
                     incapacitatedPlayerData.setDownsUntilDeath(Services.PLATFORM.commonConfigDownCount());

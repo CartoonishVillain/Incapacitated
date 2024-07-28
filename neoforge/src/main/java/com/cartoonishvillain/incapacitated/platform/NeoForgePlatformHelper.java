@@ -7,6 +7,8 @@ import com.cartoonishvillain.incapacitated.config.IncapacitatedClientConfig;
 import com.cartoonishvillain.incapacitated.config.IncapacitatedCommonConfig;
 import com.cartoonishvillain.incapacitated.networking.IncapPacket;
 import com.cartoonishvillain.incapacitated.platform.services.IPlatformHelper;
+import net.minecraft.core.Holder;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.damagesource.DamageSource;
@@ -90,13 +92,13 @@ public class NeoForgePlatformHelper implements IPlatformHelper {
     }
 
     @Override
-    public MobEffect getSlowEffect() {
-        return IncapEffects.incapSlow.get();
+    public Holder<MobEffect> getSlowEffect() {
+        return BuiltInRegistries.MOB_EFFECT.wrapAsHolder(IncapEffects.incapSlow.get());
     }
 
     @Override
-    public MobEffect getWeakEffect() {
-        return IncapEffects.incapWeak.get();
+    public Holder<MobEffect> getWeakEffect() {
+        return BuiltInRegistries.MOB_EFFECT.wrapAsHolder(IncapEffects.incapWeak.get());
     }
 
     @Override

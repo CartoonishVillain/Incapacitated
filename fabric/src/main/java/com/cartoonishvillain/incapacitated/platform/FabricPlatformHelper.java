@@ -4,13 +4,16 @@ import com.cartoonishvillain.incapacitated.FabricEffects;
 import com.cartoonishvillain.incapacitated.FabricIncapacitated;
 import com.cartoonishvillain.incapacitated.IncapacitatedPlayerData;
 import com.cartoonishvillain.incapacitated.component.IncapacitatedComponent;
-import com.cartoonishvillain.incapacitated.component.IncapacitatedInterface;
 import com.cartoonishvillain.incapacitated.platform.services.IPlatformHelper;
 import net.fabricmc.loader.api.FabricLoader;
+import net.minecraft.core.Holder;
+import net.minecraft.core.Registry;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffects;
+import net.minecraft.world.entity.monster.EnderMan;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 
@@ -70,6 +73,7 @@ public class FabricPlatformHelper implements IPlatformHelper {
         IncapacitatedComponent playerData = INCAPACITATEDCOMPONENTINSTANCE.get(player);
         if (playerData.getIsIncapacitated()) {
             player.hurt(playerData.getSourceOfDeath(player.level()), player.getMaxHealth() * 10);
+            player.kill();
             playerData.setReviveCount(FabricIncapacitated.downCounter);
             playerData.setIsIncapacitated(false);
             player.removeEffect(MobEffects.GLOWING);
@@ -82,13 +86,13 @@ public class FabricPlatformHelper implements IPlatformHelper {
     }
 
     @Override
-    public MobEffect getSlowEffect() {
-        return FabricEffects.incapSlow;
+    public Holder<MobEffect> getSlowEffect() {
+        return BuiltInRegistries.MOB_EFFECT.wrapAsHolder(FabricEffects.INCAPSLOW.get());
     }
 
     @Override
-    public MobEffect getWeakEffect() {
-        return FabricEffects.incapWeak;
+    public Holder<MobEffect> getWeakEffect() {
+        return  BuiltInRegistries.MOB_EFFECT.wrapAsHolder(FabricEffects.INCAPWEAK.get());
     }
 
     @Override

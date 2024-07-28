@@ -1,6 +1,7 @@
 package com.cartoonishvillain.incapacitated.mixin;
 
 
+import com.cartoonishvillain.incapacitated.Constants;
 import com.cartoonishvillain.incapacitated.FabricIncapacitated;
 import com.cartoonishvillain.incapacitated.component.IncapacitatedComponent;
 import net.minecraft.client.Minecraft;
@@ -18,11 +19,13 @@ public class LocalPlayerTickMixin {
     @Inject(at = @At("HEAD"), method = "tick")
     private void incapacitatedLocalTick(CallbackInfo ci){
         IncapacitatedComponent playerData = INCAPACITATEDCOMPONENTINSTANCE.get((LocalPlayer) (Object) this);
-        if (FabricIncapacitated.lastDownDesaturate && playerData.getDownsUntilDeath() <= 0) {
-            ResourceLocation resourceLocation = new ResourceLocation("shaders/post/desaturate.json");
+        if (FabricIncapacitated.lastDownDesaturate && playerData.getDownsUntilDeath() <= 0 && !playerData.isShader()) {
+            ResourceLocation resourceLocation = ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "shaders/post/desaturate.json");
             ((LoadEffectInvoker) Minecraft.getInstance().gameRenderer).incapacitatedLoadEffect(resourceLocation);
-        } else {
+            playerData.setShader(true);
+        } else if ((!FabricIncapacitated.lastDownDesaturate || !(playerData.getDownsUntilDeath() <= 0)) && playerData.isShader()) {
             Minecraft.getInstance().gameRenderer.shutdownEffect();
+            playerData.setShader(false);
         }
     }
 }
