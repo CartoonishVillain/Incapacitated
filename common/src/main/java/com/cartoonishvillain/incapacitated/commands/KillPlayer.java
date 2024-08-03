@@ -1,9 +1,11 @@
 package com.cartoonishvillain.incapacitated.commands;
 
+import com.cartoonishvillain.incapacitated.Incapacitated;
 import com.cartoonishvillain.incapacitated.platform.Services;
 import com.mojang.brigadier.CommandDispatcher;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
+import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 
 
@@ -20,8 +22,10 @@ public class KillPlayer {
 
     private static int killPlayerIfDown(CommandSourceStack sourceStack) {
         ServerPlayer player = sourceStack.getPlayer();
-        if (player != null) {
+        if (player != null && !Incapacitated.configData.isDANGERDisableGiveUp()) {
             Services.PLATFORM.killPlayerIfIncappedCommand(player);
+        } else if (player != null && Incapacitated.configData.isDANGERDisableGiveUp()) {
+            sourceStack.sendFailure(Component.translatable("command.return.die.failed"));
         }
         return 0;
     }

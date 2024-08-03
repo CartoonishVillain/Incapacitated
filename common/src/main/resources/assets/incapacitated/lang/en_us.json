@@ -4,6 +4,8 @@
   "command.return.revived": "Forcibly revived %1$s",
   "command.return.setdowns": "%1$s now has %2$s incapacitations until death",
   "command.return.getdowns": "%1$s has %2$s incapacitations until death",
+  "command.return.die.failed": "Unfortunately, your server config has disabled your ability to give up.",
+  "command.return.config.reload": "Server incapacitated configuration files reloaded.",
   "message.incap.message": "%1$s is incapacitated!",
   "message.revive.message": "%1$s has been revived!",
   "message.revivecount.normal": "You have %1$s downs left",

@@ -17,9 +17,9 @@ import static com.cartoonishvillain.incapacitated.damage.IncapacitatedDamageSour
 public class IncapacitatedPlayerData implements Serializable {
 
     boolean incapacitated = false;
-    int ticksUntilDeath = Services.PLATFORM.commonConfigDownTicks();
-    int downsUntilDeath = Services.PLATFORM.commonConfigDownCount();
-    int reviveCounter = Services.PLATFORM.commonConfigReviveTicks();
+    int ticksUntilDeath = Incapacitated.configData.getDownTicks();
+    int downsUntilDeath = Incapacitated.configData.getDownCounter();
+    int reviveCounter = Incapacitated.configData.getReviveTicks();
     DamageSource originalSource = null;
 
     public boolean isIncapacitated() {

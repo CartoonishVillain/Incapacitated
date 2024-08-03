@@ -15,8 +15,8 @@ public class IncapEffects {
     public static DeferredHolder<MobEffect, MobEffect> incapWeak;
 
     public static void init(IEventBus modBus){
-        incapSlow = MOB_EFFECTS.register("incap_slow", () -> new ModdedPotionEffects(MobEffectCategory.HARMFUL, 4587519, new ResourceLocation(Constants.MOD_ID, "incap_slow")).addAttributeModifier(Attributes.MOVEMENT_SPEED, "7107DE5E-7CE8-4030-940E-514C1B169290", (double)-0.15F, AttributeModifier.Operation.MULTIPLY_TOTAL));
-        incapWeak = MOB_EFFECTS.register("incap_weak", () -> new AttackModdedPotionEffects(MobEffectCategory.HARMFUL, 4587519,  new ResourceLocation(Constants.MOD_ID, "incap_weak")).addAttributeModifier(Attributes.ATTACK_DAMAGE, "22653B89-11AE-492C-9B6B-9971489B5BE5", -4.0D, AttributeModifier.Operation.ADDITION));
+        incapSlow = MOB_EFFECTS.register("incap_slow", () -> new ModdedPotionEffects(MobEffectCategory.HARMFUL, 4587519, ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "incap_slow")).addAttributeModifier(Attributes.MOVEMENT_SPEED, ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "slow"), (double)-0.15F, AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL));
+        incapWeak = MOB_EFFECTS.register("incap_weak", () -> new AttackModdedPotionEffects(MobEffectCategory.HARMFUL, 4587519,  ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "incap_weak")).addAttributeModifier(Attributes.ATTACK_DAMAGE, ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "weaken"), -4.0D, AttributeModifier.Operation.ADD_VALUE));
         MOB_EFFECTS.register(modBus);
     }
 
