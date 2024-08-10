@@ -11,6 +11,8 @@ You can reload your config at any time with /incap config reload
 
 * Hunter - true or false, can players revive themselves with a (non-player) kill
 
+* CanBreakOrInteractWithBlocks - true or false, can players while downed break or interact with blocks
+
 * Slow - true or false, are incapacitated players slowed down dramatically?
 
 * Weakened - true or false, are incapacitated players weakened dramatically
@@ -63,7 +65,7 @@ IncapEffectData is an array of objects defined as
 {  
 effectID: String  
 amplifier: Integer  
-ambient:   
+ambient:  boolean  
 }
 
 An example would look like:

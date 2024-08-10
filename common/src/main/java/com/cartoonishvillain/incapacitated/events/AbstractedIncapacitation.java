@@ -394,6 +394,13 @@ public class AbstractedIncapacitation {
         }
     }
 
+    public static void breakBlocks(Player player, CallbackInfoReturnable<Boolean> ci) {
+        IncapacitatedPlayerData playerData = Services.PLATFORM.getPlayerData(player);
+        if (!Incapacitated.configData.isCanBreakOrInteractWithBlocks() && playerData.isIncapacitated()) { //if they can, we do not change behavior..
+            ci.setReturnValue(true);
+        }
+    }
+
     private static MutableComponent revivingComponent(IncapacitatedPlayerData playerData, String translatable) {
         if (!Incapacitated.configData.isUseSecondsForRevive()) {
             MutableComponent barComponent = Component.literal("[").withStyle(ChatFormatting.GREEN);
