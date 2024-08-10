@@ -13,7 +13,9 @@ You can reload your config at any time with /incap config reload
 
 * CanBreakOrInteractWithBlocks - true or false, can players while downed break or interact with blocks
 
-* Slow - true or false, are incapacitated players slowed down dramatically?
+* CanJumpWhileDown - true or false, can players while downed jump
+
+* Slow - true or false, are incapacitated players slowed down dramatically
 
 * Weakened - true or false, are incapacitated players weakened dramatically
 

@@ -7,6 +7,7 @@ public class IncapConfigData implements Serializable {
     String info;
     int merciful;
     boolean canBreakOrInteractWithBlocks;
+    boolean canJumpWhileDown;
     boolean hunter;
     boolean slow;
     boolean weakened;
@@ -32,12 +33,13 @@ public class IncapConfigData implements Serializable {
     ArrayList<IncapEffectData> incapEffectData;
     boolean DANGERDisableGiveUp;
 
-    public IncapConfigData(int merciful, boolean hunter, boolean canBreakOrInteractWithBlocks, boolean slow, boolean weakened, boolean regenerating, boolean unlimitedDowns, boolean downLogging, boolean reviveMessage, String foodReviveList, String foodHealList, int downTicks, int reviveTicks, int downCounter, boolean glowingWhileDowned, boolean someInstantKills, String instantKills, boolean globalIncapMessage, boolean globalReviveMessage, boolean useSecondsForRevive,
+    public IncapConfigData(int merciful, boolean hunter, boolean canBreakOrInteractWithBlocks, boolean canJumpWhileDown, boolean slow, boolean weakened, boolean regenerating, boolean unlimitedDowns, boolean downLogging, boolean reviveMessage, String foodReviveList, String foodHealList, int downTicks, int reviveTicks, int downCounter, boolean glowingWhileDowned, boolean someInstantKills, String instantKills, boolean globalIncapMessage, boolean globalReviveMessage, boolean useSecondsForRevive,
     boolean healPercentageOfMaxHealth, float reviveHealth, int reviveHunger, float reviveSaturation, ArrayList<IncapEffectData> incapEffectData, boolean DANGERDisableGiveUp) {
         this.info = "For documentation on what each item does, see the readme file on github: https://github.com/CartoonishVillain/Incapacitated";
         this.merciful = merciful;
         this.hunter = hunter;
         this.canBreakOrInteractWithBlocks = canBreakOrInteractWithBlocks;
+        this.canJumpWhileDown = canJumpWhileDown;
         this.slow = slow;
         this.weakened = weakened;
         this.regenerating = regenerating;
@@ -69,6 +71,7 @@ public class IncapConfigData implements Serializable {
                 0, //merciful
                 false, //hunter
                 false, //canBreakOrInteractWithBlocks
+                false, //canJumpWhileDown
                 false, //slow
                 false, //weakened
                 false, //regenerating
@@ -197,5 +200,9 @@ public class IncapConfigData implements Serializable {
 
     public boolean isDANGERDisableGiveUp() {
         return DANGERDisableGiveUp;
+    }
+
+    public boolean isCanJumpWhileDown() {
+        return canJumpWhileDown;
     }
 }
