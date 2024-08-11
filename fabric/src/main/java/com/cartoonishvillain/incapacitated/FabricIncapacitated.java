@@ -3,6 +3,7 @@ package com.cartoonishvillain.incapacitated;
 import com.cartoonishvillain.incapacitated.commands.*;
 import com.cartoonishvillain.incapacitated.config.DefaultConfig;
 import com.cartoonishvillain.incapacitated.config.SimpleConfig;
+import com.cartoonishvillain.incapacitated.platform.Services;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.minecraft.ResourceLocationException;
@@ -32,11 +33,15 @@ public class FabricIncapacitated implements ModInitializer {
 
         CommandRegistrationCallback.EVENT.register(((dispatcher, registryAccess, environment) -> {
             GetDownCount.register(dispatcher);
-            IncapDevMode.register(dispatcher);
             KillPlayer.register(dispatcher);
             SetDownCount.register(dispatcher);
             ConfigCommands.register(dispatcher);
             SetIncapacitatedCommand.register(dispatcher);
+            SetDownTicks.register(dispatcher);
+
+            if (Services.PLATFORM.isDevelopmentEnvironment()) {
+                IncapDevMode.register(dispatcher);
+            }
         }));
     }
 }

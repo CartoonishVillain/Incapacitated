@@ -2,6 +2,7 @@
   "death.attack.bleedout": "%1$s and bled out",
   "command.return.incapped": "Forcibly incapacitated %1$s",
   "command.return.revived": "Forcibly revived %1$s",
+  "command.return.setticks": "%1$s now has %2$s ticks until they next bleed out",
   "command.return.setdowns": "%1$s now has %2$s incapacitations until death",
   "command.return.getdowns": "%1$s has %2$s incapacitations until death",
   "command.return.die.failed": "Unfortunately, your server config has disabled your ability to give up.",

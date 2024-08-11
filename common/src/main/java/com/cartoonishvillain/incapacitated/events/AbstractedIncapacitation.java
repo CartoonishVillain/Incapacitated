@@ -225,12 +225,21 @@ public class AbstractedIncapacitation {
                     player.displayClientMessage(Component.translatable("message.revivecount.zero"), false);
                 }
             }
+
+            resetDownTicks(player, incapacitatedPlayerData);
     }
 
 
     public static void setDownCount(Player player, short value) {
         IncapacitatedPlayerData incapacitatedPlayerData = Services.PLATFORM.getPlayerData(player);
         incapacitatedPlayerData.setDownsUntilDeath(value);
+        Services.PLATFORM.writePlayerData(player, incapacitatedPlayerData);
+        Services.PLATFORM.sendIncapPacket((ServerPlayer) player, player.getId(), incapacitatedPlayerData.isIncapacitated(), (short) incapacitatedPlayerData.getDownsUntilDeath());
+    }
+
+    public static void setDownTicks(Player player, int value) {
+        IncapacitatedPlayerData incapacitatedPlayerData = Services.PLATFORM.getPlayerData(player);
+        incapacitatedPlayerData.setTicksUntilDeath(value);
         Services.PLATFORM.writePlayerData(player, incapacitatedPlayerData);
         Services.PLATFORM.sendIncapPacket((ServerPlayer) player, player.getId(), incapacitatedPlayerData.isIncapacitated(), (short) incapacitatedPlayerData.getDownsUntilDeath());
     }
@@ -446,6 +455,14 @@ public class AbstractedIncapacitation {
 
     public static void broadcast(MinecraftServer server, Component translationTextComponent){
         server.getPlayerList().broadcastSystemMessage(translationTextComponent, false);
+    }
+
+    private static void resetDownTicks(Player player, IncapacitatedPlayerData playerData) {
+        if (Incapacitated.configData.isShouldDownTimeReset()) {
+            playerData.setTicksUntilDeath(Incapacitated.configData.getDownTicks());
+            Services.PLATFORM.writePlayerData(player, playerData);
+            Services.PLATFORM.sendIncapPacket((ServerPlayer) player, player.getId(), playerData.isIncapacitated(), (short) playerData.getDownsUntilDeath());
+        }
     }
 
 }
