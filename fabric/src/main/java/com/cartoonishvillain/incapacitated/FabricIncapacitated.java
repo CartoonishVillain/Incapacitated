@@ -6,6 +6,7 @@ import com.cartoonishvillain.incapacitated.config.SimpleConfig;
 import com.cartoonishvillain.incapacitated.platform.Services;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
+import net.fabricmc.fabric.api.event.lifecycle.v1.CommonLifecycleEvents;
 import net.minecraft.ResourceLocationException;
 import net.minecraft.resources.ResourceLocation;
 import org.apache.logging.log4j.LogManager;
@@ -30,6 +31,7 @@ public class FabricIncapacitated implements ModInitializer {
         // Use Fabric to bootstrap the Common mod.
         Incapacitated.init();
         FabricEffects.initEffects();
+        FabricStats.modConstruction();
 
         CommandRegistrationCallback.EVENT.register(((dispatcher, registryAccess, environment) -> {
             GetDownCount.register(dispatcher);
@@ -43,5 +45,9 @@ public class FabricIncapacitated implements ModInitializer {
                 IncapDevMode.register(dispatcher);
             }
         }));
+
+        CommonLifecycleEvents.TAGS_LOADED.register((listen, listen2) -> {
+            FabricStats.setup();
+        });
     }
 }

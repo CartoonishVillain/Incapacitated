@@ -10,7 +10,7 @@ import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
-public class IncapEffects {
+public class NFIncapEffects {
     public static DeferredHolder<MobEffect, MobEffect> incapSlow;
     public static DeferredHolder<MobEffect, MobEffect> incapWeak;
 

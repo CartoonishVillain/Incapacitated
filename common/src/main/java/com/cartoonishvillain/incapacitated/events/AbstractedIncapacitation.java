@@ -1,5 +1,6 @@
 package com.cartoonishvillain.incapacitated.events;
 
+import com.cartoonishvillain.incapacitated.Constants;
 import com.cartoonishvillain.incapacitated.Incapacitated;
 import com.cartoonishvillain.incapacitated.IncapacitatedPlayerData;
 import com.cartoonishvillain.incapacitated.mixin.IncapacitatedItemAccessor;
@@ -8,6 +9,7 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
@@ -40,6 +42,7 @@ public class AbstractedIncapacitation {
                 }
                 //if downs until KillPlayer is 0 or higher, we can cancel the KillPlayer event because the user is down.
                 if (incapacitatedPlayerData.getDownsUntilDeath() > -1) {
+                    if (player instanceof ServerPlayer) player.awardStat(Services.PLATFORM.getIncappedStat());
                     incapacitatedPlayerData.setIncapacitated(true);
                     player.setHealth(player.getMaxHealth());
                     if (Incapacitated.configData.isGlowingWhileDowned())
@@ -88,6 +91,7 @@ public class AbstractedIncapacitation {
                 }
                 //if downs until KillPlayer is 0 or higher, we can cancel the KillPlayer event because the user is down.
                 if (incapacitatedPlayerData.getDownsUntilDeath() > -1) {
+                    if (player instanceof ServerPlayer) player.awardStat(Services.PLATFORM.getIncappedStat());
                     incapacitatedPlayerData.setIncapacitated(true);
                     Services.PLATFORM.setDamageSource(player.level(), damageSource, player);
                     event.cancel();
@@ -137,6 +141,7 @@ public class AbstractedIncapacitation {
                     }
                     //if downs until KillPlayer is 0 or higher, we can cancel the KillPlayer event because the user is down.
                     if (incapacitatedPlayerData.getDownsUntilDeath() > -1) {
+                        if (player instanceof ServerPlayer) player.awardStat(Services.PLATFORM.getIncappedStat());
                         incapacitatedPlayerData.setIncapacitated(true);
                         Services.PLATFORM.setDamageSource(player.level(), damageSource, player);
                         event.cancel();
@@ -277,6 +282,7 @@ public class AbstractedIncapacitation {
 
             if(incapacitatedPlayerData.isIncapacitated()) {
                 if(Incapacitated.reviveFoods.contains(item)){
+                    if (player instanceof ServerPlayer) player.awardStat(Services.PLATFORM.getSelfReviveStat(), 1);
                     incapacitatedPlayerData.setIncapacitated(false);
                     incapacitatedPlayerData.setReviveCounter(Incapacitated.configData.getReviveTicks());
                     incapacitatedPlayerData.setDownsUntilDeath(Incapacitated.configData.getDownCounter());
@@ -285,7 +291,7 @@ public class AbstractedIncapacitation {
                     healPlayerWhenReviving(player);
                     player.level().playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.NOTE_BLOCK_PLING.value(), SoundSource.PLAYERS, 1, 1);
                 }
-            } else if(Incapacitated.reviveFoods.contains(item.toString())) {
+            } else if(Incapacitated.reviveFoods.contains(item)) {
                 incapacitatedPlayerData.setDownsUntilDeath(Incapacitated.configData.getDownCounter());
                 incapacitatedPlayerData.setTicksUntilDeath(Incapacitated.configData.getDownTicks());
             }
@@ -348,6 +354,7 @@ public class AbstractedIncapacitation {
                 if (reviving) {
                     //Count down the revive timer. Returns true if the timer is 0, at which point the player is revived.
                     if (playerData.downReviveCount()) {
+                        if (revivingPlayer instanceof ServerPlayer) revivingPlayer.awardStat(Services.PLATFORM.getReviveStat(), 1);
                         revive(downPlayer);
                     } else {
                         //If the timer is not 0 on the revive timer, tell both parties that the revive is occuring, and how much longer until it is done.

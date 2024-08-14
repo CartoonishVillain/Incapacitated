@@ -1,6 +1,5 @@
 package com.cartoonishvillain.incapacitated;
 
-
 import com.cartoonishvillain.incapacitated.capability.PlayerCapability;
 import com.cartoonishvillain.incapacitated.commands.*;
 import com.cartoonishvillain.incapacitated.config.IncapacitatedClientConfig;
@@ -17,15 +16,13 @@ import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.config.ModConfig;
+import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.neoforged.fml.loading.FMLLoader;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.RegisterCommandsEvent;
-import net.neoforged.neoforge.event.server.ServerStartingEvent;
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
 import net.neoforged.neoforge.network.handling.DirectionalPayloadHandler;
 import net.neoforged.neoforge.network.registration.PayloadRegistrar;
-
-import java.util.List;
 
 @Mod(Constants.MOD_ID)
 public class NFIncapacitated {
@@ -34,7 +31,8 @@ public class NFIncapacitated {
         Incapacitated.init();
 
         PlayerCapability.loadDataAttachment(modEventBus);
-        IncapEffects.init(modEventBus);
+        NFIncapEffects.init(modEventBus);
+        NFIncapStats.modConstruction(modEventBus);
 
         modContainer.registerConfig(ModConfig.Type.CLIENT, IncapacitatedClientConfig.CLIENTSPEC);
 
@@ -58,6 +56,11 @@ public class NFIncapacitated {
     @EventBusSubscriber(modid = Constants.MOD_ID, bus = EventBusSubscriber.Bus.MOD)
     public static class ModEvents
     {
+        @SubscribeEvent
+        public static void commonSetup(FMLCommonSetupEvent event) {
+            NFIncapStats.setup();
+        }
+
         @SubscribeEvent
         public static void onClientSetup(final RegisterPayloadHandlersEvent event)
         {

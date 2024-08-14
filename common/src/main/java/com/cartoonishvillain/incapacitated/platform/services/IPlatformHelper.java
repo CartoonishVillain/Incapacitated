@@ -1,7 +1,9 @@
 package com.cartoonishvillain.incapacitated.platform.services;
 
 import com.cartoonishvillain.incapacitated.IncapacitatedPlayerData;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.stats.Stat;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffects;
@@ -85,4 +87,11 @@ public interface IPlatformHelper {
      */
     MobEffect getSlowEffect();
     MobEffect getWeakEffect();
+
+    /*
+      INCAPACITATED CUSTOM STATS
+     */
+    ResourceLocation getIncappedStat();
+    ResourceLocation getReviveStat();
+    ResourceLocation getSelfReviveStat();
 }

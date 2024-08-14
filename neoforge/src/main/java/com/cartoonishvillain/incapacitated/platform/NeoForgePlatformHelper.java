@@ -1,11 +1,9 @@
 package com.cartoonishvillain.incapacitated.platform;
 
-import com.cartoonishvillain.incapacitated.IncapEffects;
-import com.cartoonishvillain.incapacitated.Incapacitated;
-import com.cartoonishvillain.incapacitated.IncapacitatedPlayerData;
-import com.cartoonishvillain.incapacitated.NFIncapacitated;
+import com.cartoonishvillain.incapacitated.*;
 import com.cartoonishvillain.incapacitated.capability.NeoForgeIncapacitatedPlayerData;
 import com.cartoonishvillain.incapacitated.platform.services.IPlatformHelper;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffect;
@@ -89,11 +87,26 @@ public class NeoForgePlatformHelper implements IPlatformHelper {
 
     @Override
     public MobEffect getSlowEffect() {
-        return IncapEffects.incapSlow.get();
+        return NFIncapEffects.incapSlow.get();
     }
 
     @Override
     public MobEffect getWeakEffect() {
-       return IncapEffects.incapWeak.get();
+       return NFIncapEffects.incapWeak.get();
+    }
+
+    @Override
+    public ResourceLocation getIncappedStat() {
+        return NFIncapStats.TIMES_INCAPPED.value();
+    }
+
+    @Override
+    public ResourceLocation getReviveStat() {
+        return NFIncapStats.TIMES_REVIVED.value();
+    }
+
+    @Override
+    public ResourceLocation getSelfReviveStat() {
+        return NFIncapStats.TIMES_REVIVED_SELF.value();
     }
 }
