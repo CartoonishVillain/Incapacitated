@@ -5,6 +5,7 @@ import com.cartoonishvillain.incapacitated.Incapacitated;
 import com.cartoonishvillain.incapacitated.IncapacitatedPlayerData;
 import com.cartoonishvillain.incapacitated.mixin.IncapacitatedItemAccessor;
 import com.cartoonishvillain.incapacitated.platform.Services;
+import com.mojang.datafixers.util.Either;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
@@ -14,6 +15,8 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.util.Unit;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
@@ -22,6 +25,7 @@ import net.minecraft.world.entity.Pose;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.food.FoodData;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.context.UseOnContext;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
@@ -29,6 +33,7 @@ import java.util.ArrayList;
 
 import static com.cartoonishvillain.incapacitated.Incapacitated.effectInstances;
 import static com.cartoonishvillain.incapacitated.Incapacitated.noMercyDamageSourcesMessageID;
+import static net.minecraft.world.entity.player.Player.BedSleepingProblem.OTHER_PROBLEM;
 
 public class AbstractedIncapacitation {
 
@@ -414,6 +419,20 @@ public class AbstractedIncapacitation {
         IncapacitatedPlayerData playerData = Services.PLATFORM.getPlayerData(player);
         if (!Incapacitated.configData.isCanBreakOrInteractWithBlocks() && playerData.isIncapacitated()) { //if they can, we do not change behavior..
             ci.setReturnValue(true);
+        }
+    }
+
+    public static void sleep(ServerPlayer player, CallbackInfoReturnable<Either<Player.BedSleepingProblem, Unit>> ci) {
+        IncapacitatedPlayerData playerData = Services.PLATFORM.getPlayerData(player);
+        if (!Incapacitated.configData.isCanBreakOrInteractWithBlocks() && playerData.isIncapacitated()) { //if they can, we do not change behavior..
+            ci.setReturnValue(Either.left(OTHER_PROBLEM));
+        }
+    }
+
+    public static void useOn(UseOnContext context, CallbackInfoReturnable<InteractionResult> ci) {
+        IncapacitatedPlayerData playerData = Services.PLATFORM.getPlayerData(context.getPlayer());
+        if (!Incapacitated.configData.isCanBreakOrInteractWithBlocks() && playerData.isIncapacitated()) { //if they can, we do not change behavior..
+            ci.setReturnValue(InteractionResult.FAIL);
         }
     }
 

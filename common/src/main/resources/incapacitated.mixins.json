@@ -16,6 +16,8 @@
         "ServerPlayerTickMixin",
         "IncapacitatedItemAccessor",
         "BreakBlocksMixin",
+        "SleepMixin",
+        "UseOnBlockItemMixin",
         "JumpMixin"
     ],
     "client": [
