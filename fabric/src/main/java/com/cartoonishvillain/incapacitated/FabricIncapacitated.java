@@ -3,13 +3,17 @@ package com.cartoonishvillain.incapacitated;
 import com.cartoonishvillain.incapacitated.commands.*;
 import com.cartoonishvillain.incapacitated.config.DefaultConfig;
 import com.cartoonishvillain.incapacitated.config.SimpleConfig;
+import com.cartoonishvillain.incapacitated.platform.Services;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
-import net.minecraft.core.Registry;
-import net.minecraft.core.registries.BuiltInRegistries;
+import net.fabricmc.fabric.api.event.lifecycle.v1.CommonLifecycleEvents;
+import net.minecraft.ResourceLocationException;
 import net.minecraft.resources.ResourceLocation;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class FabricIncapacitated implements ModInitializer {
     private static final Logger LOGGER = LogManager.getLogger();
@@ -26,16 +30,24 @@ public class FabricIncapacitated implements ModInitializer {
 
         // Use Fabric to bootstrap the Common mod.
         Incapacitated.init();
-        Registry.register(BuiltInRegistries.MOB_EFFECT, new ResourceLocation(Constants.MOD_ID, "incap_slow"), FabricEffects.incapSlow);
-        Registry.register(BuiltInRegistries.MOB_EFFECT, new ResourceLocation(Constants.MOD_ID, "incap_weak"), FabricEffects.incapWeak);
+        FabricEffects.initEffects();
+        FabricStats.modConstruction();
 
         CommandRegistrationCallback.EVENT.register(((dispatcher, registryAccess, environment) -> {
             GetDownCount.register(dispatcher);
-            IncapDevMode.register(dispatcher);
             KillPlayer.register(dispatcher);
             SetDownCount.register(dispatcher);
-            SetIncapacitatedCommand.register(dispatcher);
             ConfigCommands.register(dispatcher);
+            SetIncapacitatedCommand.register(dispatcher);
+            SetDownTicks.register(dispatcher);
+
+            if (Services.PLATFORM.isDevelopmentEnvironment()) {
+                IncapDevMode.register(dispatcher);
+            }
         }));
+
+        CommonLifecycleEvents.TAGS_LOADED.register((listen, listen2) -> {
+            FabricStats.setup();
+        });
     }
 }

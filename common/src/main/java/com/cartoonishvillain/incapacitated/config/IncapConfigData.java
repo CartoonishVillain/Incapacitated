@@ -6,6 +6,8 @@ import java.util.ArrayList;
 public class IncapConfigData implements Serializable {
     String info;
     int merciful;
+    boolean canBreakOrInteractWithBlocks;
+    boolean canJumpWhileDown;
     boolean hunter;
     boolean slow;
     boolean weakened;
@@ -28,14 +30,17 @@ public class IncapConfigData implements Serializable {
     float reviveHealth;
     int reviveHunger;
     float reviveSaturation;
+    boolean shouldDownTimeReset;
     ArrayList<IncapEffectData> incapEffectData;
     boolean DANGERDisableGiveUp;
 
-    public IncapConfigData(int merciful, boolean hunter, boolean slow, boolean weakened, boolean regenerating, boolean unlimitedDowns, boolean downLogging, boolean reviveMessage, String foodReviveList, String foodHealList, int downTicks, int reviveTicks, int downCounter, boolean glowingWhileDowned, boolean someInstantKills, String instantKills, boolean globalIncapMessage, boolean globalReviveMessage, boolean useSecondsForRevive,
-    boolean healPercentageOfMaxHealth, float reviveHealth, int reviveHunger, float reviveSaturation, ArrayList<IncapEffectData> incapEffectData, boolean DANGERDisableGiveUp) {
+    public IncapConfigData(int merciful, boolean hunter, boolean canBreakOrInteractWithBlocks, boolean canJumpWhileDown, boolean slow, boolean weakened, boolean regenerating, boolean unlimitedDowns, boolean downLogging, boolean reviveMessage, String foodReviveList, String foodHealList, int downTicks, int reviveTicks, int downCounter, boolean glowingWhileDowned, boolean someInstantKills, String instantKills, boolean globalIncapMessage, boolean globalReviveMessage, boolean useSecondsForRevive,
+    boolean healPercentageOfMaxHealth, float reviveHealth, int reviveHunger, float reviveSaturation, boolean shouldDownTimeReset, ArrayList<IncapEffectData> incapEffectData, boolean DANGERDisableGiveUp) {
         this.info = "For documentation on what each item does, see the readme file on github: https://github.com/CartoonishVillain/Incapacitated";
         this.merciful = merciful;
         this.hunter = hunter;
+        this.canBreakOrInteractWithBlocks = canBreakOrInteractWithBlocks;
+        this.canJumpWhileDown = canJumpWhileDown;
         this.slow = slow;
         this.weakened = weakened;
         this.regenerating = regenerating;
@@ -57,6 +62,7 @@ public class IncapConfigData implements Serializable {
         this.reviveHealth = reviveHealth;
         this.reviveHunger = reviveHunger;
         this.reviveSaturation = reviveSaturation;
+        this.shouldDownTimeReset = shouldDownTimeReset;
         this.incapEffectData = incapEffectData;
         this.DANGERDisableGiveUp = DANGERDisableGiveUp;
     }
@@ -66,6 +72,8 @@ public class IncapConfigData implements Serializable {
         return new IncapConfigData(
                 0, //merciful
                 false, //hunter
+                false, //canBreakOrInteractWithBlocks
+                false, //canJumpWhileDown
                 false, //slow
                 false, //weakened
                 false, //regenerating
@@ -87,6 +95,7 @@ public class IncapConfigData implements Serializable {
                 0.33f, //reviveHealth
                 -1, //reviveHunger
                 -1f, //reviveSaturation
+                false, //shouldDownTimeReset
                 new ArrayList<>(), //incapEffectData
                 false //DANGERDisableGiveUp
         );
@@ -164,6 +173,10 @@ public class IncapConfigData implements Serializable {
         return useSecondsForRevive;
     }
 
+    public boolean isCanBreakOrInteractWithBlocks() {
+        return canBreakOrInteractWithBlocks;
+    }
+
     public boolean isHealPercentageOfMaxHealth() {
         return healPercentageOfMaxHealth;
     }
@@ -190,5 +203,13 @@ public class IncapConfigData implements Serializable {
 
     public boolean isDANGERDisableGiveUp() {
         return DANGERDisableGiveUp;
+    }
+
+    public boolean isCanJumpWhileDown() {
+        return canJumpWhileDown;
+    }
+
+    public boolean isShouldDownTimeReset() {
+        return shouldDownTimeReset;
     }
 }

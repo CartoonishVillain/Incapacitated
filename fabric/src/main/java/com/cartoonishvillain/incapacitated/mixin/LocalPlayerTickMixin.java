@@ -1,6 +1,5 @@
 package com.cartoonishvillain.incapacitated.mixin;
 
-
 import com.cartoonishvillain.incapacitated.FabricIncapacitated;
 import com.cartoonishvillain.incapacitated.component.IncapacitatedComponent;
 import net.minecraft.client.Minecraft;

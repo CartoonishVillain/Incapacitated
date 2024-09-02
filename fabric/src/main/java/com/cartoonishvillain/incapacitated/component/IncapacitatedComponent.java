@@ -1,9 +1,7 @@
 package com.cartoonishvillain.incapacitated.component;
 
-import com.cartoonishvillain.incapacitated.FabricIncapacitated;
 import com.cartoonishvillain.incapacitated.Incapacitated;
 import com.cartoonishvillain.incapacitated.damage.BleedOutDamage;
-import dev.onyxstudios.cca.api.v3.component.sync.AutoSyncedComponent;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
@@ -13,6 +11,7 @@ import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.damagesource.DamageType;
 import net.minecraft.world.damagesource.DamageTypes;
 import net.minecraft.world.level.Level;
+import dev.onyxstudios.cca.api.v3.component.sync.AutoSyncedComponent;
 
 import static com.cartoonishvillain.incapacitated.damage.IncapacitatedDamageSources.BLEEDOUT;
 
@@ -36,6 +35,14 @@ public class IncapacitatedComponent implements IncapacitatedInterface, AutoSynce
     public void setIsIncapacitated(boolean isIncapacitated) {
         incapacitated = isIncapacitated;
         ComponentStarter.INCAPACITATEDCOMPONENTINSTANCE.sync(this.provider);
+    }
+
+    public boolean isShader() {
+        return isShader;
+    }
+
+    public void setShader(boolean shader) {
+        isShader = shader;
     }
 
     @Override
@@ -100,14 +107,6 @@ public class IncapacitatedComponent implements IncapacitatedInterface, AutoSynce
         ComponentStarter.INCAPACITATEDCOMPONENTINSTANCE.sync(this.provider);
     }
 
-    public boolean isShader() {
-        return isShader;
-    }
-
-    public void setShader(boolean shader) {
-        isShader = shader;
-    }
-
     @Override
     public void readFromNbt(CompoundTag tag) {
         incapacitated = tag.getBoolean("incapacitation");
@@ -120,6 +119,7 @@ public class IncapacitatedComponent implements IncapacitatedInterface, AutoSynce
         tag.putBoolean("incapacitation", incapacitated);
         tag.putInt("incapTimer", ticksUntilDeath);
         tag.putInt("incapCounter", downsUntilDeath);
+        tag.putBoolean("incapShader", isShader);
     }
 
     @Override

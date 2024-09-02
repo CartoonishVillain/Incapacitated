@@ -1,11 +1,9 @@
 package com.cartoonishvillain.incapacitated.platform;
 
-import com.cartoonishvillain.incapacitated.IncapEffects;
-import com.cartoonishvillain.incapacitated.Incapacitated;
-import com.cartoonishvillain.incapacitated.IncapacitatedPlayerData;
+import com.cartoonishvillain.incapacitated.*;
 import com.cartoonishvillain.incapacitated.capability.NeoForgeIncapacitatedPlayerData;
-import com.cartoonishvillain.incapacitated.networking.IncapPacket;
 import com.cartoonishvillain.incapacitated.platform.services.IPlatformHelper;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffect;
@@ -78,22 +76,37 @@ public class NeoForgePlatformHelper implements IPlatformHelper {
             playerData.setReviveCounter(Incapacitated.configData.getDownCounter());
             playerData.setIncapacitated(false);
             player.removeEffect(MobEffects.GLOWING);
-            PacketDistributor.PLAYER.with(player).send(new IncapPacket(player.getId(), false, (short) playerData.getDownsUntilDeath()));
+            PacketDistributor.sendToPlayer(player, new NFIncapacitated.IncapPayload(player.getId(), false, (short) playerData.getDownsUntilDeath(), playerData.getTicksUntilDeath()));
         }
     }
 
     @Override
     public void sendIncapPacket(ServerPlayer player, int playerID, boolean isIncapacitated, short downsUntilDeath, int downTicks) {
-        PacketDistributor.PLAYER.with(player).send(new IncapPacket(player.getId(), isIncapacitated, downsUntilDeath, downTicks));
+        PacketDistributor.sendToPlayer(player, new NFIncapacitated.IncapPayload(player.getId(), isIncapacitated, downsUntilDeath, downTicks));
     }
 
     @Override
     public MobEffect getSlowEffect() {
-        return IncapEffects.incapSlow.get();
+        return NFIncapEffects.incapSlow.get();
     }
 
     @Override
     public MobEffect getWeakEffect() {
-        return IncapEffects.incapWeak.get();
+       return NFIncapEffects.incapWeak.get();
+    }
+
+    @Override
+    public ResourceLocation getIncappedStat() {
+        return NFIncapStats.TIMES_INCAPPED.value();
+    }
+
+    @Override
+    public ResourceLocation getReviveStat() {
+        return NFIncapStats.TIMES_REVIVED.value();
+    }
+
+    @Override
+    public ResourceLocation getSelfReviveStat() {
+        return NFIncapStats.TIMES_REVIVED_SELF.value();
     }
 }

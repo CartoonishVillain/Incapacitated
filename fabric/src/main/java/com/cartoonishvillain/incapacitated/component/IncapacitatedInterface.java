@@ -1,8 +1,8 @@
 package com.cartoonishvillain.incapacitated.component;
 
-import dev.onyxstudios.cca.api.v3.component.Component;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.level.Level;
+import dev.onyxstudios.cca.api.v3.component.Component;
 
 public interface IncapacitatedInterface extends Component {
     boolean getIsIncapacitated();

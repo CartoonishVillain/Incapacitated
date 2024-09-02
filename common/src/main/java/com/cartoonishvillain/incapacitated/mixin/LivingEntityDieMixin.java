@@ -1,9 +1,12 @@
 package com.cartoonishvillain.incapacitated.mixin;
 
+import com.cartoonishvillain.incapacitated.Constants;
 import com.cartoonishvillain.incapacitated.Incapacitated;
 import com.cartoonishvillain.incapacitated.IncapacitatedPlayerData;
 import com.cartoonishvillain.incapacitated.events.AbstractedIncapacitation;
 import com.cartoonishvillain.incapacitated.platform.Services;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
@@ -21,7 +24,9 @@ public class LivingEntityDieMixin {
         if(!(entity instanceof Player) && !entity.level().isClientSide && damageSource.getEntity() instanceof Player) {
             IncapacitatedPlayerData data = Services.PLATFORM.getPlayerData((Player) damageSource.getEntity());
             if (data.isIncapacitated() && Incapacitated.configData.isHunter()) {
-                AbstractedIncapacitation.revive((Player) damageSource.getEntity());
+                Player player = ((Player) damageSource.getEntity());
+                if (player instanceof ServerPlayer) player.awardStat(Services.PLATFORM.getSelfReviveStat(), 1);
+                AbstractedIncapacitation.revive(player);
             }
         }
     }

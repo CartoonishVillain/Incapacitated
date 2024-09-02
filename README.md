@@ -5,13 +5,17 @@ Note: This does not include client specific configs. Those are their own file.
 You can reload your config at any time with /incap config reload
 
 * Merciless - Can be filled with a 0, 1, or a 2, determines if players are immune to damage while downed.
-  * 0 - No, players are not immune to damage while downed.
-  * 1 - Yes, players are immune to damage while downed, but part of the damage is removed from their time to live.
-  * 2 - Yes, players are fully immune to damage while downed.
+    * 0 - No, players are not immune to damage while downed.
+    * 1 - Yes, players are immune to damage while downed, but part of the damage is removed from their time to live.
+    * 2 - Yes, players are fully immune to damage while downed.
 
 * Hunter - true or false, can players revive themselves with a (non-player) kill
 
-* Slow - true or false, are incapacitated players slowed down dramatically?
+* CanBreakOrInteractWithBlocks - true or false, can players while downed break or interact with blocks
+
+* CanJumpWhileDown - true or false, can players while downed jump
+
+* Slow - true or false, are incapacitated players slowed down dramatically
 
 * Weakened - true or false, are incapacitated players weakened dramatically
 
@@ -53,6 +57,8 @@ You can reload your config at any time with /incap config reload
 
 * ReviveSaturation - number, potentially decimal, what should the hunger saturation of a recently revived player be? Numbers at or below -1 avoid adjusting saturation values.
 
+* ShouldDownTimeReset - true or false, if a user is revived, should the bleed out timer reset to the configured value for the next revive?
+
 * IncapEffectData - custom json array, see below for more details on how to set up. Adds additional potion effects to users while they're incapacitated.
 
 * DANGERDisableGiveUp - true or false, disable the give up command. Not recommended.
@@ -63,21 +69,21 @@ IncapEffectData is an array of objects defined as
 {  
 effectID: String  
 amplifier: Integer  
-ambient:   
+ambient:  boolean  
 }
 
-An example would look like:  
-  
+An example would look like:
+
 incapEffectData: [  
-  {  
-    effectID: "minecraft:speed",    
-    amplifier: 1,    
-    ambient: true  
-  },  
-  {  
-    effectID: "minecraft:resistance",  
-    amplifier: 3,  
-    ambient:false  
-  }  
+{  
+effectID: "minecraft:speed",    
+amplifier: 1,    
+ambient: true  
+},  
+{  
+effectID: "minecraft:resistance",  
+amplifier: 3,  
+ambient:false  
+}  
 ]  
 
