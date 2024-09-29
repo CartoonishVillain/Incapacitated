@@ -291,6 +291,14 @@ public class AbstractedIncapacitation {
                     incapacitatedPlayerData.setDownsUntilDeath(Incapacitated.configData.getDownCounter());
                     incapacitatedPlayerData.setTicksUntilDeath(Incapacitated.configData.getDownTicks());
                     player.removeEffect(MobEffects.GLOWING);
+                    player.removeEffect(BuiltInRegistries.MOB_EFFECT.wrapAsHolder(Services.PLATFORM.getSlowEffect()));
+                    player.removeEffect(BuiltInRegistries.MOB_EFFECT.wrapAsHolder(Services.PLATFORM.getWeakEffect()));
+
+                    if (!effectInstances.isEmpty()) {
+                        for (MobEffectInstance effectInstance : effectInstances) {
+                            player.removeEffect(effectInstance.getEffect());
+                        }
+                    }
                     healPlayerWhenReviving(player);
                     player.level().playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.NOTE_BLOCK_PLING.value(), SoundSource.PLAYERS, 1, 1);
                 }
