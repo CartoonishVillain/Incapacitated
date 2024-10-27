@@ -291,9 +291,8 @@ public class AbstractedIncapacitation {
                     incapacitatedPlayerData.setDownsUntilDeath(Incapacitated.configData.getDownCounter());
                     incapacitatedPlayerData.setTicksUntilDeath(Incapacitated.configData.getDownTicks());
                     player.removeEffect(MobEffects.GLOWING);
-                    player.removeEffect(BuiltInRegistries.MOB_EFFECT.wrapAsHolder(Services.PLATFORM.getSlowEffect()));
-                    player.removeEffect(BuiltInRegistries.MOB_EFFECT.wrapAsHolder(Services.PLATFORM.getWeakEffect()));
-
+                    player.removeEffect(Services.PLATFORM.getSlowEffect());
+                    player.removeEffect(Services.PLATFORM.getWeakEffect());
                     if (!effectInstances.isEmpty()) {
                         for (MobEffectInstance effectInstance : effectInstances) {
                             player.removeEffect(effectInstance.getEffect());
