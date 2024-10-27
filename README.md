@@ -59,9 +59,13 @@ You can reload your config at any time with /incap config reload
 
 * ShouldDownTimeReset - true or false, if a user is revived, should the bleed out timer reset to the configured value for the next revive?
 
+* ShouldDisableFallFlying - true or false, should players be restricted from using elytras while incapacitated?
+
 * IncapEffectData - custom json array, see below for more details on how to set up. Adds additional potion effects to users while they're incapacitated.
 
 * DANGERDisableGiveUp - true or false, disable the give up command. Not recommended.
+
+* DANGERDisableIncapPlayerDamage - true or false, should any damage attributed to an incapacitated player be canceled?
 
 
 # IncapEffectData
