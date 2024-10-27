@@ -1,6 +1,5 @@
 package com.cartoonishvillain.incapacitated.events;
 
-import com.cartoonishvillain.incapacitated.Constants;
 import com.cartoonishvillain.incapacitated.Incapacitated;
 import com.cartoonishvillain.incapacitated.IncapacitatedPlayerData;
 import com.cartoonishvillain.incapacitated.mixin.IncapacitatedItemAccessor;
@@ -10,7 +9,6 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
@@ -226,7 +224,7 @@ public class AbstractedIncapacitation {
                 }
             }
 
-            if (Incapacitated.configData.isGlobalReviveMessage() && !Incapacitated.configData.isUnlimitedDowns()) {
+            if (Incapacitated.configData.isReviveMessage() && !Incapacitated.configData.isUnlimitedDowns()) {
                 if (incapacitatedPlayerData.getDownsUntilDeath() > 1) {
                     player.displayClientMessage(Component.translatable("message.revivecount.normal", incapacitatedPlayerData.getDownsUntilDeath()), false);
                 } else if (incapacitatedPlayerData.getDownsUntilDeath() == 1) {
@@ -293,6 +291,14 @@ public class AbstractedIncapacitation {
                     incapacitatedPlayerData.setDownsUntilDeath(Incapacitated.configData.getDownCounter());
                     incapacitatedPlayerData.setTicksUntilDeath(Incapacitated.configData.getDownTicks());
                     player.removeEffect(MobEffects.GLOWING);
+                    player.removeEffect(BuiltInRegistries.MOB_EFFECT.wrapAsHolder(Services.PLATFORM.getSlowEffect()));
+                    player.removeEffect(BuiltInRegistries.MOB_EFFECT.wrapAsHolder(Services.PLATFORM.getWeakEffect()));
+
+                    if (!effectInstances.isEmpty()) {
+                        for (MobEffectInstance effectInstance : effectInstances) {
+                            player.removeEffect(effectInstance.getEffect());
+                        }
+                    }
                     healPlayerWhenReviving(player);
                     player.level().playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.NOTE_BLOCK_PLING.value(), SoundSource.PLAYERS, 1, 1);
                 }
@@ -352,6 +358,8 @@ public class AbstractedIncapacitation {
                     if (player.isCrouching() && !isdown) {
                         reviving = true;
                         revivingPlayer = player;
+                    } else if (!player.isCrouching() && !isdown) { //If the player is in range, not down, and not reviving
+                        player.displayClientMessage((Component.translatable("message.reviveindicator.revivetutorial").withStyle(ChatFormatting.GREEN)), true);
                     }
                 }
 

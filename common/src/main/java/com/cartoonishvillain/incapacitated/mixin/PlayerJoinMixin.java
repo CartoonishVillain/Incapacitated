@@ -12,13 +12,6 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(ServerLevel.class)
 public class PlayerJoinMixin {
-    @Inject(at = @At("TAIL"), method = "addNewPlayer")
-    private void incapacitatedAddPlayer(ServerPlayer player, CallbackInfo info) {
-        IncapacitatedPlayerData data = Services.PLATFORM.getPlayerData(player);
-        Services.PLATFORM.sendIncapPacket(player, player.getId(), data.isIncapacitated(), (short)data.getDownsUntilDeath(), data.getTicksUntilDeath());
-        player.sendSystemMessage(Component.translatable("incapacitated.info.joinrevivetutorial"));;
-    }
-
     @Inject(at = @At("TAIL"), method = "addRespawnedPlayer")
     private void incapacitatedRespawnedPlayer(ServerPlayer player, CallbackInfo info) {
         IncapacitatedPlayerData data = Services.PLATFORM.getPlayerData(player);
