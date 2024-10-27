@@ -224,7 +224,7 @@ public class AbstractedIncapacitation {
                 }
             }
 
-            if (Incapacitated.configData.isGlobalReviveMessage() && !Incapacitated.configData.isUnlimitedDowns()) {
+            if (Incapacitated.configData.isReviveMessage() && !Incapacitated.configData.isUnlimitedDowns()) {
                 if (incapacitatedPlayerData.getDownsUntilDeath() > 1) {
                     player.displayClientMessage(Component.translatable("message.revivecount.normal", incapacitatedPlayerData.getDownsUntilDeath()), false);
                 } else if (incapacitatedPlayerData.getDownsUntilDeath() == 1) {

@@ -1,41 +1,46 @@
 package com.cartoonishvillain.incapacitated.config;
 
+import com.cartoonishvillain.incapacitated.Constants;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 
 public class IncapConfigData implements Serializable {
     String info;
-    int merciful;
-    boolean canBreakOrInteractWithBlocks;
-    boolean canJumpWhileDown;
-    boolean hunter;
-    boolean slow;
-    boolean weakened;
-    boolean regenerating;
-    boolean unlimitedDowns;
-    boolean downLogging;
-    boolean reviveMessage;
+    Integer merciful;
+    Boolean canBreakOrInteractWithBlocks;
+    Boolean canJumpWhileDown;
+    Boolean hunter;
+    Boolean slow;
+    Boolean weakened;
+    Boolean regenerating;
+    Boolean unlimitedDowns;
+    Boolean downLogging;
+    Boolean reviveMessage;
     String foodReviveList;
     String foodHealList;
-    int downTicks;
-    int reviveTicks;
-    int downCounter;
-    boolean glowingWhileDowned;
-    boolean someInstantKills;
+    Integer downTicks;
+    Integer reviveTicks;
+    Integer downCounter;
+    Boolean glowingWhileDowned;
+    Boolean someInstantKills;
     String instantKills;
-    boolean globalIncapMessage;
-    boolean globalReviveMessage;
-    boolean useSecondsForRevive;
-    boolean healPercentageOfMaxHealth;
-    float reviveHealth;
-    int reviveHunger;
-    float reviveSaturation;
-    boolean shouldDownTimeReset;
+    Boolean globalIncapMessage;
+    Boolean globalReviveMessage;
+    Boolean useSecondsForRevive;
+    Boolean healPercentageOfMaxHealth;
+    Float reviveHealth;
+    Integer reviveHunger;
+    Float reviveSaturation;
+    Boolean shouldDownTimeReset;
     ArrayList<IncapEffectData> incapEffectData;
-    boolean DANGERDisableGiveUp;
+    Boolean DANGERDisableGiveUp;
+    Boolean DANGERDisableIncapPlayerDamage;
+    
+    public static IncapConfigData defaultData = buildDefaultConfig();
 
-    public IncapConfigData(int merciful, boolean hunter, boolean canBreakOrInteractWithBlocks, boolean canJumpWhileDown, boolean slow, boolean weakened, boolean regenerating, boolean unlimitedDowns, boolean downLogging, boolean reviveMessage, String foodReviveList, String foodHealList, int downTicks, int reviveTicks, int downCounter, boolean glowingWhileDowned, boolean someInstantKills, String instantKills, boolean globalIncapMessage, boolean globalReviveMessage, boolean useSecondsForRevive,
-    boolean healPercentageOfMaxHealth, float reviveHealth, int reviveHunger, float reviveSaturation, boolean shouldDownTimeReset, ArrayList<IncapEffectData> incapEffectData, boolean DANGERDisableGiveUp) {
+    public IncapConfigData(Integer merciful, Boolean hunter, Boolean canBreakOrInteractWithBlocks, Boolean canJumpWhileDown, Boolean slow, Boolean weakened, Boolean regenerating, Boolean unlimitedDowns, Boolean downLogging, Boolean reviveMessage, String foodReviveList, String foodHealList, Integer downTicks, Integer reviveTicks, Integer downCounter, Boolean glowingWhileDowned, Boolean someInstantKills, String instantKills, Boolean globalIncapMessage, Boolean globalReviveMessage, Boolean useSecondsForRevive,
+    Boolean healPercentageOfMaxHealth, float reviveHealth, Integer reviveHunger, float reviveSaturation, Boolean shouldDownTimeReset, ArrayList<IncapEffectData> incapEffectData, Boolean DANGERDisableGiveUp, Boolean DANGERDisableIncapPlayerDamage) {
         this.info = "For documentation on what each item does, see the readme file on github: https://github.com/CartoonishVillain/Incapacitated";
         this.merciful = merciful;
         this.hunter = hunter;
@@ -65,8 +70,8 @@ public class IncapConfigData implements Serializable {
         this.shouldDownTimeReset = shouldDownTimeReset;
         this.incapEffectData = incapEffectData;
         this.DANGERDisableGiveUp = DANGERDisableGiveUp;
+        this.DANGERDisableIncapPlayerDamage = DANGERDisableIncapPlayerDamage;
     }
-
 
     public static IncapConfigData buildDefaultConfig() {
         return new IncapConfigData(
@@ -97,119 +102,240 @@ public class IncapConfigData implements Serializable {
                 -1f, //reviveSaturation
                 false, //shouldDownTimeReset
                 new ArrayList<>(), //incapEffectData
-                false //DANGERDisableGiveUp
+                false, //DANGERDisableGiveUp
+                false //DANGERDisableIncapPlayerDamage
         );
     }
 
-    public int getMerciful() {
-        return merciful;
+    public Integer getMerciful() {
+        if (merciful != null) return merciful;
+        else {
+            Constants.LOG.warn("Warning - merciful config not set. Using default value.");
+            return defaultData.merciful;
+        }
     }
 
-    public boolean isHunter() {
-        return hunter;
+    public Boolean isHunter() {
+        if (hunter != null) return hunter;
+        else {
+            Constants.LOG.warn("Warning - hunter config not set. Using default value.");
+            return defaultData.hunter;
+        }
     }
 
-    public boolean isSlow() {
-        return slow;
+    public Boolean isSlow() {
+        if (slow != null) return slow;
+        else {
+            Constants.LOG.warn("Warning - slow config not set. Using default value.");
+            return defaultData.slow;
+        }
     }
 
-    public boolean isWeakened() {
-        return weakened;
+    public Boolean isWeakened() {
+        if (weakened != null) return weakened;
+        else {
+            Constants.LOG.warn("Warning - weakened config not set. Using default value.");
+            return defaultData.weakened;
+        }
     }
 
-    public boolean isRegenerating() {
-        return regenerating;
+    public Boolean isRegenerating() {
+        if (regenerating != null) return regenerating;
+        else {
+            Constants.LOG.warn("Warning - regenerating config not set. Using default value.");
+            return defaultData.regenerating;
+        }
     }
 
-    public boolean isUnlimitedDowns() {
-        return unlimitedDowns;
+    public Boolean isUnlimitedDowns() {
+        if (unlimitedDowns != null) return unlimitedDowns;
+        else {
+            Constants.LOG.warn("Warning - unlimitedDowns config not set. Using default value.");
+            return defaultData.unlimitedDowns;
+        }
     }
 
-    public boolean isDownLogging() {
-        return downLogging;
+    public Boolean isDownLogging() {
+        if (downLogging != null) return downLogging;
+        else {
+            Constants.LOG.warn("Warning - downLogging config not set. Using default value.");
+            return defaultData.downLogging;
+        }
     }
 
-    public boolean isReviveMessage() {
-        return reviveMessage;
+    public Boolean isReviveMessage() {
+        if (reviveMessage != null) return reviveMessage;
+        else {
+            Constants.LOG.warn("Warning - reviveMessage config not set. Using default value.");
+            return defaultData.reviveMessage;
+        }
     }
 
     public String getFoodReviveList() {
-        return foodReviveList;
+        if (foodReviveList != null) return foodReviveList;
+        else {
+            Constants.LOG.warn("Warning - foodReviveList config not set. Using default value.");
+            return defaultData.foodReviveList;
+        }
     }
 
     public String getFoodHealList() {
-        return foodHealList;
+        if (foodHealList != null) return foodHealList;
+        else {
+            Constants.LOG.warn("Warning - foodHealList config not set. Using default value.");
+            return defaultData.foodHealList;
+        }
     }
 
-    public int getDownTicks() {
-        return downTicks;
+    public Integer getDownTicks() {
+        if (downTicks != null) return downTicks;
+        else {
+            Constants.LOG.warn("Warning - downTicks config not set. Using default value.");
+            return defaultData.downTicks;
+        }
     }
 
-    public int getReviveTicks() {
-        return reviveTicks;
+    public Integer getReviveTicks() {
+        if (reviveTicks != null) return reviveTicks;
+        else {
+            Constants.LOG.warn("Warning - reviveTicks config not set. Using default value.");
+            return defaultData.reviveTicks;
+        }
     }
 
-    public int getDownCounter() {
-        return downCounter;
+    public Integer getDownCounter() {
+        if (downCounter != null) return downCounter;
+        else {
+            Constants.LOG.warn("Warning - downCounter config not set. Using default value.");
+            return defaultData.downCounter;
+        }
     }
 
-    public boolean isGlowingWhileDowned() {
-        return glowingWhileDowned;
+    public Boolean isGlowingWhileDowned() {
+        if (glowingWhileDowned != null) return glowingWhileDowned;
+        else {
+            Constants.LOG.warn("Warning - glowingWhileDowned config not set. Using default value.");
+            return defaultData.glowingWhileDowned;
+        }
     }
 
-    public boolean isSomeInstantKills() {
-        return someInstantKills;
+    public Boolean isSomeInstantKills() {
+        if (someInstantKills != null) return someInstantKills;
+        else {
+            Constants.LOG.warn("Warning - someInstantKills config not set. Using default value.");
+            return defaultData.someInstantKills;
+        }
     }
 
-    public boolean isGlobalIncapMessage() {
-        return globalIncapMessage;
+    public Boolean isGlobalIncapMessage() {
+        if (globalIncapMessage != null) return globalIncapMessage;
+        else {
+            Constants.LOG.warn("Warning - globalIncapMessage config not set. Using default value.");
+            return defaultData.globalIncapMessage;
+        }
     }
 
-    public boolean isGlobalReviveMessage() {
-        return globalReviveMessage;
+    public Boolean isGlobalReviveMessage() {
+        if (globalReviveMessage != null) return globalReviveMessage;
+        else {
+            Constants.LOG.warn("Warning - globalReviveMessage config not set. Using default value.");
+            return defaultData.globalReviveMessage;
+        }
     }
 
-    public boolean isUseSecondsForRevive() {
-        return useSecondsForRevive;
+    public Boolean isUseSecondsForRevive() {
+        if (useSecondsForRevive != null) return useSecondsForRevive;
+        else {
+            Constants.LOG.warn("Warning - useSecondsForRevive config not set. Using default value.");
+            return defaultData.useSecondsForRevive;
+        }
     }
 
-    public boolean isCanBreakOrInteractWithBlocks() {
-        return canBreakOrInteractWithBlocks;
+    public Boolean isCanBreakOrInteractWithBlocks() {
+        if (canBreakOrInteractWithBlocks != null) return canBreakOrInteractWithBlocks;
+        else {
+            Constants.LOG.warn("Warning - canBreakOrInteractWithBlocks config not set. Using default value.");
+            return defaultData.canBreakOrInteractWithBlocks;
+        }
     }
 
-    public boolean isHealPercentageOfMaxHealth() {
-        return healPercentageOfMaxHealth;
+    public Boolean isHealPercentageOfMaxHealth() {
+        if (healPercentageOfMaxHealth != null) return healPercentageOfMaxHealth;
+        else {
+            Constants.LOG.warn("Warning - healPercentageOfMaxHealth config not set. Using default value.");
+            return defaultData.healPercentageOfMaxHealth;
+        }
     }
 
     public float getReviveHealth() {
-        return reviveHealth;
+        if (reviveHealth != null) return reviveHealth;
+        else {
+            Constants.LOG.warn("Warning - reviveHealth config not set. Using default value.");
+            return defaultData.reviveHealth;
+        }
     }
 
-    public int getReviveHunger() {
-        return reviveHunger;
+    public Integer getReviveHunger() {
+        if (reviveHunger != null) return reviveHunger;
+        else {
+            Constants.LOG.warn("Warning - reviveHunger config not set. Using default value.");
+            return defaultData.reviveHunger;
+        }
     }
 
     public float getReviveSaturation() {
-        return reviveSaturation;
+        if (reviveSaturation != null) return reviveSaturation;
+        else {
+            Constants.LOG.warn("Warning - reviveSaturation config not set. Using default value.");
+            return defaultData.reviveSaturation;
+        }
     }
 
     public String getInstantKills() {
-        return instantKills;
+        if (instantKills != null) return instantKills;
+        else {
+            Constants.LOG.warn("Warning - instantKills config not set. Using default value.");
+            return defaultData.instantKills;
+        }
     }
 
     public ArrayList<IncapEffectData> getIncapEffectData() {
-        return incapEffectData;
+        if (incapEffectData != null) return incapEffectData;
+        else {
+            Constants.LOG.warn("Warning - incapEffectData config not set. Using default value.");
+            return defaultData.incapEffectData;
+        }
     }
 
-    public boolean isDANGERDisableGiveUp() {
-        return DANGERDisableGiveUp;
+    public Boolean isDANGERDisableGiveUp() {
+        if (DANGERDisableGiveUp != null) return DANGERDisableGiveUp;
+        else {
+            Constants.LOG.warn("Warning - DANGERDisableGiveUp config not set. Using default value.");
+            return defaultData.DANGERDisableGiveUp;
+        }
     }
 
-    public boolean isCanJumpWhileDown() {
-        return canJumpWhileDown;
+    public Boolean isCanJumpWhileDown() {
+        if (canJumpWhileDown != null) return canJumpWhileDown;
+        else {
+            Constants.LOG.warn("Warning - canJumpWhileDown config not set. Using default value.");
+            return defaultData.canJumpWhileDown;
+        }
     }
 
-    public boolean isShouldDownTimeReset() {
-        return shouldDownTimeReset;
+    public Boolean getDANGERDisableIncapPlayerDamage() {
+        if (DANGERDisableIncapPlayerDamage != null) return DANGERDisableIncapPlayerDamage;
+        else {
+            Constants.LOG.warn("Warning - DANGERDisableIncapPlayerDamage config not set. Using default value.");
+            return defaultData.DANGERDisableIncapPlayerDamage;
+        }
+    }
+
+    public Boolean isShouldDownTimeReset() {
+        if (shouldDownTimeReset != null) return shouldDownTimeReset;
+        else {
+            Constants.LOG.warn("Warning - shouldDownTimeReset config not set. Using default value.");
+            return defaultData.shouldDownTimeReset;
+        }
     }
 }
