@@ -33,6 +33,7 @@ public class IncapConfigData implements Serializable {
     Integer reviveHunger;
     Float reviveSaturation;
     Boolean shouldDownTimeReset;
+    Boolean shouldDisableFallFlying;
     ArrayList<IncapEffectData> incapEffectData;
     Boolean DANGERDisableGiveUp;
     Boolean DANGERDisableIncapPlayerDamage;
@@ -40,7 +41,7 @@ public class IncapConfigData implements Serializable {
     public static IncapConfigData defaultData = buildDefaultConfig();
 
     public IncapConfigData(Integer merciful, Boolean hunter, Boolean canBreakOrInteractWithBlocks, Boolean canJumpWhileDown, Boolean slow, Boolean weakened, Boolean regenerating, Boolean unlimitedDowns, Boolean downLogging, Boolean reviveMessage, String foodReviveList, String foodHealList, Integer downTicks, Integer reviveTicks, Integer downCounter, Boolean glowingWhileDowned, Boolean someInstantKills, String instantKills, Boolean globalIncapMessage, Boolean globalReviveMessage, Boolean useSecondsForRevive,
-    Boolean healPercentageOfMaxHealth, float reviveHealth, Integer reviveHunger, float reviveSaturation, Boolean shouldDownTimeReset, ArrayList<IncapEffectData> incapEffectData, Boolean DANGERDisableGiveUp, Boolean DANGERDisableIncapPlayerDamage) {
+    Boolean healPercentageOfMaxHealth, float reviveHealth, Integer reviveHunger, float reviveSaturation, Boolean shouldDownTimeReset, ArrayList<IncapEffectData> incapEffectData, Boolean DANGERDisableGiveUp, Boolean DANGERDisableIncapPlayerDamage, Boolean shouldDisableFallFlying) {
         this.info = "For documentation on what each item does, see the readme file on github: https://github.com/CartoonishVillain/Incapacitated";
         this.merciful = merciful;
         this.hunter = hunter;
@@ -68,6 +69,7 @@ public class IncapConfigData implements Serializable {
         this.reviveHunger = reviveHunger;
         this.reviveSaturation = reviveSaturation;
         this.shouldDownTimeReset = shouldDownTimeReset;
+        this.shouldDisableFallFlying = shouldDisableFallFlying;
         this.incapEffectData = incapEffectData;
         this.DANGERDisableGiveUp = DANGERDisableGiveUp;
         this.DANGERDisableIncapPlayerDamage = DANGERDisableIncapPlayerDamage;
@@ -103,7 +105,8 @@ public class IncapConfigData implements Serializable {
                 false, //shouldDownTimeReset
                 new ArrayList<>(), //incapEffectData
                 false, //DANGERDisableGiveUp
-                false //DANGERDisableIncapPlayerDamage
+                false, //DANGERDisableIncapPlayerDamage
+                false //shouldDisableFallFlying
         );
     }
 
@@ -111,6 +114,7 @@ public class IncapConfigData implements Serializable {
         if (merciful != null) return merciful;
         else {
             Constants.LOG.warn("Warning - merciful config not set. Using default value.");
+            merciful = defaultData.merciful;
             return defaultData.merciful;
         }
     }
@@ -119,6 +123,7 @@ public class IncapConfigData implements Serializable {
         if (hunter != null) return hunter;
         else {
             Constants.LOG.warn("Warning - hunter config not set. Using default value.");
+            hunter = defaultData.hunter;
             return defaultData.hunter;
         }
     }
@@ -127,6 +132,7 @@ public class IncapConfigData implements Serializable {
         if (slow != null) return slow;
         else {
             Constants.LOG.warn("Warning - slow config not set. Using default value.");
+            slow = defaultData.slow;
             return defaultData.slow;
         }
     }
@@ -135,6 +141,7 @@ public class IncapConfigData implements Serializable {
         if (weakened != null) return weakened;
         else {
             Constants.LOG.warn("Warning - weakened config not set. Using default value.");
+            weakened = defaultData.weakened;
             return defaultData.weakened;
         }
     }
@@ -143,6 +150,7 @@ public class IncapConfigData implements Serializable {
         if (regenerating != null) return regenerating;
         else {
             Constants.LOG.warn("Warning - regenerating config not set. Using default value.");
+            regenerating = defaultData.regenerating;
             return defaultData.regenerating;
         }
     }
@@ -151,6 +159,7 @@ public class IncapConfigData implements Serializable {
         if (unlimitedDowns != null) return unlimitedDowns;
         else {
             Constants.LOG.warn("Warning - unlimitedDowns config not set. Using default value.");
+            unlimitedDowns = defaultData.unlimitedDowns;
             return defaultData.unlimitedDowns;
         }
     }
@@ -159,6 +168,7 @@ public class IncapConfigData implements Serializable {
         if (downLogging != null) return downLogging;
         else {
             Constants.LOG.warn("Warning - downLogging config not set. Using default value.");
+            downLogging = defaultData.downLogging;
             return defaultData.downLogging;
         }
     }
@@ -167,6 +177,7 @@ public class IncapConfigData implements Serializable {
         if (reviveMessage != null) return reviveMessage;
         else {
             Constants.LOG.warn("Warning - reviveMessage config not set. Using default value.");
+            reviveMessage = defaultData.reviveMessage;
             return defaultData.reviveMessage;
         }
     }
@@ -175,6 +186,7 @@ public class IncapConfigData implements Serializable {
         if (foodReviveList != null) return foodReviveList;
         else {
             Constants.LOG.warn("Warning - foodReviveList config not set. Using default value.");
+            foodReviveList = defaultData.foodReviveList;
             return defaultData.foodReviveList;
         }
     }
@@ -183,6 +195,7 @@ public class IncapConfigData implements Serializable {
         if (foodHealList != null) return foodHealList;
         else {
             Constants.LOG.warn("Warning - foodHealList config not set. Using default value.");
+            foodHealList = defaultData.foodHealList;
             return defaultData.foodHealList;
         }
     }
@@ -191,6 +204,7 @@ public class IncapConfigData implements Serializable {
         if (downTicks != null) return downTicks;
         else {
             Constants.LOG.warn("Warning - downTicks config not set. Using default value.");
+            downTicks = defaultData.downTicks;
             return defaultData.downTicks;
         }
     }
@@ -199,6 +213,7 @@ public class IncapConfigData implements Serializable {
         if (reviveTicks != null) return reviveTicks;
         else {
             Constants.LOG.warn("Warning - reviveTicks config not set. Using default value.");
+            reviveTicks = defaultData.reviveTicks;
             return defaultData.reviveTicks;
         }
     }
@@ -207,6 +222,7 @@ public class IncapConfigData implements Serializable {
         if (downCounter != null) return downCounter;
         else {
             Constants.LOG.warn("Warning - downCounter config not set. Using default value.");
+            downCounter = defaultData.downCounter;
             return defaultData.downCounter;
         }
     }
@@ -215,6 +231,7 @@ public class IncapConfigData implements Serializable {
         if (glowingWhileDowned != null) return glowingWhileDowned;
         else {
             Constants.LOG.warn("Warning - glowingWhileDowned config not set. Using default value.");
+            glowingWhileDowned = defaultData.glowingWhileDowned;
             return defaultData.glowingWhileDowned;
         }
     }
@@ -223,6 +240,7 @@ public class IncapConfigData implements Serializable {
         if (someInstantKills != null) return someInstantKills;
         else {
             Constants.LOG.warn("Warning - someInstantKills config not set. Using default value.");
+            someInstantKills = defaultData.someInstantKills;
             return defaultData.someInstantKills;
         }
     }
@@ -231,6 +249,7 @@ public class IncapConfigData implements Serializable {
         if (globalIncapMessage != null) return globalIncapMessage;
         else {
             Constants.LOG.warn("Warning - globalIncapMessage config not set. Using default value.");
+            globalIncapMessage = defaultData.globalIncapMessage;
             return defaultData.globalIncapMessage;
         }
     }
@@ -239,6 +258,7 @@ public class IncapConfigData implements Serializable {
         if (globalReviveMessage != null) return globalReviveMessage;
         else {
             Constants.LOG.warn("Warning - globalReviveMessage config not set. Using default value.");
+            globalReviveMessage = defaultData.globalReviveMessage;
             return defaultData.globalReviveMessage;
         }
     }
@@ -247,6 +267,7 @@ public class IncapConfigData implements Serializable {
         if (useSecondsForRevive != null) return useSecondsForRevive;
         else {
             Constants.LOG.warn("Warning - useSecondsForRevive config not set. Using default value.");
+            useSecondsForRevive = defaultData.useSecondsForRevive;
             return defaultData.useSecondsForRevive;
         }
     }
@@ -255,6 +276,7 @@ public class IncapConfigData implements Serializable {
         if (canBreakOrInteractWithBlocks != null) return canBreakOrInteractWithBlocks;
         else {
             Constants.LOG.warn("Warning - canBreakOrInteractWithBlocks config not set. Using default value.");
+            canBreakOrInteractWithBlocks = defaultData.canBreakOrInteractWithBlocks;
             return defaultData.canBreakOrInteractWithBlocks;
         }
     }
@@ -263,6 +285,7 @@ public class IncapConfigData implements Serializable {
         if (healPercentageOfMaxHealth != null) return healPercentageOfMaxHealth;
         else {
             Constants.LOG.warn("Warning - healPercentageOfMaxHealth config not set. Using default value.");
+            healPercentageOfMaxHealth = defaultData.healPercentageOfMaxHealth;
             return defaultData.healPercentageOfMaxHealth;
         }
     }
@@ -271,6 +294,7 @@ public class IncapConfigData implements Serializable {
         if (reviveHealth != null) return reviveHealth;
         else {
             Constants.LOG.warn("Warning - reviveHealth config not set. Using default value.");
+            reviveHealth = defaultData.reviveHealth;
             return defaultData.reviveHealth;
         }
     }
@@ -279,6 +303,7 @@ public class IncapConfigData implements Serializable {
         if (reviveHunger != null) return reviveHunger;
         else {
             Constants.LOG.warn("Warning - reviveHunger config not set. Using default value.");
+            reviveHunger = defaultData.reviveHunger;
             return defaultData.reviveHunger;
         }
     }
@@ -287,6 +312,7 @@ public class IncapConfigData implements Serializable {
         if (reviveSaturation != null) return reviveSaturation;
         else {
             Constants.LOG.warn("Warning - reviveSaturation config not set. Using default value.");
+            reviveSaturation = defaultData.reviveSaturation;
             return defaultData.reviveSaturation;
         }
     }
@@ -295,6 +321,7 @@ public class IncapConfigData implements Serializable {
         if (instantKills != null) return instantKills;
         else {
             Constants.LOG.warn("Warning - instantKills config not set. Using default value.");
+            instantKills = defaultData.instantKills;
             return defaultData.instantKills;
         }
     }
@@ -303,6 +330,7 @@ public class IncapConfigData implements Serializable {
         if (incapEffectData != null) return incapEffectData;
         else {
             Constants.LOG.warn("Warning - incapEffectData config not set. Using default value.");
+            incapEffectData = defaultData.incapEffectData;
             return defaultData.incapEffectData;
         }
     }
@@ -311,6 +339,7 @@ public class IncapConfigData implements Serializable {
         if (DANGERDisableGiveUp != null) return DANGERDisableGiveUp;
         else {
             Constants.LOG.warn("Warning - DANGERDisableGiveUp config not set. Using default value.");
+            DANGERDisableGiveUp = defaultData.DANGERDisableGiveUp;
             return defaultData.DANGERDisableGiveUp;
         }
     }
@@ -319,6 +348,7 @@ public class IncapConfigData implements Serializable {
         if (canJumpWhileDown != null) return canJumpWhileDown;
         else {
             Constants.LOG.warn("Warning - canJumpWhileDown config not set. Using default value.");
+            canJumpWhileDown = defaultData.canJumpWhileDown;
             return defaultData.canJumpWhileDown;
         }
     }
@@ -327,6 +357,7 @@ public class IncapConfigData implements Serializable {
         if (DANGERDisableIncapPlayerDamage != null) return DANGERDisableIncapPlayerDamage;
         else {
             Constants.LOG.warn("Warning - DANGERDisableIncapPlayerDamage config not set. Using default value.");
+            DANGERDisableIncapPlayerDamage = defaultData.DANGERDisableIncapPlayerDamage;
             return defaultData.DANGERDisableIncapPlayerDamage;
         }
     }
@@ -335,7 +366,17 @@ public class IncapConfigData implements Serializable {
         if (shouldDownTimeReset != null) return shouldDownTimeReset;
         else {
             Constants.LOG.warn("Warning - shouldDownTimeReset config not set. Using default value.");
+            shouldDownTimeReset = defaultData.shouldDownTimeReset;
             return defaultData.shouldDownTimeReset;
+        }
+    }
+
+    public Boolean getShouldDisableFallFlying() {
+        if (shouldDisableFallFlying != null) return shouldDisableFallFlying;
+        else {
+            Constants.LOG.warn("Warning - shouldDisableFallFlying config not set. Using default value.");
+            shouldDisableFallFlying = defaultData.shouldDisableFallFlying;
+            return defaultData.shouldDisableFallFlying;
         }
     }
 }
