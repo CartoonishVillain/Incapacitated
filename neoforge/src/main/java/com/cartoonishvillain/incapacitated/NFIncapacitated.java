@@ -3,9 +3,11 @@ package com.cartoonishvillain.incapacitated;
 import com.cartoonishvillain.incapacitated.capability.PlayerCapability;
 import com.cartoonishvillain.incapacitated.commands.*;
 import com.cartoonishvillain.incapacitated.config.IncapacitatedClientConfig;
+import com.cartoonishvillain.incapacitated.event.ReviveCheckEvent;
 import com.cartoonishvillain.incapacitated.networking.IncapPacketClientHandler;
 import com.cartoonishvillain.incapacitated.networking.IncapPacketServerHandler;
 import io.netty.buffer.ByteBuf;
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
@@ -50,6 +52,14 @@ public class NFIncapacitated {
 
         if(!FMLLoader.isProduction()) {
             IncapDevMode.register(event.getDispatcher());
+        }
+    }
+
+    //@SubscribeEvent
+    public void creativeCheckExampleEvent(ReviveCheckEvent event) {
+        if (!event.getRevivingPlayer().isCreative()) {
+            event.getRevivingPlayer().displayClientMessage(Component.literal("You need to be in creative to revive."), true);
+            event.setCanceled(true);
         }
     }
 

@@ -3,11 +3,14 @@ package com.cartoonishvillain.incapacitated;
 import com.cartoonishvillain.incapacitated.commands.*;
 import com.cartoonishvillain.incapacitated.config.DefaultConfig;
 import com.cartoonishvillain.incapacitated.config.SimpleConfig;
+import com.cartoonishvillain.incapacitated.events.IncapacitatedRevivalCallback;
+import com.cartoonishvillain.incapacitated.events.RevivePlayerState;
 import com.cartoonishvillain.incapacitated.platform.Services;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.event.lifecycle.v1.CommonLifecycleEvents;
 import net.minecraft.ResourceLocationException;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -45,6 +48,15 @@ public class FabricIncapacitated implements ModInitializer {
                 IncapDevMode.register(dispatcher);
             }
         }));
+
+        //Example implementation of the event call back register.
+//        IncapacitatedRevivalCallback.EVENT.register(((revivingPlayer, downedPlayer) -> {
+//            if (!revivingPlayer.isCreative()) {
+//                revivingPlayer.displayClientMessage(Component.literal("Must be in creative to revive"), true);
+//                return RevivePlayerState.INCAPABLE_OF_REVIVING;
+//            }
+//            return RevivePlayerState.CAPABLE_OF_REVIVING;
+//        }));
 
         CommonLifecycleEvents.TAGS_LOADED.register((listen, listen2) -> {
             FabricStats.setup();
