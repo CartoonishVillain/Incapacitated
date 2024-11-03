@@ -2,6 +2,8 @@ package com.cartoonishvillain.incapacitated.platform;
 
 import com.cartoonishvillain.incapacitated.*;
 import com.cartoonishvillain.incapacitated.capability.NeoForgeIncapacitatedPlayerData;
+import com.cartoonishvillain.incapacitated.event.ReviveCheckEvent;
+import com.cartoonishvillain.incapacitated.events.RevivePlayerState;
 import com.cartoonishvillain.incapacitated.platform.services.IPlatformHelper;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
@@ -31,6 +33,22 @@ public class NeoForgePlatformHelper implements IPlatformHelper {
     @Override
     public boolean isDevelopmentEnvironment() {
         return !FMLLoader.isProduction();
+    }
+
+    @Override
+    public RevivePlayerState reviveCheckEvent(Player revivingPlayer, Player downPlayer) {
+        var event = new ReviveCheckEvent(revivingPlayer, downPlayer);
+        if (net.neoforged.neoforge.common.NeoForge.EVENT_BUS.post(event).isCanceled()) return RevivePlayerState.INCAPABLE_OF_REVIVING;
+
+        boolean isDown;
+        IncapacitatedPlayerData potentialHeroData = Services.PLATFORM.getPlayerData(revivingPlayer);
+        isDown = potentialHeroData.isIncapacitated();
+
+        //Since we are here, we know the event player is down. So if a nearby player is crouching and not down themselves, we set the reviving state and
+        //mark the reviving player.
+        if (revivingPlayer.isCrouching() &&  !isDown) return RevivePlayerState.REVIVING;
+        else if (!isDown) return RevivePlayerState.CAPABLE_OF_REVIVING;
+        else return RevivePlayerState.INCAPABLE_OF_REVIVING;
     }
 
     @Override

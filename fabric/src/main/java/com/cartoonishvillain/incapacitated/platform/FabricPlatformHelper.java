@@ -2,6 +2,8 @@ package com.cartoonishvillain.incapacitated.platform;
 
 import com.cartoonishvillain.incapacitated.*;
 import com.cartoonishvillain.incapacitated.component.IncapacitatedComponent;
+import com.cartoonishvillain.incapacitated.events.IncapacitatedRevivalCallback;
+import com.cartoonishvillain.incapacitated.events.RevivePlayerState;
 import com.cartoonishvillain.incapacitated.platform.services.IPlatformHelper;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.core.Holder;
@@ -33,6 +35,11 @@ public class FabricPlatformHelper implements IPlatformHelper {
     @Override
     public boolean isDevelopmentEnvironment() {
         return FabricLoader.getInstance().isDevelopmentEnvironment();
+    }
+
+    @Override
+    public RevivePlayerState reviveCheckEvent(Player revivingPlayer, Player downPlayer) {
+        return IncapacitatedRevivalCallback.EVENT.invoker().interact(revivingPlayer, downPlayer);
     }
 
     @Override

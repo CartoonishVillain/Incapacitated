@@ -337,6 +337,7 @@ public class AbstractedIncapacitation {
     public static void tick(Player downPlayer) {
         //Given event player's data
         IncapacitatedPlayerData playerData = Services.PLATFORM.getPlayerData(downPlayer);
+        if (downPlayer.tickCount == 10) Services.PLATFORM.sendIncapPacket((ServerPlayer) downPlayer, downPlayer.getId(), playerData.isIncapacitated(), (short) playerData.getDownsUntilDeath());
 
         //If the player is down, run all the code associated every tick, otherwise don't.
         if(playerData.isIncapacitated()) {
@@ -344,33 +345,30 @@ public class AbstractedIncapacitation {
             if (!downPlayer.level().isClientSide) {
                 //Scan for any players nearby
                 ArrayList<Player> playerEntities = (ArrayList<Player>) downPlayer.level().getEntitiesOfClass(Player.class, downPlayer.getBoundingBox().inflate(3));
-                boolean reviving = false;
+                RevivePlayerState reviving = RevivePlayerState.CAPABLE_OF_REVIVING;
                 Player revivingPlayer = null;
 
                 //Loop through nearby players to check if any are reviving the downed player successfully
                 for (Player player : playerEntities) {
-                    boolean isdown;
-                    IncapacitatedPlayerData potentialHeroData = Services.PLATFORM.getPlayerData(player);
-                    isdown = potentialHeroData.isIncapacitated();
-
-                    //Since we are here, we know the event player is down. So if a nearby player is crouching and not down themselves, we set the reviving state and
-                    //mark the reviving player.
-                    if (player.isCrouching() && !isdown) {
-                        reviving = true;
-                        revivingPlayer = player;
-                    } else if (!player.isCrouching() && !isdown) { //If the player is in range, not down, and not reviving
-                        player.displayClientMessage((Component.translatable("message.reviveindicator.revivetutorial").withStyle(ChatFormatting.GREEN)), true);
+                    if (player != downPlayer) {
+                        reviving = Services.PLATFORM.reviveCheckEvent(player, downPlayer);
+                        if (reviving == RevivePlayerState.REVIVING) {
+                            revivingPlayer = player;
+                            break;
+                        } else if (reviving == RevivePlayerState.CAPABLE_OF_REVIVING) { //If the player is in range, not down, and not reviving
+                            player.displayClientMessage((Component.translatable("message.reviveindicator.revivetutorial").withStyle(ChatFormatting.GREEN)), true);
+                        }
                     }
                 }
 
                 //If our event player is actively being revived.
-                if (reviving) {
+                if (reviving == RevivePlayerState.REVIVING) {
                     //Count down the revive timer. Returns true if the timer is 0, at which point the player is revived.
                     if (playerData.downReviveCount()) {
                         if (revivingPlayer instanceof ServerPlayer) revivingPlayer.awardStat(Services.PLATFORM.getReviveStat(), 1);
                         revive(downPlayer);
                     } else {
-                        //If the timer is not 0 on the revive timer, tell both parties that the revive is occuring, and how much longer until it is done.
+                        //If the timer is not 0 on the revive timer, tell both parties that the revive is occurring, and how much longer until it is done.
                         if (!Incapacitated.configData.isUseSecondsForRevive()) {
                             downPlayer.displayClientMessage(revivingComponent(playerData, "message.downindicator.revivingbar"), true);
                             revivingPlayer.displayClientMessage(revivingComponent(playerData, "message.reviveindicator.revivingbar", downPlayer), true);
@@ -383,7 +381,6 @@ public class AbstractedIncapacitation {
                 } else {
                     //If our event player is not being revived, count down the timer until; their death. Returns true when the player runs out of time.
                     if (playerData.countTicksUntilDeath()) {
-                        
                         downPlayer.hurt(Services.PLATFORM.getDamageSource(downPlayer, downPlayer.level()), Float.MAX_VALUE);
                         playerData.setReviveCounter(Incapacitated.configData.getReviveTicks());
                         downPlayer.removeEffect(MobEffects.GLOWING);

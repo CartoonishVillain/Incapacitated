@@ -1,6 +1,7 @@
 package com.cartoonishvillain.incapacitated.platform.services;
 
 import com.cartoonishvillain.incapacitated.IncapacitatedPlayerData;
+import com.cartoonishvillain.incapacitated.events.RevivePlayerState;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.stats.Stat;
@@ -43,6 +44,8 @@ public interface IPlatformHelper {
 
         return isDevelopmentEnvironment() ? "development" : "production";
     }
+
+    RevivePlayerState reviveCheckEvent(Player revivingPlayer, Player downPlayer);
 
     /*
       INCAPACITATED API METHODS HERE
