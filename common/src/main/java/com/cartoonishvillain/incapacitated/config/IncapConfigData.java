@@ -34,6 +34,7 @@ public class IncapConfigData implements Serializable {
     Float reviveSaturation;
     Boolean shouldDownTimeReset;
     Boolean shouldDisableFallFlying;
+    Boolean shouldDieOnTimeout;
     ArrayList<IncapEffectData> incapEffectData;
     Boolean DANGERDisableGiveUp;
     Boolean DANGERDisableIncapPlayerDamage;
@@ -41,7 +42,7 @@ public class IncapConfigData implements Serializable {
     public static IncapConfigData defaultData = buildDefaultConfig();
 
     public IncapConfigData(Integer merciful, Boolean hunter, Boolean canBreakOrInteractWithBlocks, Boolean canJumpWhileDown, Boolean slow, Boolean weakened, Boolean regenerating, Boolean unlimitedDowns, Boolean downLogging, Boolean reviveMessage, String foodReviveList, String foodHealList, Integer downTicks, Integer reviveTicks, Integer downCounter, Boolean glowingWhileDowned, Boolean someInstantKills, String instantKills, Boolean globalIncapMessage, Boolean globalReviveMessage, Boolean useSecondsForRevive,
-    Boolean healPercentageOfMaxHealth, float reviveHealth, Integer reviveHunger, float reviveSaturation, Boolean shouldDownTimeReset, ArrayList<IncapEffectData> incapEffectData, Boolean DANGERDisableGiveUp, Boolean DANGERDisableIncapPlayerDamage, Boolean shouldDisableFallFlying) {
+    Boolean healPercentageOfMaxHealth, float reviveHealth, Integer reviveHunger, float reviveSaturation, Boolean shouldDownTimeReset, Boolean shouldDieOnTimeout, ArrayList<IncapEffectData> incapEffectData, Boolean DANGERDisableGiveUp, Boolean DANGERDisableIncapPlayerDamage, Boolean shouldDisableFallFlying) {
         this.info = "For documentation on what each item does, see the readme file on github: https://github.com/CartoonishVillain/Incapacitated";
         this.merciful = merciful;
         this.hunter = hunter;
@@ -70,6 +71,7 @@ public class IncapConfigData implements Serializable {
         this.reviveSaturation = reviveSaturation;
         this.shouldDownTimeReset = shouldDownTimeReset;
         this.shouldDisableFallFlying = shouldDisableFallFlying;
+        this.shouldDieOnTimeout = shouldDieOnTimeout;
         this.incapEffectData = incapEffectData;
         this.DANGERDisableGiveUp = DANGERDisableGiveUp;
         this.DANGERDisableIncapPlayerDamage = DANGERDisableIncapPlayerDamage;
@@ -103,11 +105,21 @@ public class IncapConfigData implements Serializable {
                 -1, //reviveHunger
                 -1f, //reviveSaturation
                 false, //shouldDownTimeReset
+                true, //shouldDieOnTimeout
                 new ArrayList<>(), //incapEffectData
                 false, //DANGERDisableGiveUp
                 false, //DANGERDisableIncapPlayerDamage
                 false //shouldDisableFallFlying
         );
+    }
+
+    public Boolean getShouldDieOnTimeout() {
+        if (shouldDieOnTimeout != null) return shouldDieOnTimeout;
+        else {
+            Constants.LOG.warn("Warning - shouldDieOnTimeout config not set. Using default value.");
+            shouldDieOnTimeout = defaultData.shouldDieOnTimeout;
+            return defaultData.shouldDieOnTimeout;
+        }
     }
 
     public Integer getMerciful() {

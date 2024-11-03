@@ -13,6 +13,7 @@
   "message.revivecount.one": "You have 1 down left",
   "message.revivecount.zero": "You have no downs left",
   "message.downindicator.norevive": "Incapacitated! Call for help or run \"%1$s\" to give up! %2$s seconds left!",
+  "message.downindicator.norevivesafe": "Incapacitated! Call for help or wait %1$s seconds to auto recover!",
   "message.downindicator.reviving": "You are being revived! %1$s seconds..",
   "message.reviveindicator.reviving": "Reviving %1$s %2$s seconds..",
   "message.downindicator.revivingbar": "You are being revived! %1$s",

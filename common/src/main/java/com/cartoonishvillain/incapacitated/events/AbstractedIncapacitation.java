@@ -194,6 +194,49 @@ public class AbstractedIncapacitation {
         }
     }
 
+    public static void revive(Player player, IncapacitatedPlayerData incapacitatedPlayerData, boolean shouldResetTimer) {
+        incapacitatedPlayerData.setIncapacitated(false);
+        incapacitatedPlayerData.setReviveCounter(Incapacitated.configData.getReviveTicks());
+        if (shouldResetTimer) incapacitatedPlayerData.setTicksUntilDeath(Incapacitated.configData.getDownTicks());
+        player.removeEffect(MobEffects.GLOWING);
+        player.removeEffect(BuiltInRegistries.MOB_EFFECT.wrapAsHolder(Services.PLATFORM.getSlowEffect()));
+        player.removeEffect(BuiltInRegistries.MOB_EFFECT.wrapAsHolder(Services.PLATFORM.getWeakEffect()));
+
+        if (!effectInstances.isEmpty()) {
+            for (MobEffectInstance effectInstance : effectInstances) {
+                player.removeEffect(effectInstance.getEffect());
+            }
+        }
+
+        Services.PLATFORM.writePlayerData(player, incapacitatedPlayerData);
+        if (!player.level().isClientSide) {
+            Services.PLATFORM.sendIncapPacket((ServerPlayer) player, player.getId(), false, (short) incapacitatedPlayerData.getDownsUntilDeath());
+        }
+        healPlayerWhenReviving(player);
+        player.level().playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.NOTE_BLOCK_PLING.value(), SoundSource.PLAYERS, 1, 1);
+
+        if (Incapacitated.configData.isGlobalReviveMessage()) {
+            broadcast(player.getServer(), Component.translatable("message.revive.message", player.getScoreboardName()));
+        } else {
+            ArrayList<Player> playerEntities = (ArrayList<Player>) player.level().getEntitiesOfClass(Player.class, player.getBoundingBox().inflate(50));
+            for (Player players : playerEntities) {
+                players.displayClientMessage(Component.translatable("message.revive.message", player.getScoreboardName()), false);
+            }
+        }
+
+        if (Incapacitated.configData.isReviveMessage() && !Incapacitated.configData.isUnlimitedDowns()) {
+            if (incapacitatedPlayerData.getDownsUntilDeath() > 1) {
+                player.displayClientMessage(Component.translatable("message.revivecount.normal", incapacitatedPlayerData.getDownsUntilDeath()), false);
+            } else if (incapacitatedPlayerData.getDownsUntilDeath() == 1) {
+                player.displayClientMessage(Component.translatable("message.revivecount.one"), false);
+            } else {
+                player.displayClientMessage(Component.translatable("message.revivecount.zero"), false);
+            }
+        }
+
+        resetDownTicks(player, incapacitatedPlayerData);
+    }
+
     public static void revive(Player player) {
         IncapacitatedPlayerData incapacitatedPlayerData = Services.PLATFORM.getPlayerData(player);
         incapacitatedPlayerData.setIncapacitated(false);
@@ -381,15 +424,12 @@ public class AbstractedIncapacitation {
                 } else {
                     //If our event player is not being revived, count down the timer until; their death. Returns true when the player runs out of time.
                     if (playerData.countTicksUntilDeath()) {
-                        downPlayer.hurt(Services.PLATFORM.getDamageSource(downPlayer, downPlayer.level()), Float.MAX_VALUE);
-                        playerData.setReviveCounter(Incapacitated.configData.getReviveTicks());
-                        downPlayer.removeEffect(MobEffects.GLOWING);
-                        playerData.setIncapacitated(false);
-                        Services.PLATFORM.writePlayerData(downPlayer, playerData);
-                        Services.PLATFORM.sendIncapPacket((ServerPlayer) downPlayer, downPlayer.getId(), false, (short) playerData.getDownsUntilDeath());
+                        if (Incapacitated.configData.getShouldDieOnTimeout()) killFromTimeout(downPlayer, playerData); //We now have a config to disable death based on bleedouts, reviving the player, as if they've recovered after somw downtime.
+                        else revive(downPlayer, playerData, true);
                     } else if (playerData.getTicksUntilDeath() % 20 == 0) {
                         //Otherwise, every 20 ticks (1 second) send the dying player a message about how long, in seconds, they have until death.
-                        downPlayer.displayClientMessage(Component.translatable("message.downindicator.norevive", "/incap die", playerData.getTicksUntilDeath() / 20f).withStyle(ChatFormatting.RED), true);
+                        if (Incapacitated.configData.getShouldDieOnTimeout()) downPlayer.displayClientMessage(Component.translatable("message.downindicator.norevive", "/incap die", playerData.getTicksUntilDeath() / 20f).withStyle(ChatFormatting.RED), true);
+                        else downPlayer.displayClientMessage(Component.translatable("message.downindicator.norevivesafe", playerData.getTicksUntilDeath() /20f).withStyle(ChatFormatting.LIGHT_PURPLE), true);
                     }
 
                     //Additionally, if the user is not reviving, make sure the revive timer is reset.
@@ -400,6 +440,15 @@ public class AbstractedIncapacitation {
                 }
             }
         }
+    }
+
+    private static void killFromTimeout(Player downPlayer, IncapacitatedPlayerData playerData) {
+        downPlayer.hurt(Services.PLATFORM.getDamageSource(downPlayer, downPlayer.level()), Float.MAX_VALUE);
+        playerData.setReviveCounter(Incapacitated.configData.getReviveTicks());
+        downPlayer.removeEffect(MobEffects.GLOWING);
+        playerData.setIncapacitated(false);
+        Services.PLATFORM.writePlayerData(downPlayer, playerData);
+        Services.PLATFORM.sendIncapPacket((ServerPlayer) downPlayer, downPlayer.getId(), false, (short) playerData.getDownsUntilDeath());
     }
 
     public static void downLogging(Player player) {
