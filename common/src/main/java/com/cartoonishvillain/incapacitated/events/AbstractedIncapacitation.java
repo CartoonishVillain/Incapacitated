@@ -219,7 +219,7 @@ public class AbstractedIncapacitation {
                     }
 
                     if (!player.getInventory().offhand.isEmpty()) {
-                        String offhand = ((IncapacitatedItemAccessor) playerChecked.getInventory().offhand.getFirst().getItem()).getBuiltInRegistryHolder().key().location().toString();
+                        String offhand = ((IncapacitatedItemAccessor) playerChecked.getInventory().offhand.get(0).getItem()).getBuiltInRegistryHolder().key().location().toString();
                         if (reviveFoods.contains(offhand)) {
                             everyoneIsDown = false; //The player can revive themselves with an item in their inventory. Not all hope is lost.
                             break;

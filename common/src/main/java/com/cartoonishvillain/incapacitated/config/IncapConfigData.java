@@ -112,7 +112,7 @@ public class IncapConfigData implements Serializable {
                 false, //DANGERDisableGiveUp
                 false, //DANGERDisableIncapPlayerDamage
                 false, //shouldDisableFallFlying
-                true
+                false //DANGERFullServerKill
         );
     }
 
