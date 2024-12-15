@@ -69,6 +69,12 @@ You can reload your config at any time with /incap config reload
 
 * DANGERDisableIncapPlayerDamage - true or false, should any damage attributed to an incapacitated player be canceled?
 
+* DANGERFullServerKill - true or false, if all players are down, should everyone die? 
+This checks every time someone goes down or dies.
+* If the Hunter config is on, this will never run, as players could possibly revive themselves
+* Inventories are scanned for any items on the FoodReviveList, if such an item is present in any live player's inventory, this won't count.
+* If everyone is down, dead, or in spectator mode, everyone not in spectator or creative mode is instantly killed.
+
 
 # IncapEffectData
 IncapEffectData is an array of objects defined as   
