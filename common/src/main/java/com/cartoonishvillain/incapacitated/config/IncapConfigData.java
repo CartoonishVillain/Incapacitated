@@ -38,11 +38,12 @@ public class IncapConfigData implements Serializable {
     ArrayList<IncapEffectData> incapEffectData;
     Boolean DANGERDisableGiveUp;
     Boolean DANGERDisableIncapPlayerDamage;
+    Boolean DANGERFullServerKill;
     
     public static IncapConfigData defaultData = buildDefaultConfig();
 
     public IncapConfigData(Integer merciful, Boolean hunter, Boolean canBreakOrInteractWithBlocks, Boolean canJumpWhileDown, Boolean slow, Boolean weakened, Boolean regenerating, Boolean unlimitedDowns, Boolean downLogging, Boolean reviveMessage, String foodReviveList, String foodHealList, Integer downTicks, Integer reviveTicks, Integer downCounter, Boolean glowingWhileDowned, Boolean someInstantKills, String instantKills, Boolean globalIncapMessage, Boolean globalReviveMessage, Boolean useSecondsForRevive,
-    Boolean healPercentageOfMaxHealth, float reviveHealth, Integer reviveHunger, float reviveSaturation, Boolean shouldDownTimeReset, Boolean shouldDieOnTimeout, ArrayList<IncapEffectData> incapEffectData, Boolean DANGERDisableGiveUp, Boolean DANGERDisableIncapPlayerDamage, Boolean shouldDisableFallFlying) {
+    Boolean healPercentageOfMaxHealth, float reviveHealth, Integer reviveHunger, float reviveSaturation, Boolean shouldDownTimeReset, Boolean shouldDieOnTimeout, ArrayList<IncapEffectData> incapEffectData, Boolean DANGERDisableGiveUp, Boolean DANGERDisableIncapPlayerDamage, Boolean shouldDisableFallFlying, Boolean DANGERFullServerKill) {
         this.info = "For documentation on what each item does, see the readme file on github: https://github.com/CartoonishVillain/Incapacitated";
         this.merciful = merciful;
         this.hunter = hunter;
@@ -75,6 +76,7 @@ public class IncapConfigData implements Serializable {
         this.incapEffectData = incapEffectData;
         this.DANGERDisableGiveUp = DANGERDisableGiveUp;
         this.DANGERDisableIncapPlayerDamage = DANGERDisableIncapPlayerDamage;
+        this.DANGERFullServerKill = DANGERFullServerKill;
     }
 
     public static IncapConfigData buildDefaultConfig() {
@@ -109,7 +111,8 @@ public class IncapConfigData implements Serializable {
                 new ArrayList<>(), //incapEffectData
                 false, //DANGERDisableGiveUp
                 false, //DANGERDisableIncapPlayerDamage
-                false //shouldDisableFallFlying
+                false, //shouldDisableFallFlying
+                true
         );
     }
 
@@ -389,6 +392,15 @@ public class IncapConfigData implements Serializable {
             Constants.LOG.warn("Warning - shouldDisableFallFlying config not set. Using default value.");
             shouldDisableFallFlying = defaultData.shouldDisableFallFlying;
             return defaultData.shouldDisableFallFlying;
+        }
+    }
+
+    public Boolean getDANGERFullServerKill() {
+        if (DANGERFullServerKill != null) return DANGERFullServerKill;
+        else {
+            Constants.LOG.warn("Warning - shouldDisableFallFlying config not set. Using default value.");
+            DANGERFullServerKill = defaultData.DANGERFullServerKill;
+            return defaultData.DANGERFullServerKill;
         }
     }
 }

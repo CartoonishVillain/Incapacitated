@@ -1,5 +1,6 @@
 package com.cartoonishvillain.incapacitated.events;
 
+import com.cartoonishvillain.incapacitated.Constants;
 import com.cartoonishvillain.incapacitated.Incapacitated;
 import com.cartoonishvillain.incapacitated.IncapacitatedPlayerData;
 import com.cartoonishvillain.incapacitated.mixin.IncapacitatedItemAccessor;
@@ -28,9 +29,9 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.util.ArrayList;
+import java.util.List;
 
-import static com.cartoonishvillain.incapacitated.Incapacitated.effectInstances;
-import static com.cartoonishvillain.incapacitated.Incapacitated.noMercyDamageSourcesMessageID;
+import static com.cartoonishvillain.incapacitated.Incapacitated.*;
 import static net.minecraft.world.entity.player.Player.BedSleepingProblem.OTHER_PROBLEM;
 
 public class AbstractedIncapacitation {
@@ -38,7 +39,7 @@ public class AbstractedIncapacitation {
     public static void downOrKill(Player player) {
         IncapacitatedPlayerData incapacitatedPlayerData = Services.PLATFORM.getPlayerData(player);
             //if the player is not already incapacitated
-            if (!incapacitatedPlayerData.isIncapacitated()) {
+            if (!incapacitatedPlayerData.isIncapacitated() && !allKill(player)) {
                 //reduce downs until KillPlayer, unless unlimitedDowns is on.
                 if (!Incapacitated.configData.isUnlimitedDowns()) {
                     incapacitatedPlayerData.setDownsUntilDeath(incapacitatedPlayerData.getDownsUntilDeath() - 1);
@@ -79,15 +80,19 @@ public class AbstractedIncapacitation {
                 } else {
                     player.kill();
                 }
-            } else {
+            } else if(!incapacitatedPlayerData.isIncapacitated()) { //if the player is incapacitated, and everyone is with no chance of revive
+                killAllPlayers(player);
+            }
+            else {
                 player.kill();
             }
     }
 
     public static void downOrKill(Player player, CallbackInfo event, DamageSource damageSource) {
         IncapacitatedPlayerData incapacitatedPlayerData = Services.PLATFORM.getPlayerData(player);
+        Boolean allKillCheck = allKill(player);
             //if the player is not already incapacitated
-            if (!incapacitatedPlayerData.isIncapacitated() && !(Incapacitated.configData.isSomeInstantKills())) {
+            if (!incapacitatedPlayerData.isIncapacitated() && !(Incapacitated.configData.isSomeInstantKills()) && !allKillCheck) {
                 //reduce downs until KillPlayer, unless unlimitedDowns is on.
                 if (!Incapacitated.configData.isUnlimitedDowns()) {
                     incapacitatedPlayerData.setDownsUntilDeath(incapacitatedPlayerData.getDownsUntilDeath() - 1);
@@ -129,7 +134,7 @@ public class AbstractedIncapacitation {
                     }
                     Services.PLATFORM.writePlayerData(player, incapacitatedPlayerData);
                 }
-            } else if (!incapacitatedPlayerData.isIncapacitated() && (Incapacitated.configData.isSomeInstantKills())) {
+            } else if (!incapacitatedPlayerData.isIncapacitated() && (Incapacitated.configData.isSomeInstantKills()) && !allKillCheck) {
                 boolean notInstantKill = true;
                 //check if the damage type is in the instant kill list, if it does, don't cancel KillPlayer event.
                 for (String damageType : Incapacitated.instantKillDamageSourcesMessageID) {
@@ -180,9 +185,58 @@ public class AbstractedIncapacitation {
                     Services.PLATFORM.writePlayerData(player, incapacitatedPlayerData);
                 }
             }
+            else if (!incapacitatedPlayerData.isIncapacitated() && allKillCheck) {
+                killAllPlayers(player);
+            }
             else {
                 player.kill();
             }
+    }
+
+    private static void killAllPlayers(Player player) {
+        for (ServerPlayer deadPlayer : player.getServer().getPlayerList().getPlayers()) {
+            if (deadPlayer.isSpectator() || deadPlayer.isCreative()) {} //don't kill dead or creative players.
+            else {
+                deadPlayer.kill();
+            }
+        }
+    }
+
+    private static boolean allKill(Player player) {
+        boolean shouldEveryoneDie = false;
+        if (configData.getDANGERFullServerKill() && !configData.isHunter()) { //Hunter is a hard conflict as players can easily revive themselves with it.
+            MinecraftServer server = player.getServer();
+            List<ServerPlayer> players = server.getPlayerList().getPlayers();
+            boolean everyoneIsDown = true;
+            for (ServerPlayer playerChecked : players) {
+                if (!playerChecked.isDeadOrDying() && !playerChecked.isSpectator()) { //don't inventory check or whatever if the player is dead or spectating.
+                    for (ItemStack items : playerChecked.getInventory().items) {
+                        String item = ((IncapacitatedItemAccessor) items.getItem()).getBuiltInRegistryHolder().key().location().toString();
+                        if (Incapacitated.reviveFoods.contains(item)) {
+                            everyoneIsDown = false; //The player can revive themselves with an item in their inventory. Not all hope is lost.
+                            break;
+                        }
+                    }
+
+                    if (!player.getInventory().offhand.isEmpty()) {
+                        String offhand = ((IncapacitatedItemAccessor) playerChecked.getInventory().offhand.getFirst().getItem()).getBuiltInRegistryHolder().key().location().toString();
+                        if (reviveFoods.contains(offhand)) {
+                            everyoneIsDown = false; //The player can revive themselves with an item in their inventory. Not all hope is lost.
+                            break;
+                        }
+                    }
+
+
+                    IncapacitatedPlayerData incapacitatedPlayerData = Services.PLATFORM.getPlayerData(playerChecked);
+                    if (!incapacitatedPlayerData.isIncapacitated() && playerChecked != player) {
+                        everyoneIsDown = false; //If someone is found not down, we don't need to check any more players
+                        break;
+                    }
+                }
+            }
+            shouldEveryoneDie = everyoneIsDown;
+        }
+        return shouldEveryoneDie;
     }
 
     public static void pose(Player player, CallbackInfo ci, boolean cancellable) {
