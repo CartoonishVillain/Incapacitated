@@ -29,6 +29,8 @@ You can reload your config at any time with /incap config reload
 
 * FoodReviveList - string, a list of items ids of items that, when consumed, will revive the player (ex: minecraft:enchanted_golden_apple)
 
+* FoodAdrenalineList - string, a list of item ids of items that, when consumed, will revive the player, but not heal them (no resetting down timers or counts)
+
 * FoodHealList - string, a list of items ids of items that, when consumed, will reset the amount of times a player can go down before instant death (ex: minecraft:golden_apple)
 
 * DownTicks - whole number, how many ticks (20 per second if not lagging) can a player persist incapacitated before dying?

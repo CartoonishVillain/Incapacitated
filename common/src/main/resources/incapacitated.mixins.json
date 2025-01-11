@@ -11,6 +11,7 @@
         "LivingEntityHurtMixin",
         "PlayerDeathMixin",
         "PlayerJoinMixin",
+        "PlayerRespawnMixin",
         "PlayerMixin",
         "PlayerRemoveMixin",
         "PlayerSleepMixin",
