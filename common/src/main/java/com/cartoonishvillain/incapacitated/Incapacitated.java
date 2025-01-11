@@ -102,7 +102,7 @@ public class Incapacitated {
             ArrayList<String> reviveFoodList = new ArrayList<>();
             try {
                 for (String string : reviveFoods) {
-                    String food = ResourceLocation.parse(string).toString();
+                    String food = new ResourceLocation(string).toString();
                     reviveFoodList.add(food);
                 }
             } catch (ResourceLocationException e) {
