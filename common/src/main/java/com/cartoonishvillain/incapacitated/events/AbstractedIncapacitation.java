@@ -212,7 +212,7 @@ public class AbstractedIncapacitation {
                 if (!playerChecked.isDeadOrDying() && !playerChecked.isSpectator()) { //don't inventory check or whatever if the player is dead or spectating.
                     for (ItemStack items : playerChecked.getInventory().items) {
                         String item = ((IncapacitatedItemAccessor) items.getItem()).getBuiltInRegistryHolder().key().location().toString();
-                        if (Incapacitated.reviveFoods.contains(item)) {
+                        if (Incapacitated.reviveFoods.contains(item) || adrenalineFoods.contains(item)) {
                             everyoneIsDown = false; //The player can revive themselves with an item in their inventory. Not all hope is lost.
                             break;
                         }
@@ -220,7 +220,7 @@ public class AbstractedIncapacitation {
 
                     if (!player.getInventory().offhand.isEmpty()) {
                         String offhand = ((IncapacitatedItemAccessor) playerChecked.getInventory().offhand.getFirst().getItem()).getBuiltInRegistryHolder().key().location().toString();
-                        if (reviveFoods.contains(offhand)) {
+                        if (reviveFoods.contains(offhand) || adrenalineFoods.contains(offhand)) {
                             everyoneIsDown = false; //The player can revive themselves with an item in their inventory. Not all hope is lost.
                             break;
                         }
