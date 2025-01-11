@@ -33,6 +33,7 @@ public class Incapacitated {
     public static ArrayList<String> instantKillDamageSourcesMessageID;
     public static ArrayList<String> noMercyDamageSourcesMessageID;
     public static List<String> reviveFoods;
+    public static List<String> adrenalineFoods;
     public static List<String> healingFoods;
     public static ArrayList<MobEffectInstance> effectInstances = new ArrayList<>();
     public static void init() {
@@ -56,6 +57,7 @@ public class Incapacitated {
             configData = gson.fromJson(reader, IncapConfigData.class);
             if (configData != null) {
                 reviveFoods = getFoodForReviving();
+                adrenalineFoods = getFoodForAdrenaline();
                 healingFoods = getFoodForHealing();
                 instantKillDamageSourcesMessageID = getInstantKills();
                 getEffectInstances();
@@ -91,6 +93,27 @@ public class Incapacitated {
             return new ArrayList<>(List.of("minecraft:enchanted_golden_apple"));
         }
         return reviveFoodList;
+    }
+
+    private static ArrayList<String> getFoodForAdrenaline() {
+        try {
+            final String FoodList = configData.getFoodAdrenalineList();
+            String[] reviveFoods = FoodList.split(",");
+            ArrayList<String> reviveFoodList = new ArrayList<>();
+            try {
+                for (String string : reviveFoods) {
+                    String food = ResourceLocation.parse(string).toString();
+                    reviveFoodList.add(food);
+                }
+            } catch (ResourceLocationException e) {
+                Constants.LOG.error("Incapacitation: Adrenaline foods not parsed. Non [a-z0-9_.-] character in config! Using default...");
+                return new ArrayList<>(List.of());
+            }
+            return reviveFoodList;
+        } catch (NullPointerException e) {
+            Constants.LOG.error("Incapacitation: Adrenaline foods not parsed. It is likely this value is not in your config file! Using default...");
+            return new ArrayList<>(List.of());
+        }
     }
 
     private static ArrayList<String> getFoodForHealing() {

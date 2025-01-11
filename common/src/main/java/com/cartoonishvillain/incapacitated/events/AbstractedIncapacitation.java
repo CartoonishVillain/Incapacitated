@@ -381,12 +381,15 @@ public class AbstractedIncapacitation {
             }
 
             if(incapacitatedPlayerData.isIncapacitated()) {
-                if(Incapacitated.reviveFoods.contains(item)){
+                if(Incapacitated.reviveFoods.contains(item) || Incapacitated.adrenalineFoods.contains(item)){
                     if (player instanceof ServerPlayer) player.awardStat(Services.PLATFORM.getSelfReviveStat(), 1);
                     incapacitatedPlayerData.setIncapacitated(false);
                     incapacitatedPlayerData.setReviveCounter(Incapacitated.configData.getReviveTicks());
-                    incapacitatedPlayerData.setDownsUntilDeath(Incapacitated.configData.getDownCounter());
-                    incapacitatedPlayerData.setTicksUntilDeath(Incapacitated.configData.getDownTicks());
+
+                    if (Incapacitated.reviveFoods.contains(item)) {
+                        incapacitatedPlayerData.setDownsUntilDeath(Incapacitated.configData.getDownCounter());
+                        incapacitatedPlayerData.setTicksUntilDeath(Incapacitated.configData.getDownTicks());
+                    }
                     player.removeEffect(MobEffects.GLOWING);
                     player.removeEffect(Services.PLATFORM.getSlowEffect());
                     player.removeEffect(Services.PLATFORM.getWeakEffect());
@@ -548,7 +551,6 @@ public class AbstractedIncapacitation {
             MutableComponent barComponent = Component.literal("[").withStyle(ChatFormatting.GREEN);
             float percentage = 1 - ((float)playerData.getReviveCounter()/(float)Incapacitated.configData.getReviveTicks());
             percentage *= 100;
-//            LOGGER.debug("Config amount: " + IncapacitatedCommonConfig.REVIVETICKS.get() + " current revive counter: " + playerData.getReviveCounter() + " calculated: " + (100 - (playerData.getReviveCounter()/IncapacitatedCommonConfig.REVIVETICKS.get())));
             for (int i = 10; i > 0; i--) {
                 if (percentage >= 10) {
                     percentage -= 10;
@@ -597,5 +599,4 @@ public class AbstractedIncapacitation {
             Services.PLATFORM.sendIncapPacket((ServerPlayer) player, player.getId(), playerData.isIncapacitated(), (short) playerData.getDownsUntilDeath());
         }
     }
-
 }
