@@ -9,7 +9,24 @@
     "client": [
         "LocalPlayerTickMixin",
         "LoadEffectInvoker",
-        "LocalPlayerRespawnMixin"
+        "LocalPlayerRespawnMixin",
+        "FallFlyingMixin",
+        "HealingFoodMixin",
+        "LivingEntityDieMixin",
+        "LivingEntityHurtMixin",
+        "PlayerDeathMixin",
+        "PlayerJoinMixin",
+        "PlayerRespawnMixin",
+        "PlayerMixin",
+        "PlayerRemoveMixin",
+        "PlayerSleepMixin",
+        "ServerPlayerTickMixin",
+        "IncapacitatedItemAccessor",
+        "BreakBlocksMixin",
+        "SleepMixin",
+        "UseOnBlockItemMixin",
+        "JumpMixin",
+        "IncapacitatedInventoryAccessor"
     ],
     "server": [
     ],

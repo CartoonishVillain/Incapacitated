@@ -1,7 +1,7 @@
 package com.cartoonishvillain.incapacitated.mixin;
 
 import com.cartoonishvillain.incapacitated.Incapacitated;
-import com.cartoonishvillain.incapacitated.events.AbstractedIncapacitation;
+import com.cartoonishvillain.incapacitated.AbstractedIncapacitation;
 import com.cartoonishvillain.incapacitated.platform.Services;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.damagesource.DamageSource;

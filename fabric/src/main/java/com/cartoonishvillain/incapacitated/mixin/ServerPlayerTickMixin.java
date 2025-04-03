@@ -1,7 +1,7 @@
 package com.cartoonishvillain.incapacitated.mixin;
 
 
-import com.cartoonishvillain.incapacitated.events.AbstractedIncapacitation;
+import com.cartoonishvillain.incapacitated.AbstractedIncapacitation;
 import net.minecraft.server.level.ServerPlayer;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;

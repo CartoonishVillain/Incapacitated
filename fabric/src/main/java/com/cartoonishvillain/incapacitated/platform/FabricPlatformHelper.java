@@ -79,7 +79,7 @@ public class FabricPlatformHelper implements IPlatformHelper {
         IncapacitatedComponent playerData = INCAPACITATEDCOMPONENTINSTANCE.get(player);
         if (playerData.getIsIncapacitated()) {
             player.hurt(playerData.getSourceOfDeath(player.level()), player.getMaxHealth() * 10);
-            player.kill();
+            player.kill(player.serverLevel());
             playerData.setReviveCount(Incapacitated.configData.getDownCounter());
             playerData.setIsIncapacitated(false);
             player.removeEffect(MobEffects.GLOWING);
@@ -89,6 +89,11 @@ public class FabricPlatformHelper implements IPlatformHelper {
     @Override
     public void sendIncapPacket(ServerPlayer player, int playerID, boolean isIncapacitated, short downsUntilDeath, int downTicks) {
 
+    }
+
+    @Override
+    public void loadConfig() {
+        FabricIncapacitated.loadConfig();
     }
 
     @Override

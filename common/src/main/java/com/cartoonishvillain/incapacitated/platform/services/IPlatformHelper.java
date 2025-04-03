@@ -85,6 +85,8 @@ public interface IPlatformHelper {
             int downTicks
     );
 
+    void loadConfig();
+
     /*
       INCAPACITATED MOB EFFECTS
      */

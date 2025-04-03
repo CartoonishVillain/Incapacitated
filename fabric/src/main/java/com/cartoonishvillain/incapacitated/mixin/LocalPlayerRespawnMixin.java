@@ -18,6 +18,6 @@ import static com.cartoonishvillain.incapacitated.component.ComponentStarter.INC
 public class LocalPlayerRespawnMixin {
     @Inject(at = @At("HEAD"), method = "respawn")
     private void incapacitatedRespawn(CallbackInfo ci){
-        if (FabricIncapacitated.lastDownDesaturate) Minecraft.getInstance().gameRenderer.shutdownEffect();
+        if (FabricIncapacitated.lastDownDesaturate) Minecraft.getInstance().gameRenderer.clearPostEffect();
     }
 }

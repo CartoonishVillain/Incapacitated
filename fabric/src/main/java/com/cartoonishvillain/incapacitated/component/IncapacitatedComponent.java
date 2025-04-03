@@ -11,6 +11,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.damagesource.DamageSources;
 import net.minecraft.world.damagesource.DamageType;
 import net.minecraft.world.damagesource.DamageTypes;
 import net.minecraft.world.level.Level;
@@ -88,12 +89,12 @@ public class IncapacitatedComponent implements IncapacitatedInterface, AutoSynce
     @Override
     public DamageSource getSourceOfDeath(Level level) {
         Holder.Reference<DamageType> damageType = level.registryAccess()
-                .registryOrThrow(Registries.DAMAGE_TYPE)
-                .getHolderOrThrow(BLEEDOUT);
+                .lookupOrThrow(Registries.DAMAGE_TYPE)
+                .getOrThrow(BLEEDOUT);
 
         Holder.Reference<DamageType> fallOutOfWorld = level.registryAccess()
-                .registryOrThrow(Registries.DAMAGE_TYPE)
-                .getHolderOrThrow(DamageTypes.FELL_OUT_OF_WORLD);
+                .lookupOrThrow(Registries.DAMAGE_TYPE)
+                .getOrThrow(DamageTypes.FELL_OUT_OF_WORLD);
 
         return originalSource != null
                 ? originalSource
@@ -103,8 +104,8 @@ public class IncapacitatedComponent implements IncapacitatedInterface, AutoSynce
     @Override
     public void setSourceOfDeath(Level level, DamageSource causeOfDeath) {
         Holder.Reference<DamageType> damageType = level.registryAccess()
-                .registryOrThrow(Registries.DAMAGE_TYPE)
-                .getHolderOrThrow(BLEEDOUT);
+                .lookupOrThrow(Registries.DAMAGE_TYPE)
+                .getOrThrow(BLEEDOUT);
 
         originalSource = new BleedOutDamage(damageType, causeOfDeath);
         ComponentStarter.INCAPACITATEDCOMPONENTINSTANCE.sync(this.provider);
@@ -127,10 +128,10 @@ public class IncapacitatedComponent implements IncapacitatedInterface, AutoSynce
 
     @Override
     public void readFromNbt(CompoundTag tag, HolderLookup.Provider registryLookup) {
-        incapacitated = tag.getBoolean("incapacitation");
-        ticksUntilDeath = tag.getInt("incapTimer");
-        downsUntilDeath = tag.getInt("incapCounter");
-        isShader = tag.getBoolean("incapShader");
+        incapacitated = tag.getBoolean("incapacitation").orElse(false);
+        ticksUntilDeath = tag.getInt("incapTimer").orElse(10000);
+        downsUntilDeath = tag.getInt("incapCounter").orElse(3);
+        isShader = tag.getBoolean("incapShader").orElse(false);
     }
 
     @Override

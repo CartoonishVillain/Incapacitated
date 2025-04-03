@@ -9,7 +9,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-import static com.cartoonishvillain.incapacitated.events.AbstractedIncapacitation.breakBlocks;
+import static com.cartoonishvillain.incapacitated.AbstractedIncapacitation.breakBlocks;
 
 @Mixin(Player.class)
 public class BreakBlocksMixin {

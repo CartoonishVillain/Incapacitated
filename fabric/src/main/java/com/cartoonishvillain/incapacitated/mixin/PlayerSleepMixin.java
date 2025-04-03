@@ -1,6 +1,6 @@
 package com.cartoonishvillain.incapacitated.mixin;
 
-import com.cartoonishvillain.incapacitated.events.AbstractedIncapacitation;
+import com.cartoonishvillain.incapacitated.AbstractedIncapacitation;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import org.spongepowered.asm.mixin.Mixin;

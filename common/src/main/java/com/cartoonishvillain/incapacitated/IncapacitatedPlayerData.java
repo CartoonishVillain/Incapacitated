@@ -54,28 +54,6 @@ public class IncapacitatedPlayerData implements Serializable {
         this.reviveCounter = reviveCounter;
     }
 
-    public DamageSource getDamageSource(Level level, Player player) {
-        Holder.Reference<DamageType> damageType = level.registryAccess()
-                .registryOrThrow(Registries.DAMAGE_TYPE)
-                .getHolderOrThrow(BLEEDOUT);
-
-        Holder.Reference<DamageType> fallOutOfWorld = level.registryAccess()
-                .registryOrThrow(Registries.DAMAGE_TYPE)
-                .getHolderOrThrow(DamageTypes.FELL_OUT_OF_WORLD);
-
-        return originalSource != null
-                ? originalSource
-                : new BleedOutDamage(damageType, new DamageSource(fallOutOfWorld));
-    }
-
-    public void setDamageSource(Level level, DamageSource damageSource, Player player) {
-        Holder.Reference<DamageType> damageType = level.registryAccess()
-                .registryOrThrow(Registries.DAMAGE_TYPE)
-                .getHolderOrThrow(BLEEDOUT);
-
-        originalSource = new BleedOutDamage(damageType, damageSource);
-    }
-
     public boolean downReviveCount() {
         reviveCounter--;
         return reviveCounter <= 0;

@@ -28,7 +28,7 @@ public class ComponentStarter implements EntityComponentInitializer {
             CompoundTag donorTag = new CompoundTag();
             from.writeToNbt(donorTag, registryLookup);
             CompoundTag finalTag = new CompoundTag();
-            finalTag.putBoolean("incapShader", donorTag.getBoolean("incapShader"));
+            finalTag.putBoolean("incapShader", donorTag.getBoolean("incapShader").orElse(false));
             to.readFromNbt(finalTag, registryLookup);
         }
     };

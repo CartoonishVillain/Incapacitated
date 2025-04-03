@@ -24,7 +24,7 @@ public class LocalPlayerTickMixin {
             ((LoadEffectInvoker) Minecraft.getInstance().gameRenderer).incapacitatedLoadEffect(resourceLocation);
             playerData.setShader(true);
         } else if ((!FabricIncapacitated.lastDownDesaturate || !(playerData.getDownsUntilDeath() <= 0)) && playerData.isShader()) {
-            Minecraft.getInstance().gameRenderer.shutdownEffect();
+            Minecraft.getInstance().gameRenderer.clearPostEffect();
             playerData.setShader(false);
         }
     }

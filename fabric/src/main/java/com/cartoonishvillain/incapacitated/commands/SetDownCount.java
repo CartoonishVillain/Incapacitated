@@ -1,7 +1,6 @@
 package com.cartoonishvillain.incapacitated.commands;
 
-import com.cartoonishvillain.incapacitated.events.AbstractedIncapacitation;
-import com.cartoonishvillain.incapacitated.platform.Services;
+import com.cartoonishvillain.incapacitated.AbstractedIncapacitation;
 import com.mojang.authlib.GameProfile;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
@@ -31,7 +30,7 @@ public class SetDownCount {
 
     private static int setDownCount(CommandSourceStack sourceStack, Collection<GameProfile> profiles, int downCount) {
         for(GameProfile gameProfile : profiles) {
-            ServerPlayer serverPlayer = sourceStack.getServer().getPlayerList().getPlayer(gameProfile.getId());
+            ServerPlayer serverPlayer = sourceStack.getPlayer();
             if (serverPlayer != null) {
                 AbstractedIncapacitation.setDownCount(serverPlayer, (short) downCount);
                 sourceStack.sendSuccess(() -> Component.translatable("command.return.setdowns", serverPlayer.getName(), downCount), true);

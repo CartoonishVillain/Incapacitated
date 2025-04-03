@@ -1,8 +1,7 @@
-package com.cartoonishvillain.incapacitated.events;
+package com.cartoonishvillain.incapacitated;
 
-import com.cartoonishvillain.incapacitated.Constants;
-import com.cartoonishvillain.incapacitated.Incapacitated;
-import com.cartoonishvillain.incapacitated.IncapacitatedPlayerData;
+import com.cartoonishvillain.incapacitated.events.RevivePlayerState;
+import com.cartoonishvillain.incapacitated.mixin.IncapacitatedInventoryAccessor;
 import com.cartoonishvillain.incapacitated.mixin.IncapacitatedItemAccessor;
 import com.cartoonishvillain.incapacitated.platform.Services;
 import com.mojang.datafixers.util.Either;
@@ -11,6 +10,7 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.TheGame;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -21,6 +21,7 @@ import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Pose;
+import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.food.FoodData;
 import net.minecraft.world.item.ItemStack;
@@ -32,6 +33,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static com.cartoonishvillain.incapacitated.Incapacitated.*;
+import static net.minecraft.world.entity.player.Inventory.SLOT_OFFHAND;
 import static net.minecraft.world.entity.player.Player.BedSleepingProblem.OTHER_PROBLEM;
 
 public class AbstractedIncapacitation {
@@ -69,7 +71,7 @@ public class AbstractedIncapacitation {
                     }
 
                     if (Incapacitated.configData.isGlobalIncapMessage()) {
-                        broadcast(player.getServer(), Component.translatable("message.incap.message", player.getScoreboardName()));
+                        broadcast(player.theGame(), Component.translatable("message.incap.message", player.getScoreboardName()));
                     } else {
                         ArrayList<Player> playerEntities = (ArrayList<Player>) player.level().getEntitiesOfClass(Player.class, player.getBoundingBox().inflate(50));
                         for (Player players : playerEntities) {
@@ -78,13 +80,13 @@ public class AbstractedIncapacitation {
                     }
                     Services.PLATFORM.writePlayerData(player, incapacitatedPlayerData);
                 } else {
-                    player.kill();
+                    if (player instanceof ServerPlayer) player.kill(((ServerPlayer) player).serverLevel());
                 }
             } else if(!incapacitatedPlayerData.isIncapacitated()) { //if the player is incapacitated, and everyone is with no chance of revive
                 killAllPlayers(player);
             }
             else {
-                player.kill();
+                if (player instanceof ServerPlayer) player.kill(((ServerPlayer) player).serverLevel());
             }
     }
 
@@ -125,7 +127,7 @@ public class AbstractedIncapacitation {
                     }
 
                     if (Incapacitated.configData.isGlobalIncapMessage()) {
-                        broadcast(player.getServer(), Component.translatable("message.incap.message", player.getScoreboardName()));
+                        broadcast(player.theGame(), Component.translatable("message.incap.message", player.getScoreboardName()));
                     } else {
                         ArrayList<Player> playerEntities = (ArrayList<Player>) player.level().getEntitiesOfClass(Player.class, player.getBoundingBox().inflate(50));
                         for (Player players : playerEntities) {
@@ -174,7 +176,7 @@ public class AbstractedIncapacitation {
                         }
 
                         if (Incapacitated.configData.isGlobalIncapMessage()) {
-                            broadcast(player.getServer(), Component.translatable("message.incap.message", player.getScoreboardName()));
+                            broadcast(player.theGame(), Component.translatable("message.incap.message", player.getScoreboardName()));
                         } else {
                             ArrayList<Player> playerEntities = (ArrayList<Player>) player.level().getEntitiesOfClass(Player.class, player.getBoundingBox().inflate(50));
                             for (Player players : playerEntities) {
@@ -189,15 +191,15 @@ public class AbstractedIncapacitation {
                 killAllPlayers(player);
             }
             else {
-                player.kill();
+                if (player instanceof ServerPlayer) player.kill(((ServerPlayer) player).serverLevel());
             }
     }
 
     private static void killAllPlayers(Player player) {
-        for (ServerPlayer deadPlayer : player.getServer().getPlayerList().getPlayers()) {
+        for (ServerPlayer deadPlayer : player.theGame().playerList().getPlayers()) {
             if (deadPlayer.isSpectator() || deadPlayer.isCreative()) {} //don't kill dead or creative players.
             else {
-                deadPlayer.kill();
+                if (player instanceof ServerPlayer) deadPlayer.kill(((ServerPlayer) player).serverLevel());
             }
         }
     }
@@ -205,12 +207,12 @@ public class AbstractedIncapacitation {
     private static boolean allKill(Player player) {
         boolean shouldEveryoneDie = false;
         if (configData.getDANGERFullServerKill() && !configData.isHunter()) { //Hunter is a hard conflict as players can easily revive themselves with it.
-            MinecraftServer server = player.getServer();
-            List<ServerPlayer> players = server.getPlayerList().getPlayers();
+            TheGame server = player.theGame();
+            List<ServerPlayer> players = server.playerList().getPlayers();
             boolean everyoneIsDown = true;
             for (ServerPlayer playerChecked : players) {
                 if (!playerChecked.isDeadOrDying() && !playerChecked.isSpectator()) { //don't inventory check or whatever if the player is dead or spectating.
-                    for (ItemStack items : playerChecked.getInventory().items) {
+                    for (ItemStack items : ((IncapacitatedInventoryAccessor) playerChecked.getInventory()).getItems()) {
                         String item = ((IncapacitatedItemAccessor) items.getItem()).getBuiltInRegistryHolder().key().location().toString();
                         if (Incapacitated.reviveFoods.contains(item) || adrenalineFoods.contains(item)) {
                             everyoneIsDown = false; //The player can revive themselves with an item in their inventory. Not all hope is lost.
@@ -218,8 +220,8 @@ public class AbstractedIncapacitation {
                         }
                     }
 
-                    if (!player.getInventory().offhand.isEmpty()) {
-                        String offhand = ((IncapacitatedItemAccessor) playerChecked.getInventory().offhand.getFirst().getItem()).getBuiltInRegistryHolder().key().location().toString();
+                    if (!player.getInventory().getItem(SLOT_OFFHAND).isEmpty()) {
+                        String offhand = ((IncapacitatedItemAccessor) playerChecked.getInventory().getItem(SLOT_OFFHAND).getItem()).getBuiltInRegistryHolder().key().location().toString();
                         if (reviveFoods.contains(offhand) || adrenalineFoods.contains(offhand)) {
                             everyoneIsDown = false; //The player can revive themselves with an item in their inventory. Not all hope is lost.
                             break;
@@ -270,7 +272,7 @@ public class AbstractedIncapacitation {
         player.level().playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.NOTE_BLOCK_PLING.value(), SoundSource.PLAYERS, 1, 1);
 
         if (Incapacitated.configData.isGlobalReviveMessage()) {
-            broadcast(player.getServer(), Component.translatable("message.revive.message", player.getScoreboardName()));
+            broadcast(player.theGame(), Component.translatable("message.revive.message", player.getScoreboardName()));
         } else {
             ArrayList<Player> playerEntities = (ArrayList<Player>) player.level().getEntitiesOfClass(Player.class, player.getBoundingBox().inflate(50));
             for (Player players : playerEntities) {
@@ -313,7 +315,7 @@ public class AbstractedIncapacitation {
         player.level().playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.NOTE_BLOCK_PLING.value(), SoundSource.PLAYERS, 1, 1);
 
         if (Incapacitated.configData.isGlobalReviveMessage()) {
-                broadcast(player.getServer(), Component.translatable("message.revive.message", player.getScoreboardName()));
+                broadcast(player.theGame(), Component.translatable("message.revive.message", player.getScoreboardName()));
             } else {
                 ArrayList<Player> playerEntities = (ArrayList<Player>) player.level().getEntitiesOfClass(Player.class, player.getBoundingBox().inflate(50));
                 for (Player players : playerEntities) {
@@ -589,8 +591,8 @@ public class AbstractedIncapacitation {
         }
     }
 
-    public static void broadcast(MinecraftServer server, Component translationTextComponent){
-        server.getPlayerList().broadcastSystemMessage(translationTextComponent, false);
+    public static void broadcast(TheGame server, Component translationTextComponent){
+        server.playerList().broadcastSystemMessage(translationTextComponent, false);
     }
 
     private static void resetDownTicks(Player player, IncapacitatedPlayerData playerData) {

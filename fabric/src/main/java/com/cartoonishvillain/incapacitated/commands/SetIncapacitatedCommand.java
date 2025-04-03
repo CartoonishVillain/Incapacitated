@@ -1,6 +1,6 @@
 package com.cartoonishvillain.incapacitated.commands;
 
-import com.cartoonishvillain.incapacitated.events.AbstractedIncapacitation;
+import com.cartoonishvillain.incapacitated.AbstractedIncapacitation;
 import com.mojang.authlib.GameProfile;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.BoolArgumentType;
@@ -32,7 +32,7 @@ public class SetIncapacitatedCommand {
 
     private static int setIncapped(CommandSourceStack sourceStack, Collection<GameProfile> profiles, boolean isIncapped) {
         for(GameProfile gameProfile : profiles) {
-            ServerPlayer serverPlayer = sourceStack.getServer().getPlayerList().getPlayer(gameProfile.getId());
+            ServerPlayer serverPlayer = sourceStack.getPlayer();
             if (serverPlayer != null) {
                 if (isIncapped) {
                     AbstractedIncapacitation.downOrKill(serverPlayer);

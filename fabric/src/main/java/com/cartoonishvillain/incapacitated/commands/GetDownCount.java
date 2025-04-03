@@ -1,7 +1,6 @@
 package com.cartoonishvillain.incapacitated.commands;
 
-import com.cartoonishvillain.incapacitated.events.AbstractedIncapacitation;
-import com.cartoonishvillain.incapacitated.platform.Services;
+import com.cartoonishvillain.incapacitated.AbstractedIncapacitation;
 import com.mojang.authlib.GameProfile;
 import com.mojang.brigadier.CommandDispatcher;
 import net.minecraft.commands.CommandSourceStack;
@@ -28,7 +27,7 @@ public class GetDownCount {
 
     private static int getDownCount(CommandSourceStack sourceStack, Collection<GameProfile> profiles) {
         for(GameProfile gameProfile : profiles) {
-            ServerPlayer serverPlayer = sourceStack.getServer().getPlayerList().getPlayer(gameProfile.getId());
+            ServerPlayer serverPlayer = sourceStack.getPlayer();
             if (serverPlayer != null) {
                 short amount = AbstractedIncapacitation.getDownCount(serverPlayer);
                 sourceStack.sendSuccess(() -> Component.translatable("command.return.getdowns", serverPlayer.getName(), amount), true);

@@ -7,6 +7,6 @@ import org.spongepowered.asm.mixin.gen.Invoker;
 
 @Mixin(GameRenderer.class)
 public interface LoadEffectInvoker {
-    @Invoker("loadEffect")
+    @Invoker("setPostEffect")
     public void incapacitatedLoadEffect(ResourceLocation location);
 }
