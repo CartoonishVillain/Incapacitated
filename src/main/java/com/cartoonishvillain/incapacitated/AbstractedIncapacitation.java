@@ -1,14 +1,18 @@
 package com.cartoonishvillain.incapacitated;
 
+import com.cartoonishvillain.incapacitated.component.IncapacitatedComponent;
 import com.cartoonishvillain.incapacitated.events.RevivePlayerState;
 import com.cartoonishvillain.incapacitated.mixin.IncapacitatedInventoryAccessor;
 import com.cartoonishvillain.incapacitated.mixin.IncapacitatedItemAccessor;
+import com.cartoonishvillain.incapacitated.mixin.LoadEffectInvoker;
 import com.cartoonishvillain.incapacitated.platform.Services;
 import com.mojang.datafixers.util.Either;
 import net.minecraft.ChatFormatting;
+import net.minecraft.client.Minecraft;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.TheGame;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
@@ -603,6 +607,17 @@ public class AbstractedIncapacitation {
             playerData.setTicksUntilDeath(configData.getDownTicks());
             Services.writePlayerData(player, playerData);
             Services.sendIncapPacket((ServerPlayer) player, player.getId(), playerData.isIncapacitated(), (short) playerData.getDownsUntilDeath(), playerData.ticksUntilDeath);
+        }
+    }
+
+    public static void shaderStuff(IncapacitatedComponent playerData) {
+        if (FabricIncapacitated.lastDownDesaturate && playerData.getDownsUntilDeath() <= 0 && !playerData.isShader()) {
+            ResourceLocation resourceLocation = ResourceLocation.withDefaultNamespace("desaturate");
+            ((LoadEffectInvoker) Minecraft.getInstance().gameRenderer).incapacitatedLoadEffect(resourceLocation);
+            playerData.setShader(true);
+        } else if ((!FabricIncapacitated.lastDownDesaturate || !(playerData.getDownsUntilDeath() <= 0)) && playerData.isShader()) {
+            Minecraft.getInstance().gameRenderer.clearPostEffect();
+            playerData.setShader(false);
         }
     }
 }

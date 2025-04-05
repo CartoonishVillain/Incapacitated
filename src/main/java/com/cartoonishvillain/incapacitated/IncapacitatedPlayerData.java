@@ -7,6 +7,7 @@ import java.io.Serializable;
 public class IncapacitatedPlayerData implements Serializable {
 
     boolean incapacitated = false;
+    boolean shader = false;
     int ticksUntilDeath = FabricIncapacitated.configData.getDownTicks();
     int downsUntilDeath = FabricIncapacitated.configData.getDownCounter();
     int reviveCounter = FabricIncapacitated.configData.getReviveTicks();
@@ -52,5 +53,13 @@ public class IncapacitatedPlayerData implements Serializable {
     public boolean countTicksUntilDeath() {
         ticksUntilDeath--;
         return ticksUntilDeath <= 0;
+    }
+
+    public boolean isShader() {
+        return shader;
+    }
+
+    public void setShader(boolean shader) {
+        this.shader = shader;
     }
 }

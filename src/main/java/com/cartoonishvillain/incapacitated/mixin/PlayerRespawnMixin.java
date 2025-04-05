@@ -20,11 +20,14 @@ public class PlayerRespawnMixin {
     private void incapacitatedRespawnedPlayer(ServerPlayer player, Consumer<ServerPlayer> consumer, CallbackInfo info) {
         IncapacitatedPlayerData data = Services.getPlayerData(player);
         if (configData.getShouldReturnLivesAcrossBiomes()) {
+            if (data.getDownsUntilDeath() == 0) data.setShader(true);
             data.setDownsUntilDeath(configData.getDownCounter().shortValue());
             data.setTicksUntilDeath(configData.getDownTicks());
             data.setIncapacitated(false);
             Services.writePlayerData(player, data);
             Services.sendIncapPacket(player, player.getId(), data.isIncapacitated(), (short)data.getDownsUntilDeath(), data.getTicksUntilDeath());
+            data.setShader(false);
+            Services.writePlayerData(player, data);
         } else {
             Services.sendIncapPacket(player, player.getId(), data.isIncapacitated(), (short)data.getDownsUntilDeath(), data.getTicksUntilDeath());
         }

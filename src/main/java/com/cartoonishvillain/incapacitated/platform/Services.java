@@ -58,6 +58,7 @@ public class Services {
         h.setTicksUntilDeath(playerData.getTicksUntilDeath());
         h.setIsIncapacitated(playerData.isIncapacitated());
         h.setReviveCount(playerData.getReviveCounter());
+        h.setShader(playerData.isShader());
     }
 
     

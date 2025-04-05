@@ -114,6 +114,7 @@ public class IncapacitatedComponent implements IncapacitatedInterface, AutoSynce
         buf.writeBoolean(this.getIsIncapacitated());
         buf.writeInt(this.getTicksUntilDeath());
         buf.writeInt(this.getDownsUntilDeath());
+        buf.writeBoolean(this.isShader());
     }
 
     @Override
@@ -121,6 +122,7 @@ public class IncapacitatedComponent implements IncapacitatedInterface, AutoSynce
         this.setIsIncapacitated(buf.readBoolean());
         this.setTicksUntilDeath(buf.readInt());
         this.setDownsUntilDeath(buf.readInt());
+        this.setShader(buf.readBoolean());
     }
 
     @Override
