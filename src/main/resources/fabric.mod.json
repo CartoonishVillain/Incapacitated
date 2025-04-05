@@ -1,0 +1,43 @@
+{
+    "schemaVersion": 1,
+    "id": "incapacitated",
+    "version": "1.9.4a",
+    "name": "Incapacitated",
+    "description": "Incapacitated allows players to be revived a small handful of times by other players before dying.",
+    "authors": [
+        "Mari (Cartoonish Villain)"
+    ],
+    "contact": {
+        "homepage": "",
+        "sources": ""
+    },
+    "license": "MIT",
+    "icon": "incapacitated.png",
+    "environment": "*",
+    "entrypoints": {
+        "main": [
+            "com.cartoonishvillain.incapacitated.FabricIncapacitated"
+        ],
+        "cardinal-components-entity": [
+            "com.cartoonishvillain.incapacitated.component.ComponentStarter"
+        ]
+    },
+    "mixins": [
+        "incapacitated.fabric.mixins.json"
+    ],
+    "depends": {
+        "fabricloader": ">=0.16.12",
+        "fabric-api": "*",
+        "minecraft": "*",
+        "java": ">=17"
+    },
+    "suggests": {
+    },
+
+    "custom": {
+        "cardinal-components": [
+            "incapacitation:incapdata"
+        ]
+    }
+}
+  

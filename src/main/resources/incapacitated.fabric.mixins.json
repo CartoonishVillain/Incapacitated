@@ -1,0 +1,36 @@
+{
+    "required": true,
+    "minVersion": "0.8",
+    "package": "com.cartoonishvillain.incapacitated.mixin",
+    "compatibilityLevel": "JAVA_17",
+    "mixins": [
+    "FallFlyingMixin",
+    "HealingFoodMixin",
+    "LivingEntityDieMixin",
+    "LivingEntityHurtMixin",
+    "PlayerDeathMixin",
+    "PlayerJoinMixin",
+    "PlayerRespawnMixin",
+    "PlayerMixin",
+    "PlayerRemoveMixin",
+    "PlayerSleepMixin",
+    "ServerPlayerTickMixin",
+    "IncapacitatedItemAccessor",
+    "BreakBlocksMixin",
+    "SleepMixin",
+    "UseOnBlockItemMixin",
+    "JumpMixin",
+    "IncapacitatedInventoryAccessor"
+    ],
+    "client": [
+        "LocalPlayerTickMixin",
+        "LoadEffectInvoker",
+        "LocalPlayerRespawnMixin"
+    ],
+    "server": [
+    ],
+    "injectors": {
+      "defaultRequire": 1
+    }
+  }
+  
