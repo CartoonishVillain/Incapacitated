@@ -7,6 +7,7 @@ import java.util.ArrayList;
 
 public class IncapConfigData implements Serializable {
     String info;
+    Boolean shouldReturnLivesAcrossBiomes;
     Integer merciful;
     Boolean canBreakOrInteractWithBlocks;
     Boolean canJumpWhileDown;
@@ -43,9 +44,10 @@ public class IncapConfigData implements Serializable {
     
     public static IncapConfigData defaultData = buildDefaultConfig();
 
-    public IncapConfigData(Integer merciful, Boolean hunter, Boolean canBreakOrInteractWithBlocks, Boolean canJumpWhileDown, Boolean slow, Boolean weakened, Boolean regenerating, Boolean unlimitedDowns, Boolean downLogging, Boolean reviveMessage, String foodReviveList, String foodAdrenalineList, String foodHealList, Integer downTicks, Integer reviveTicks, Integer downCounter, Boolean glowingWhileDowned, Boolean someInstantKills, String instantKills, Boolean globalIncapMessage, Boolean globalReviveMessage, Boolean useSecondsForRevive,
-    Boolean healPercentageOfMaxHealth, float reviveHealth, Integer reviveHunger, float reviveSaturation, Boolean shouldDownTimeReset, Boolean shouldDieOnTimeout, ArrayList<IncapEffectData> incapEffectData, Boolean DANGERDisableGiveUp, Boolean DANGERDisableIncapPlayerDamage, Boolean shouldDisableFallFlying, Boolean DANGERFullServerKill) {
+    public IncapConfigData(Boolean shouldReturnLivesAcrossBiomes, Integer merciful, Boolean hunter, Boolean canBreakOrInteractWithBlocks, Boolean canJumpWhileDown, Boolean slow, Boolean weakened, Boolean regenerating, Boolean unlimitedDowns, Boolean downLogging, Boolean reviveMessage, String foodReviveList, String foodAdrenalineList, String foodHealList, Integer downTicks, Integer reviveTicks, Integer downCounter, Boolean glowingWhileDowned, Boolean someInstantKills, String instantKills, Boolean globalIncapMessage, Boolean globalReviveMessage, Boolean useSecondsForRevive,
+                           Boolean healPercentageOfMaxHealth, float reviveHealth, Integer reviveHunger, float reviveSaturation, Boolean shouldDownTimeReset, Boolean shouldDieOnTimeout, ArrayList<IncapEffectData> incapEffectData, Boolean DANGERDisableGiveUp, Boolean DANGERDisableIncapPlayerDamage, Boolean shouldDisableFallFlying, Boolean DANGERFullServerKill) {
         this.info = "For documentation on what each item does, see the readme file on github: https://github.com/CartoonishVillain/Incapacitated";
+        this.shouldReturnLivesAcrossBiomes = shouldReturnLivesAcrossBiomes;
         this.merciful = merciful;
         this.hunter = hunter;
         this.canBreakOrInteractWithBlocks = canBreakOrInteractWithBlocks;
@@ -83,6 +85,7 @@ public class IncapConfigData implements Serializable {
 
     public static IncapConfigData buildDefaultConfig() {
         return new IncapConfigData(
+                true, //shouldReturnLivesAcrossBiomes
                 0, //merciful
                 true, //hunter
                 false, //canBreakOrInteractWithBlocks
@@ -117,6 +120,15 @@ public class IncapConfigData implements Serializable {
                 false, //shouldDisableFallFlying
                 false //DANGERFullServerKill
         );
+    }
+
+    public Boolean getShouldReturnLivesAcrossBiomes() {
+        if (shouldReturnLivesAcrossBiomes != null) return shouldReturnLivesAcrossBiomes;
+        else {
+            Constants.LOG.warn("Warning - shouldReturnLivesAcrossBiomes config not set. Using default value.");
+            shouldReturnLivesAcrossBiomes = defaultData.shouldReturnLivesAcrossBiomes;
+            return defaultData.shouldReturnLivesAcrossBiomes;
+        }
     }
 
     public Boolean getShouldDieOnTimeout() {

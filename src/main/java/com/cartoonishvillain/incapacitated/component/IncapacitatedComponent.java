@@ -125,7 +125,7 @@ public class IncapacitatedComponent implements IncapacitatedInterface, AutoSynce
 
     @Override
     public boolean isRequiredOnClient() {
-        return true;
+        return false;
     }
 
     @Override

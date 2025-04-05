@@ -1,6 +1,5 @@
 package com.cartoonishvillain.incapacitated.component;
 
-
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import org.ladysnake.cca.api.v3.component.Component;

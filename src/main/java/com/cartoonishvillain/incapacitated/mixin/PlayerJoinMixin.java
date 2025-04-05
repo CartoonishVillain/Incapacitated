@@ -18,6 +18,5 @@ public class PlayerJoinMixin {
     private void incapacitatedRespawnedPlayer(Connection pConnection, ServerPlayer player, CommonListenerCookie pCookie, CallbackInfo info) {
         IncapacitatedPlayerData data = Services.getPlayerData(player);
         Services.sendIncapPacket(player, player.getId(), data.isIncapacitated(), (short)data.getDownsUntilDeath(), data.getTicksUntilDeath());
-        player.sendSystemMessage(Component.translatable("alpha.incapacitated.message"));
     }
 }

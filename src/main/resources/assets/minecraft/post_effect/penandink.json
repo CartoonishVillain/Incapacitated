@@ -1,0 +1,40 @@
+{
+  "targets": {
+    "swap": {}
+  },
+  "passes": [
+    {
+      "vertex_shader": "minecraft:post/blit",
+      "fragment_shader": "minecraft:post/incap_color_convolve",
+      "inputs": [
+        {
+          "sampler_name": "In",
+          "target": "minecraft:main"
+        }
+      ],
+      "output": "minecraft:main",
+      "uniforms": [
+        {
+          "name": "RedMatrix",
+          "type": "vec3",
+          "values": [ 1, 1, 1 ]
+        },
+        {
+          "name": "GreenMatrix",
+          "type": "vec3",
+          "values": [ 1, 1, 1 ]
+        },
+        {
+          "name": "BlueMatrix",
+          "type": "vec3",
+          "values": [ 1, 1, 1 ]
+        },
+        {
+          "name": "Saturation",
+          "type": "float",
+          "values": [ 1.8 ]
+        }
+      ]
+    }
+  ]
+}
