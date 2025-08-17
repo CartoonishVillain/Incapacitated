@@ -2,6 +2,7 @@ package com.cartoonishvillain.incapacitated.platform.services;
 
 import com.cartoonishvillain.incapacitated.IncapacitatedPlayerData;
 import com.cartoonishvillain.incapacitated.events.RevivePlayerState;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.stats.Stat;
@@ -97,4 +98,6 @@ public interface IPlatformHelper {
     ResourceLocation getIncappedStat();
     ResourceLocation getReviveStat();
     ResourceLocation getSelfReviveStat();
+
+    Component getGiveUpKeybindTranslated();
 }

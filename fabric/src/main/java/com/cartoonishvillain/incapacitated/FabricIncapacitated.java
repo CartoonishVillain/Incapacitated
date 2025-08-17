@@ -3,24 +3,26 @@ package com.cartoonishvillain.incapacitated;
 import com.cartoonishvillain.incapacitated.commands.*;
 import com.cartoonishvillain.incapacitated.config.DefaultConfig;
 import com.cartoonishvillain.incapacitated.config.SimpleConfig;
-import com.cartoonishvillain.incapacitated.events.IncapacitatedRevivalCallback;
-import com.cartoonishvillain.incapacitated.events.RevivePlayerState;
+import com.cartoonishvillain.incapacitated.networking.GiveUpPacket;
 import com.cartoonishvillain.incapacitated.platform.Services;
 import net.fabricmc.api.ModInitializer;
+import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.event.lifecycle.v1.CommonLifecycleEvents;
-import net.minecraft.ResourceLocationException;
-import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
+import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
+import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
+import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.player.Player;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class FabricIncapacitated implements ModInitializer {
     private static final Logger LOGGER = LogManager.getLogger();
 
+    private MinecraftServer server;
     private static final SimpleConfig CONFIG = SimpleConfig.of("incapacitated").provider(DefaultConfig::provider).request();
     public static boolean lastDownDesaturate = CONFIG.getOrDefault("lastDownDesaturate", true);
 
@@ -48,6 +50,27 @@ public class FabricIncapacitated implements ModInitializer {
                 IncapDevMode.register(dispatcher);
             }
         }));
+
+        PayloadTypeRegistry.playC2S().register(GiveUpPacket.TYPE, GiveUpPacket.STREAM_CODEC);
+
+        ServerPlayNetworking.registerGlobalReceiver(GiveUpPacket.TYPE, ((incapPacket, context) -> {
+            context.server().execute(() -> {
+                Entity entity = server.overworld().getEntity(incapPacket.ID());
+                Player player = server.getPlayerList().getPlayer(incapPacket.gameProfile().getId());
+                if (player == null && entity instanceof Player) {
+                    player = (Player) entity;
+                }
+                if (player != null) {
+                    if (!Incapacitated.configData.isDANGERDisableGiveUp()) {
+                        Services.PLATFORM.killPlayerIfIncappedCommand((ServerPlayer) player);
+                    }
+                }
+            });
+        }));
+
+        ServerTickEvents.END_SERVER_TICK.register(server1 -> {
+            server = server1;
+        });
 
         //Example implementation of the event call back register.
 //        IncapacitatedRevivalCallback.EVENT.register(((revivingPlayer, downedPlayer) -> {

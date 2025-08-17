@@ -1,23 +1,24 @@
 package com.cartoonishvillain.incapacitated.platform;
 
-import com.cartoonishvillain.incapacitated.*;
+import com.cartoonishvillain.incapacitated.FabricEffects;
+import com.cartoonishvillain.incapacitated.FabricStats;
+import com.cartoonishvillain.incapacitated.Incapacitated;
+import com.cartoonishvillain.incapacitated.IncapacitatedPlayerData;
 import com.cartoonishvillain.incapacitated.component.IncapacitatedComponent;
 import com.cartoonishvillain.incapacitated.events.IncapacitatedRevivalCallback;
 import com.cartoonishvillain.incapacitated.events.RevivePlayerState;
 import com.cartoonishvillain.incapacitated.platform.services.IPlatformHelper;
 import net.fabricmc.loader.api.FabricLoader;
-import net.minecraft.core.Holder;
-import net.minecraft.core.Registry;
-import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffects;
-import net.minecraft.world.entity.monster.EnderMan;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 
+import static com.cartoonishvillain.incapacitated.FabricKeybind.giveUpKeybind;
 import static com.cartoonishvillain.incapacitated.component.ComponentStarter.INCAPACITATEDCOMPONENTINSTANCE;
 
 public class FabricPlatformHelper implements IPlatformHelper {
@@ -114,5 +115,10 @@ public class FabricPlatformHelper implements IPlatformHelper {
     @Override
     public ResourceLocation getSelfReviveStat() {
         return FabricStats.TIMES_REVIVED_SELF.get();
+    }
+
+    @Override
+    public Component getGiveUpKeybindTranslated() {
+        return giveUpKeybind.getTranslatedKeyMessage();
     }
 }

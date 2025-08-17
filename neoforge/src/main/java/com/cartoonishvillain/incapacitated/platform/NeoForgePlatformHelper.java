@@ -5,6 +5,7 @@ import com.cartoonishvillain.incapacitated.capability.NeoForgeIncapacitatedPlaye
 import com.cartoonishvillain.incapacitated.event.ReviveCheckEvent;
 import com.cartoonishvillain.incapacitated.events.RevivePlayerState;
 import com.cartoonishvillain.incapacitated.platform.services.IPlatformHelper;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.damagesource.DamageSource;
@@ -126,5 +127,10 @@ public class NeoForgePlatformHelper implements IPlatformHelper {
     @Override
     public ResourceLocation getSelfReviveStat() {
         return NFIncapStats.TIMES_REVIVED_SELF.value();
+    }
+
+    @Override
+    public Component getGiveUpKeybindTranslated() {
+        return NFIncapKeybind.GiveUpKeybind.getTranslatedKeyMessage();
     }
 }

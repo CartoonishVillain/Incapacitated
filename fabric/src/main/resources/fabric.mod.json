@@ -18,6 +18,9 @@
         "main": [
             "com.cartoonishvillain.incapacitated.FabricIncapacitated"
         ],
+        "client": [
+            "com.cartoonishvillain.incapacitated.ClientFabricIncapacitated"
+        ],
         "cardinal-components-entity": [
             "com.cartoonishvillain.incapacitated.component.ComponentStarter"
         ]

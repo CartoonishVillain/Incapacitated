@@ -483,10 +483,12 @@ public class AbstractedIncapacitation {
                     if (playerData.countTicksUntilDeath()) {
                         if (Incapacitated.configData.getShouldDieOnTimeout()) killFromTimeout(downPlayer, playerData); //We now have a config to disable death based on bleedouts, reviving the player, as if they've recovered after somw downtime.
                         else revive(downPlayer, playerData, true);
-                    } else if (playerData.getTicksUntilDeath() % 20 == 0) {
+                    } else if (playerData.getTicksUntilDeath() % 2 == 0) {
                         //Otherwise, every 20 ticks (1 second) send the dying player a message about how long, in seconds, they have until death.
-                        if (Incapacitated.configData.getShouldDieOnTimeout()) downPlayer.displayClientMessage(Component.translatable("message.downindicator.norevive", "/incap die", playerData.getTicksUntilDeath() / 20f).withStyle(ChatFormatting.RED), true);
-                        else downPlayer.displayClientMessage(Component.translatable("message.downindicator.norevivesafe", playerData.getTicksUntilDeath() /20f).withStyle(ChatFormatting.LIGHT_PURPLE), true);
+                       if (Incapacitated.configData.getShouldDieOnTimeout()) downPlayer.displayClientMessage(Component.translatable("message.downindicator.norevive").withStyle(ChatFormatting.RED).append(
+                                       Component.literal(" " + Services.PLATFORM.getGiveUpKeybindTranslated().getString() + " ").withStyle(ChatFormatting.GOLD)
+                               ).append(Component.translatable("message.downindicator.norevive2", (float) playerData.getTicksUntilDeath() /20f).withStyle(ChatFormatting.RED)), true);
+                        else downPlayer.displayClientMessage(Component.translatable("message.downindicator.norevivesafe", (float) playerData.getTicksUntilDeath() /20f).withStyle(ChatFormatting.LIGHT_PURPLE), true);
                     }
 
                     //Additionally, if the user is not reviving, make sure the revive timer is reset.
