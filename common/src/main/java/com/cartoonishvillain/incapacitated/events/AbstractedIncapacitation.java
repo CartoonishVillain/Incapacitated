@@ -552,7 +552,7 @@ public class AbstractedIncapacitation {
     private static MutableComponent revivingComponent(IncapacitatedPlayerData playerData, String translatable) {
         if (!Incapacitated.configData.isUseSecondsForRevive()) {
             MutableComponent barComponent = Component.literal("[").withStyle(ChatFormatting.GREEN);
-            float percentage = 1 - ((float)playerData.getReviveCounter()/(float)Incapacitated.configData.getReviveTicks());
+            float percentage = 1 - ((float)(playerData.getReviveCounter() - 10)/(float)Incapacitated.configData.getReviveTicks());
             percentage *= 100;
             for (int i = 10; i > 0; i--) {
                 if (percentage >= 10) {
@@ -573,7 +573,7 @@ public class AbstractedIncapacitation {
     private static MutableComponent revivingComponent(IncapacitatedPlayerData playerData, String translatable, Player player) {
         if (!Incapacitated.configData.isUseSecondsForRevive()) {
             MutableComponent barComponent = Component.literal("[").withStyle(ChatFormatting.GREEN);
-            float percentage = 1 - ((float)playerData.getReviveCounter()/(float)Incapacitated.configData.getReviveTicks());
+            float percentage = 1 - ((float)(playerData.getReviveCounter() - 10)/(float)Incapacitated.configData.getReviveTicks());
             percentage *= 100;
             for (int i = 10; i > 0; i--) {
                 if (percentage >= 10) {
