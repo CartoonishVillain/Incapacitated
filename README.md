@@ -61,6 +61,10 @@ You can reload your config at any time with /incap config reload
 
 * ShouldDisableFallFlying - true or false, should players be restricted from using elytras while incapacitated?
 
+* ShouldBlameIncapacitations - true or false, should incap messages announce who or what incapacitated a player if the information is available?
+
+* ShouldBlameRevives - true or false, should revive message announce who revived a player if 
+
 * ShouldDieOnTimeout - true or false, should players die when the incap timer runs out? Defaults to true.
 
 * ShouldDieOnOverkillDamage - true or false, should players when taking a significant amount of damage in the hit leading to 0 health be instantly killed? Defaults to true.

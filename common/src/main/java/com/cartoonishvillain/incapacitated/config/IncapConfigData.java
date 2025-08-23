@@ -40,6 +40,8 @@ public class IncapConfigData implements Serializable {
     Boolean shouldDisableFallFlying;
     Boolean shouldDieOnTimeout;
     Boolean shouldDieOnOverkillDamage;
+    Boolean shouldBlameIncapacitations;
+    Boolean shouldBlameRevives;
     ArrayList<IncapEffectData> incapEffectData;
     ArrayList<IncapEffectData> reviveEffectData;
     Boolean DANGERDisableGiveUp;
@@ -50,7 +52,7 @@ public class IncapConfigData implements Serializable {
     public static IncapConfigData defaultData = buildDefaultConfig();
 
     public IncapConfigData(Integer merciful, Boolean hunter, Boolean canBreakOrInteractWithBlocks, Boolean canJumpWhileDown, Boolean slow, Boolean weakened, Boolean regenerating, Boolean unlimitedDowns, Boolean downLogging, Boolean reviveMessage, String foodReviveList, String foodAdrenalineList, String foodHealList, Integer downTicks, Integer reviveTicks, Integer downCounter, Boolean someInstantKills, String instantKills, Boolean globalIncapMessage, Boolean globalReviveMessage, Boolean useSecondsForRevive,
-    Boolean healPercentageOfMaxHealth, float reviveHealth, Integer reviveHunger, float reviveSaturation, Boolean shouldDownTimeReset, Boolean shouldDieOnTimeout, Boolean shouldDieOnOverkillDamage, ArrayList<IncapEffectData> incapEffectData, ArrayList<IncapEffectData> reviveEffectData, Boolean DANGERDisableGiveUp, Boolean DANGERDisableIncapPlayerDamage, Boolean shouldDisableFallFlying, Boolean DANGERManipulateGoalToAvoidDownPlayers, Boolean DANGERFullServerKill) {
+    Boolean healPercentageOfMaxHealth, float reviveHealth, Integer reviveHunger, float reviveSaturation, Boolean shouldDownTimeReset, Boolean shouldDieOnTimeout, Boolean shouldDieOnOverkillDamage, ArrayList<IncapEffectData> incapEffectData, ArrayList<IncapEffectData> reviveEffectData, Boolean DANGERDisableGiveUp, Boolean DANGERDisableIncapPlayerDamage, Boolean shouldDisableFallFlying, Boolean shouldBlameIncapacitations, Boolean shouldBlameRevives, Boolean DANGERManipulateGoalToAvoidDownPlayers, Boolean DANGERFullServerKill) {
         this.info = "For documentation on what each item does, see the readme file on github: https://github.com/CartoonishVillain/Incapacitated";
         this.merciful = merciful;
         this.hunter = hunter;
@@ -83,6 +85,8 @@ public class IncapConfigData implements Serializable {
         this.shouldDieOnOverkillDamage = shouldDieOnOverkillDamage;
         this.incapEffectData = incapEffectData;
         this.reviveEffectData = reviveEffectData;
+        this.shouldBlameIncapacitations = shouldBlameIncapacitations;
+        this.shouldBlameRevives = shouldBlameRevives;
         this.DANGERDisableGiveUp = DANGERDisableGiveUp;
         this.DANGERDisableIncapPlayerDamage = DANGERDisableIncapPlayerDamage;
         this.DANGERManipulateGoalToAvoidDownPlayers = DANGERManipulateGoalToAvoidDownPlayers;
@@ -135,9 +139,29 @@ public class IncapConfigData implements Serializable {
                 false, //DANGERDisableGiveUp
                 false, //DANGERDisableIncapPlayerDamage
                 false, //shouldDisableFallFlying
+                true, //shouldBlameIncapacitations
+                true, //shouldBlameRevives
                 false, //DANGERManipulateGoalToAvoidDownPlayers
                 false //DANGERFullServerKill
         );
+    }
+
+    public Boolean getShouldBlameIncapacitations() {
+        if (shouldBlameIncapacitations != null) return shouldBlameIncapacitations;
+        else {
+            Constants.LOG.warn("Warning - shouldBlameIncapacitations config not set. Using default value.");
+            shouldBlameIncapacitations = defaultData.shouldBlameIncapacitations;
+            return defaultData.shouldBlameIncapacitations;
+        }
+    }
+
+    public Boolean getShouldBlameRevives() {
+        if (shouldBlameRevives != null) return shouldBlameRevives;
+        else {
+            Constants.LOG.warn("Warning - shouldBlameRevives config not set. Using default value.");
+            shouldBlameRevives = defaultData.shouldBlameRevives;
+            return defaultData.shouldBlameRevives;
+        }
     }
 
     public Boolean getDANGERManipulateGoalToAvoidDownPlayers() {

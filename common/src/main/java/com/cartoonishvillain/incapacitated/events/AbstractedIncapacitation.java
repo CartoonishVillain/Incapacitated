@@ -37,6 +37,7 @@ import java.util.List;
 
 import static com.cartoonishvillain.incapacitated.Incapacitated.*;
 import static net.minecraft.world.entity.player.Player.BedSleepingProblem.OTHER_PROBLEM;
+import static net.minecraft.world.level.GameRules.RULE_SHOWDEATHMESSAGES;
 
 public class AbstractedIncapacitation {
 
@@ -70,12 +71,14 @@ public class AbstractedIncapacitation {
                         }
                     }
 
-                    if (Incapacitated.configData.isGlobalIncapMessage()) {
-                        broadcast(player.getServer(), getBroadcastIncapMessage(player));
-                    } else {
-                        ArrayList<Player> playerEntities = (ArrayList<Player>) player.level().getEntitiesOfClass(Player.class, player.getBoundingBox().inflate(50));
-                        for (Player players : playerEntities) {
-                            players.displayClientMessage(getBroadcastIncapMessage(player), false);
+                    if (player.getServer().getGameRules().getBoolean(RULE_SHOWDEATHMESSAGES)) {
+                        if (Incapacitated.configData.isGlobalIncapMessage()) {
+                            broadcast(player.getServer(), getBroadcastIncapMessage(player));
+                        } else {
+                            ArrayList<Player> playerEntities = (ArrayList<Player>) player.level().getEntitiesOfClass(Player.class, player.getBoundingBox().inflate(50));
+                            for (Player players : playerEntities) {
+                                players.displayClientMessage(getBroadcastIncapMessage(player), false);
+                            }
                         }
                     }
                     Services.PLATFORM.writePlayerData(player, incapacitatedPlayerData);
@@ -123,12 +126,14 @@ public class AbstractedIncapacitation {
                         }
                     }
 
-                    if (Incapacitated.configData.isGlobalIncapMessage()) {
-                        broadcast(player.getServer(), getBroadcastIncapMessage(damageSource, player));
-                    } else {
-                        ArrayList<Player> playerEntities = (ArrayList<Player>) player.level().getEntitiesOfClass(Player.class, player.getBoundingBox().inflate(50));
-                        for (Player players : playerEntities) {
-                            players.displayClientMessage(getBroadcastIncapMessage(damageSource, player), false);
+                    if (player.getServer().getGameRules().getBoolean(RULE_SHOWDEATHMESSAGES)) {
+                        if (Incapacitated.configData.isGlobalIncapMessage()) {
+                            broadcast(player.getServer(), getBroadcastIncapMessage(damageSource, player));
+                        } else {
+                            ArrayList<Player> playerEntities = (ArrayList<Player>) player.level().getEntitiesOfClass(Player.class, player.getBoundingBox().inflate(50));
+                            for (Player players : playerEntities) {
+                                players.displayClientMessage(getBroadcastIncapMessage(damageSource, player), false);
+                            }
                         }
                     }
                     Services.PLATFORM.writePlayerData(player, incapacitatedPlayerData);
@@ -179,12 +184,14 @@ public class AbstractedIncapacitation {
                             }
                         }
 
-                        if (Incapacitated.configData.isGlobalIncapMessage()) {
-                            broadcast(player.getServer(), getBroadcastIncapMessage(damageSource, player));
-                        } else {
-                            ArrayList<Player> playerEntities = (ArrayList<Player>) player.level().getEntitiesOfClass(Player.class, player.getBoundingBox().inflate(50));
-                            for (Player players : playerEntities) {
-                                players.displayClientMessage(getBroadcastIncapMessage(damageSource, player), false);
+                        if (player.getServer().getGameRules().getBoolean(RULE_SHOWDEATHMESSAGES)) {
+                            if (Incapacitated.configData.isGlobalIncapMessage()) {
+                                broadcast(player.getServer(), getBroadcastIncapMessage(damageSource, player));
+                            } else {
+                                ArrayList<Player> playerEntities = (ArrayList<Player>) player.level().getEntitiesOfClass(Player.class, player.getBoundingBox().inflate(50));
+                                for (Player players : playerEntities) {
+                                    players.displayClientMessage(getBroadcastIncapMessage(damageSource, player), false);
+                                }
                             }
                         }
                     }
@@ -254,7 +261,7 @@ public class AbstractedIncapacitation {
         }
     }
 
-    public static void revive(Player player, IncapacitatedPlayerData incapacitatedPlayerData, boolean shouldResetTimer) {
+    public static void revive(Player player, Player reviver, IncapacitatedPlayerData incapacitatedPlayerData, boolean shouldResetTimer) {
         incapacitatedPlayerData.setIncapacitated(false);
 
         incapacitatedPlayerData.setReviveCounter(Incapacitated.configData.getReviveTicks());
@@ -282,12 +289,14 @@ public class AbstractedIncapacitation {
         healPlayerWhenReviving(player);
         player.level().playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.NOTE_BLOCK_PLING.value(), SoundSource.PLAYERS, 1, 1);
 
-        if (Incapacitated.configData.isGlobalReviveMessage()) {
-            broadcast(player.getServer(), Component.translatable("message.revive.message", player.getScoreboardName()));
-        } else {
-            ArrayList<Player> playerEntities = (ArrayList<Player>) player.level().getEntitiesOfClass(Player.class, player.getBoundingBox().inflate(50));
-            for (Player players : playerEntities) {
-                players.displayClientMessage(Component.translatable("message.revive.message", player.getScoreboardName()), false);
+        if (player.getServer().getGameRules().getBoolean(RULE_SHOWDEATHMESSAGES)) {
+            if (Incapacitated.configData.isGlobalReviveMessage()) {
+                broadcast(player.getServer(), getBroadcastReviveMessage(player, reviver));
+            } else {
+                ArrayList<Player> playerEntities = (ArrayList<Player>) player.level().getEntitiesOfClass(Player.class, player.getBoundingBox().inflate(50));
+                for (Player players : playerEntities) {
+                    players.displayClientMessage(getBroadcastReviveMessage(player, reviver), false);
+                }
             }
         }
 
@@ -304,7 +313,7 @@ public class AbstractedIncapacitation {
         resetDownTicks(player, incapacitatedPlayerData);
     }
 
-    public static void revive(Player player) {
+    public static void revive(Player player, Player reviver) {
         IncapacitatedPlayerData incapacitatedPlayerData = Services.PLATFORM.getPlayerData(player);
         incapacitatedPlayerData.setIncapacitated(false);
         incapacitatedPlayerData.setReviveCounter(Incapacitated.configData.getReviveTicks());
@@ -331,28 +340,29 @@ public class AbstractedIncapacitation {
         healPlayerWhenReviving(player);
         player.level().playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.NOTE_BLOCK_PLING.value(), SoundSource.PLAYERS, 1, 1);
 
-        if (Incapacitated.configData.isGlobalReviveMessage()) {
-                broadcast(player.getServer(), Component.translatable("message.revive.message", player.getScoreboardName()));
+        if (player.getServer().getGameRules().getBoolean(RULE_SHOWDEATHMESSAGES)) {
+            if (Incapacitated.configData.isGlobalReviveMessage()) {
+                broadcast(player.getServer(), getBroadcastReviveMessage(player, reviver));
             } else {
                 ArrayList<Player> playerEntities = (ArrayList<Player>) player.level().getEntitiesOfClass(Player.class, player.getBoundingBox().inflate(50));
                 for (Player players : playerEntities) {
-                    players.displayClientMessage(Component.translatable("message.revive.message", player.getScoreboardName()), false);
+                    players.displayClientMessage(getBroadcastReviveMessage(player, reviver), false);
                 }
             }
+        }
 
-            if (Incapacitated.configData.isReviveMessage() && !Incapacitated.configData.isUnlimitedDowns()) {
-                if (incapacitatedPlayerData.getDownsUntilDeath() > 1) {
-                    player.displayClientMessage(Component.translatable("message.revivecount.normal", incapacitatedPlayerData.getDownsUntilDeath()), false);
-                } else if (incapacitatedPlayerData.getDownsUntilDeath() == 1) {
-                    player.displayClientMessage(Component.translatable("message.revivecount.one"), false);
-                } else {
-                    player.displayClientMessage(Component.translatable("message.revivecount.zero"), false);
-                }
+        if (Incapacitated.configData.isReviveMessage() && !Incapacitated.configData.isUnlimitedDowns()) {
+            if (incapacitatedPlayerData.getDownsUntilDeath() > 1) {
+                player.displayClientMessage(Component.translatable("message.revivecount.normal", incapacitatedPlayerData.getDownsUntilDeath()), false);
+            } else if (incapacitatedPlayerData.getDownsUntilDeath() == 1) {
+                player.displayClientMessage(Component.translatable("message.revivecount.one"), false);
+            } else {
+                player.displayClientMessage(Component.translatable("message.revivecount.zero"), false);
             }
+        }
 
-            resetDownTicks(player, incapacitatedPlayerData);
+        resetDownTicks(player, incapacitatedPlayerData);
     }
-
 
     public static void setDownCount(Player player, short value) {
         IncapacitatedPlayerData incapacitatedPlayerData = Services.PLATFORM.getPlayerData(player);
@@ -492,7 +502,7 @@ public class AbstractedIncapacitation {
                     //Count down the revive timer. Returns true if the timer is 0, at which point the player is revived.
                     if (playerData.downReviveCount()) {
                         if (revivingPlayer instanceof ServerPlayer) revivingPlayer.awardStat(Services.PLATFORM.getReviveStat(), 1);
-                        revive(downPlayer);
+                        revive(downPlayer, revivingPlayer);
                     } else {
                         //If the timer is not 0 on the revive timer, tell both parties that the revive is occurring, and how much longer until it is done.
                         if (!Incapacitated.configData.isUseSecondsForRevive()) {
@@ -508,7 +518,7 @@ public class AbstractedIncapacitation {
                     //If our event player is not being revived, count down the timer until; their death. Returns true when the player runs out of time.
                     if (playerData.countTicksUntilDeath()) {
                         if (Incapacitated.configData.getShouldDieOnTimeout()) killFromTimeout(downPlayer, playerData); //We now have a config to disable death based on bleedouts, reviving the player, as if they've recovered after somw downtime.
-                        else revive(downPlayer, playerData, true);
+                        else revive(downPlayer, null, playerData, true);
                     } else if (playerData.getTicksUntilDeath() % 2 == 0) {
                         //Otherwise, every 20 ticks (1 second) send the dying player a message about how long, in seconds, they have until death.
                        if (Incapacitated.configData.getShouldDieOnTimeout()) downPlayer.displayClientMessage(Component.translatable("message.downindicator.norevive").withStyle(ChatFormatting.RED).append(
@@ -660,7 +670,7 @@ public class AbstractedIncapacitation {
     }
 
     private static Component getBroadcastIncapMessage(DamageSource source, Player victim) {
-        if (source.getEntity() != null) {
+        if (source.getEntity() != null && configData.getShouldBlameIncapacitations()) {
             return Component.translatable("message.incap.messageblamed", victim.getScoreboardName(), source.getEntity().getDisplayName());
         } else {
             return Component.translatable("message.incap.message", victim.getScoreboardName());
@@ -669,5 +679,13 @@ public class AbstractedIncapacitation {
 
     private static Component getBroadcastIncapMessage(Player victim) {
         return Component.translatable("message.incap.message", victim.getScoreboardName());
+    }
+
+    private static Component getBroadcastReviveMessage(Player revived, Player reviver) {
+        if (reviver != null && configData.getShouldBlameRevives()) {
+            return Component.translatable("message.revive.messageblamed", revived.getDisplayName(), reviver.getDisplayName());
+        } else {
+            return Component.translatable("message.revive.message", revived.getDisplayName());
+        }
     }
 }

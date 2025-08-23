@@ -26,7 +26,7 @@ public class LivingEntityDieMixin {
             if (data.isIncapacitated() && Incapacitated.configData.isHunter()) {
                 Player player = ((Player) damageSource.getEntity());
                 if (player instanceof ServerPlayer) player.awardStat(Services.PLATFORM.getSelfReviveStat(), 1);
-                AbstractedIncapacitation.revive(player);
+                AbstractedIncapacitation.revive(player, null);
             }
         }
     }

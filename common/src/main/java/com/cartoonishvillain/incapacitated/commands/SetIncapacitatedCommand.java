@@ -38,7 +38,7 @@ public class SetIncapacitatedCommand {
                     AbstractedIncapacitation.downOrKill(serverPlayer);
                     sourceStack.sendSuccess(() -> Component.translatable("command.return.incapped", serverPlayer.getName()), true);
                 } else {
-                    AbstractedIncapacitation.revive(serverPlayer);
+                    AbstractedIncapacitation.revive(serverPlayer, null);
                     sourceStack.sendSuccess(() -> Component.translatable("command.return.revived", serverPlayer.getName()), true);
                 }
             }
