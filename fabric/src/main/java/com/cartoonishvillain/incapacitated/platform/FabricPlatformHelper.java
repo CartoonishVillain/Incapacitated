@@ -1,9 +1,6 @@
 package com.cartoonishvillain.incapacitated.platform;
 
-import com.cartoonishvillain.incapacitated.FabricEffects;
-import com.cartoonishvillain.incapacitated.FabricStats;
-import com.cartoonishvillain.incapacitated.Incapacitated;
-import com.cartoonishvillain.incapacitated.IncapacitatedPlayerData;
+import com.cartoonishvillain.incapacitated.*;
 import com.cartoonishvillain.incapacitated.component.IncapacitatedComponent;
 import com.cartoonishvillain.incapacitated.events.IncapacitatedRevivalCallback;
 import com.cartoonishvillain.incapacitated.events.RevivePlayerState;
@@ -120,5 +117,25 @@ public class FabricPlatformHelper implements IPlatformHelper {
     @Override
     public Component getGiveUpKeybindTranslated() {
         return giveUpKeybind.getTranslatedKeyMessage();
+    }
+
+    @Override
+    public Boolean shouldShowGUIDownCounter() {
+        return FabricIncapacitated.renderDownCounter;
+    }
+
+    @Override
+    public Boolean shouldGUIDownCounterBeColorful() {
+        return FabricIncapacitated.downCounterColorful;
+    }
+
+    @Override
+    public int GUIDownCounterXModifier() {
+        return FabricIncapacitated.downCounterModX;
+    }
+
+    @Override
+    public int GUIDownCounterYModifier() {
+        return FabricIncapacitated.downCounterModY;
     }
 }

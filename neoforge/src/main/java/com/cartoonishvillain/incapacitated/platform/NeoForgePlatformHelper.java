@@ -2,6 +2,7 @@ package com.cartoonishvillain.incapacitated.platform;
 
 import com.cartoonishvillain.incapacitated.*;
 import com.cartoonishvillain.incapacitated.capability.NeoForgeIncapacitatedPlayerData;
+import com.cartoonishvillain.incapacitated.config.IncapacitatedClientConfig;
 import com.cartoonishvillain.incapacitated.event.ReviveCheckEvent;
 import com.cartoonishvillain.incapacitated.events.RevivePlayerState;
 import com.cartoonishvillain.incapacitated.platform.services.IPlatformHelper;
@@ -132,5 +133,25 @@ public class NeoForgePlatformHelper implements IPlatformHelper {
     @Override
     public Component getGiveUpKeybindTranslated() {
         return NFIncapKeybind.GiveUpKeybind.getTranslatedKeyMessage();
+    }
+
+    @Override
+    public Boolean shouldShowGUIDownCounter() {
+        return IncapacitatedClientConfig.DOWNCOUNTERENABLED.get();
+    }
+
+    @Override
+    public Boolean shouldGUIDownCounterBeColorful() {
+        return IncapacitatedClientConfig.DOWNCOUNTERCOLOURFUL.get();
+    }
+
+    @Override
+    public int GUIDownCounterXModifier() {
+        return IncapacitatedClientConfig.DOWNCOUNTERXMODIFIER.getAsInt();
+    }
+
+    @Override
+    public int GUIDownCounterYModifier() {
+        return IncapacitatedClientConfig.DOWNCOUNTERYMODIFIER.getAsInt();
     }
 }

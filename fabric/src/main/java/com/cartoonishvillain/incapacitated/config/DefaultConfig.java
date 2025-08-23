@@ -7,6 +7,14 @@ public class DefaultConfig {
                 # For the remainder of the configuration, use incapacitated.json.
                 # Does the player screen desaturate on their last down?
                 lastDownDesaturate=true
+                # Should the down counter render?"
+                renderDownCounter=true
+                # Should the down counter be colored based on the remaining downs?
+                downCounterColorful=true
+                # Modified X position value for the display of the down counter
+                downCounterModX=0
+                # Modified Y position value for the display of the down counter
+                downCounterModY=0
                 """;
     }
 }

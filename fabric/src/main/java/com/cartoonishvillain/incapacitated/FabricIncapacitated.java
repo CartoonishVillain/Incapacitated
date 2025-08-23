@@ -6,7 +6,6 @@ import com.cartoonishvillain.incapacitated.config.SimpleConfig;
 import com.cartoonishvillain.incapacitated.networking.GiveUpPacket;
 import com.cartoonishvillain.incapacitated.platform.Services;
 import net.fabricmc.api.ModInitializer;
-import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.event.lifecycle.v1.CommonLifecycleEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
@@ -25,6 +24,10 @@ public class FabricIncapacitated implements ModInitializer {
     private MinecraftServer server;
     private static final SimpleConfig CONFIG = SimpleConfig.of("incapacitated").provider(DefaultConfig::provider).request();
     public static boolean lastDownDesaturate = CONFIG.getOrDefault("lastDownDesaturate", true);
+    public static boolean renderDownCounter = CONFIG.getOrDefault("renderDownCounter", true);
+    public static boolean downCounterColorful = CONFIG.getOrDefault("downCounterColorful", true);
+    public static int downCounterModX = CONFIG.getOrDefault("downCounterModX", 0);
+    public static int downCounterModY = CONFIG.getOrDefault("downCounterModY", 0);
 
     @Override
     public void onInitialize() {

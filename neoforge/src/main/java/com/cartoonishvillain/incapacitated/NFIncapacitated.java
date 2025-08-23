@@ -4,6 +4,7 @@ import com.cartoonishvillain.incapacitated.capability.PlayerCapability;
 import com.cartoonishvillain.incapacitated.commands.*;
 import com.cartoonishvillain.incapacitated.config.IncapacitatedClientConfig;
 import com.cartoonishvillain.incapacitated.event.ReviveCheckEvent;
+import com.cartoonishvillain.incapacitated.gui.IncapacitatedOverlay;
 import com.cartoonishvillain.incapacitated.networking.IncapGiveUpPacketServerHandler;
 import com.cartoonishvillain.incapacitated.networking.IncapPacketClientHandler;
 import com.cartoonishvillain.incapacitated.networking.IncapPacketServerHandler;
@@ -17,6 +18,7 @@ import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.world.level.GameType;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.ModContainer;
@@ -26,7 +28,9 @@ import net.neoforged.fml.config.ModConfig;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.neoforged.fml.loading.FMLLoader;
 import net.neoforged.neoforge.client.event.ClientTickEvent;
+import net.neoforged.neoforge.client.event.RegisterGuiLayersEvent;
 import net.neoforged.neoforge.client.event.RegisterKeyMappingsEvent;
+import net.neoforged.neoforge.client.gui.VanillaGuiLayers;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.RegisterCommandsEvent;
 import net.neoforged.neoforge.event.tick.ServerTickEvent;
@@ -93,6 +97,21 @@ public class NFIncapacitated {
         @SubscribeEvent
         public static void registerBindings(RegisterKeyMappingsEvent event) {
             event.register(NFIncapKeybind.GiveUpKeybind);
+        }
+
+        @SubscribeEvent
+        public static void registerOverlay(final RegisterGuiLayersEvent event) {
+            event.registerBelow(
+                   VanillaGuiLayers.HOTBAR,
+                    ResourceLocation.parse("incapacitated:down_counter"),
+                    ((guiGraphics, deltaTracker) -> {
+                        Minecraft minecraft = Minecraft.getInstance();
+                        if (Services.PLATFORM.shouldShowGUIDownCounter() && !minecraft.options.hideGui && (minecraft.gameMode.getPlayerMode() == GameType.SURVIVAL || minecraft.gameMode.getPlayerMode() == GameType.ADVENTURE)) {
+                            IncapacitatedOverlay.renderOverlay(guiGraphics);
+                        }
+                        //TODO CONFIG CHECK
+                    })
+            );
         }
 
         @SubscribeEvent

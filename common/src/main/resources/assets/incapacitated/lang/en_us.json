@@ -25,5 +25,6 @@
   "effect.incapacitated.incap_weak": "Defeated",
   "stat.incapacitated.times_incapped": "Times Incapacitated",
   "stat.incapacitated.times_revived": "Players Revived",
-  "stat.incapacitated.times_revived_self": "Times You Revived Yourself"
+  "stat.incapacitated.times_revived_self": "Times You Revived Yourself",
+  "abbreviate.incapacitated.down": "Dwn"
 }

@@ -100,4 +100,9 @@ public interface IPlatformHelper {
     ResourceLocation getSelfReviveStat();
 
     Component getGiveUpKeybindTranslated();
+
+    Boolean shouldShowGUIDownCounter();
+    Boolean shouldGUIDownCounterBeColorful();
+    int GUIDownCounterXModifier();
+    int GUIDownCounterYModifier();
 }
