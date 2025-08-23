@@ -621,9 +621,9 @@ public class AbstractedIncapacitation {
             }
             barComponent.append(Component.literal("]").withStyle(ChatFormatting.GREEN));
 
-            return Component.translatable(translatable, player.getScoreboardName(), barComponent).withStyle(ChatFormatting.GREEN);
+            return Component.translatable(translatable, player.getDisplayName(), barComponent).withStyle(ChatFormatting.GREEN);
         } else {
-            return Component.translatable(translatable, player.getScoreboardName(),(playerData.getReviveCounter() / 20)).withStyle(ChatFormatting.GREEN);
+            return Component.translatable(translatable, player.getDisplayName(),(playerData.getReviveCounter() / 20)).withStyle(ChatFormatting.GREEN);
         }
     }
 
@@ -671,14 +671,14 @@ public class AbstractedIncapacitation {
 
     private static Component getBroadcastIncapMessage(DamageSource source, Player victim) {
         if (source.getEntity() != null && configData.getShouldBlameIncapacitations()) {
-            return Component.translatable("message.incap.messageblamed", victim.getScoreboardName(), source.getEntity().getDisplayName());
+            return Component.translatable("message.incap.messageblamed", victim.getDisplayName(), source.getEntity().getDisplayName());
         } else {
-            return Component.translatable("message.incap.message", victim.getScoreboardName());
+            return Component.translatable("message.incap.message", victim.getDisplayName());
         }
     }
 
     private static Component getBroadcastIncapMessage(Player victim) {
-        return Component.translatable("message.incap.message", victim.getScoreboardName());
+        return Component.translatable("message.incap.message", victim.getDisplayName());
     }
 
     private static Component getBroadcastReviveMessage(Player revived, Player reviver) {
