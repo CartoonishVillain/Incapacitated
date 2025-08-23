@@ -1,9 +1,12 @@
 package com.cartoonishvillain.incapacitated.config;
 
 import com.cartoonishvillain.incapacitated.Constants;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.monster.Zombie;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.function.Predicate;
 
 public class IncapConfigData implements Serializable {
     String info;
@@ -40,12 +43,13 @@ public class IncapConfigData implements Serializable {
     ArrayList<IncapEffectData> incapEffectData;
     Boolean DANGERDisableGiveUp;
     Boolean DANGERDisableIncapPlayerDamage;
+    Boolean DANGERManipulateGoalToAvoidDownPlayers;
     Boolean DANGERFullServerKill;
     
     public static IncapConfigData defaultData = buildDefaultConfig();
 
     public IncapConfigData(Integer merciful, Boolean hunter, Boolean canBreakOrInteractWithBlocks, Boolean canJumpWhileDown, Boolean slow, Boolean weakened, Boolean regenerating, Boolean unlimitedDowns, Boolean downLogging, Boolean reviveMessage, String foodReviveList, String foodAdrenalineList, String foodHealList, Integer downTicks, Integer reviveTicks, Integer downCounter, Boolean glowingWhileDowned, Boolean someInstantKills, String instantKills, Boolean globalIncapMessage, Boolean globalReviveMessage, Boolean useSecondsForRevive,
-    Boolean healPercentageOfMaxHealth, float reviveHealth, Integer reviveHunger, float reviveSaturation, Boolean shouldDownTimeReset, Boolean shouldDieOnTimeout, Boolean shouldDieOnOverkillDamage, ArrayList<IncapEffectData> incapEffectData, Boolean DANGERDisableGiveUp, Boolean DANGERDisableIncapPlayerDamage, Boolean shouldDisableFallFlying, Boolean DANGERFullServerKill) {
+    Boolean healPercentageOfMaxHealth, float reviveHealth, Integer reviveHunger, float reviveSaturation, Boolean shouldDownTimeReset, Boolean shouldDieOnTimeout, Boolean shouldDieOnOverkillDamage, ArrayList<IncapEffectData> incapEffectData, Boolean DANGERDisableGiveUp, Boolean DANGERDisableIncapPlayerDamage, Boolean shouldDisableFallFlying, Boolean DANGERManipulateGoalToAvoidDownPlayers, Boolean DANGERFullServerKill) {
         this.info = "For documentation on what each item does, see the readme file on github: https://github.com/CartoonishVillain/Incapacitated";
         this.merciful = merciful;
         this.hunter = hunter;
@@ -80,6 +84,7 @@ public class IncapConfigData implements Serializable {
         this.incapEffectData = incapEffectData;
         this.DANGERDisableGiveUp = DANGERDisableGiveUp;
         this.DANGERDisableIncapPlayerDamage = DANGERDisableIncapPlayerDamage;
+        this.DANGERManipulateGoalToAvoidDownPlayers = DANGERManipulateGoalToAvoidDownPlayers;
         this.DANGERFullServerKill = DANGERFullServerKill;
     }
 
@@ -118,8 +123,18 @@ public class IncapConfigData implements Serializable {
                 false, //DANGERDisableGiveUp
                 false, //DANGERDisableIncapPlayerDamage
                 false, //shouldDisableFallFlying
+                false, //DANGERManipulateGoalToAvoidDownPlayers
                 false //DANGERFullServerKill
         );
+    }
+
+    public Boolean getDANGERManipulateGoalToAvoidDownPlayers() {
+        if (DANGERManipulateGoalToAvoidDownPlayers != null) return DANGERManipulateGoalToAvoidDownPlayers;
+        else {
+            Constants.LOG.warn("Warning - DANGERManipulateGoalToAvoidDownPlayers config not set. Using default value.");
+            DANGERManipulateGoalToAvoidDownPlayers = defaultData.DANGERManipulateGoalToAvoidDownPlayers;
+            return defaultData.DANGERManipulateGoalToAvoidDownPlayers;
+        }
     }
 
     public Boolean getShouldDieOnTimeout() {

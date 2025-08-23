@@ -73,6 +73,10 @@ You can reload your config at any time with /incap config reload
 
 * DANGERDisableIncapPlayerDamage - true or false, should any damage attributed to an incapacitated player be canceled?
 
+* DANGERManipulateGoalToAvoidDownPlayers - true or false, should entities ignore players while they're incapacitated.
+* WARNING WARNING WARNING WARNING - This is achieved by faking that the player is in spectator mode. This shouldn't effect their capabilities in a vanilla sense, but may have weird effects when paired with other mods that check for spectators!
+* Like all DANGER items, use this at your own risk, but seriously USE THIS AT YOUR OWN RISK
+
 * DANGERFullServerKill - true or false, if all players are down, should everyone die? 
 This checks every time someone goes down or dies.
 * If the Hunter config is on, this will never run, as players could possibly revive themselves
