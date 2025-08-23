@@ -35,7 +35,8 @@ public class Incapacitated {
     public static List<String> reviveFoods;
     public static List<String> adrenalineFoods;
     public static List<String> healingFoods;
-    public static ArrayList<MobEffectInstance> effectInstances = new ArrayList<>();
+    public static ArrayList<IncapEffectData> effectInstances = new ArrayList<>();
+    public static ArrayList<IncapEffectData> reviveInstances = new ArrayList<>();
     public static void init() {
         loadConfig();
         // It is common for all supported loaders to provide a similar feature that can not be used directly in the
@@ -147,18 +148,9 @@ public class Incapacitated {
 
     private static void getEffectInstances() {
         effectInstances.clear();
-        for (IncapEffectData effectData : configData.getIncapEffectData()) {
-            MobEffect effect = BuiltInRegistries.MOB_EFFECT.get(ResourceLocation.parse(effectData.getEffectID()));
-            if (effect != null) {
-                MobEffectInstance effectInstance = new MobEffectInstance(
-                        BuiltInRegistries.MOB_EFFECT.wrapAsHolder(effect),
-                        -1,
-                        effectData.getAmplifier(),
-                        !effectData.isAmbient(),
-                        !effectData.isAmbient()
-                );
-                effectInstances.add(effectInstance);
-            }
-        }
+        effectInstances = configData.getIncapEffectData();
+
+        reviveInstances.clear();
+        reviveInstances = configData.getReviveEffectData();
     }
 }

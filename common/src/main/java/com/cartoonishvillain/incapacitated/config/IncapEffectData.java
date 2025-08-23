@@ -6,11 +6,15 @@ public class IncapEffectData implements Serializable {
     String effectID;
     int amplifier;
     boolean ambient;
+    boolean infinite;
+    int ticksActive;
 
-    public IncapEffectData(String effectID, int amplifier, boolean ambient) {
+    public IncapEffectData(String effectID, int amplifier, boolean ambient, boolean infinite, int ticksActive) {
         this.effectID = effectID;
         this.amplifier = amplifier;
         this.ambient = ambient;
+        this.infinite = infinite;
+        this.ticksActive = ticksActive;
     }
 
     public String getEffectID() {
@@ -23,5 +27,13 @@ public class IncapEffectData implements Serializable {
 
     public boolean isAmbient() {
         return ambient;
+    }
+
+    public boolean isInfinite() {
+        return infinite;
+    }
+
+    public int getTicksActive() {
+        return ticksActive;
     }
 }

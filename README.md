@@ -67,6 +67,8 @@ You can reload your config at any time with /incap config reload
 
 * IncapEffectData - custom json array, see below for more details on how to set up. Adds additional potion effects to users while they're incapacitated.
 
+* ReviveEffectData - custom json array, see below for more details on how to set up. Adds additional potion effects to users when they're revived.
+
 * DANGERDisableGiveUp - true or false, disable the give up command. Not recommended.
 
 * DANGERDisableIncapPlayerDamage - true or false, should any damage attributed to an incapacitated player be canceled?
@@ -87,7 +89,9 @@ IncapEffectData is an array of objects defined as
 {  
 effectID: String  
 amplifier: Integer  
-ambient:  boolean  
+ambient:  boolean
+infinite: boolean
+ticksActive: int (used if infinite is false)
 }
 
 An example would look like:

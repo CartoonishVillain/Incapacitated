@@ -3,13 +3,16 @@ package com.cartoonishvillain.incapacitated.events;
 import com.cartoonishvillain.incapacitated.Constants;
 import com.cartoonishvillain.incapacitated.Incapacitated;
 import com.cartoonishvillain.incapacitated.IncapacitatedPlayerData;
+import com.cartoonishvillain.incapacitated.config.IncapEffectData;
 import com.cartoonishvillain.incapacitated.mixin.IncapacitatedItemAccessor;
 import com.cartoonishvillain.incapacitated.platform.Services;
 import com.mojang.datafixers.util.Either;
 import net.minecraft.ChatFormatting;
+import net.minecraft.core.Holder;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
@@ -17,6 +20,7 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Unit;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.LivingEntity;
@@ -61,8 +65,8 @@ public class AbstractedIncapacitation {
                     }
 
                     if (!Incapacitated.effectInstances.isEmpty()) {
-                        for (MobEffectInstance effectInstance : Incapacitated.effectInstances) {
-                            player.addEffect(effectInstance);
+                        for (IncapEffectData effectInstance : Incapacitated.effectInstances) {
+                            giveEffect(effectInstance, player);
                         }
                     }
 
@@ -114,8 +118,8 @@ public class AbstractedIncapacitation {
                     }
 
                     if (!Incapacitated.effectInstances.isEmpty()) {
-                        for (MobEffectInstance effectInstance : Incapacitated.effectInstances) {
-                            player.addEffect(effectInstance);
+                        for (IncapEffectData effectInstance : Incapacitated.effectInstances) {
+                            giveEffect(effectInstance, player);
                         }
                     }
 
@@ -170,8 +174,8 @@ public class AbstractedIncapacitation {
                         }
 
                         if (!Incapacitated.effectInstances.isEmpty()) {
-                            for (MobEffectInstance effectInstance : Incapacitated.effectInstances) {
-                                player.addEffect(effectInstance);
+                            for (IncapEffectData effectInstance : Incapacitated.effectInstances) {
+                                giveEffect(effectInstance, player);
                             }
                         }
 
@@ -252,6 +256,7 @@ public class AbstractedIncapacitation {
 
     public static void revive(Player player, IncapacitatedPlayerData incapacitatedPlayerData, boolean shouldResetTimer) {
         incapacitatedPlayerData.setIncapacitated(false);
+
         incapacitatedPlayerData.setReviveCounter(Incapacitated.configData.getReviveTicks());
         if (shouldResetTimer) incapacitatedPlayerData.setTicksUntilDeath(Incapacitated.configData.getDownTicks());
         player.removeEffect(MobEffects.GLOWING);
@@ -259,8 +264,14 @@ public class AbstractedIncapacitation {
         player.removeEffect(BuiltInRegistries.MOB_EFFECT.wrapAsHolder(Services.PLATFORM.getWeakEffect()));
 
         if (!effectInstances.isEmpty()) {
-            for (MobEffectInstance effectInstance : effectInstances) {
-                player.removeEffect(effectInstance.getEffect());
+            for (IncapEffectData effectInstance : effectInstances) {
+                removeEffect(effectInstance, player);
+            }
+        }
+
+        if (!reviveInstances.isEmpty() && !player.level().isClientSide) {
+            for (IncapEffectData effectInstance : Incapacitated.reviveInstances) {
+                giveEffect(effectInstance, player);
             }
         }
 
@@ -302,8 +313,14 @@ public class AbstractedIncapacitation {
         player.removeEffect(BuiltInRegistries.MOB_EFFECT.wrapAsHolder(Services.PLATFORM.getWeakEffect()));
 
         if (!effectInstances.isEmpty()) {
-            for (MobEffectInstance effectInstance : effectInstances) {
-                player.removeEffect(effectInstance.getEffect());
+            for (IncapEffectData effectInstance : effectInstances) {
+                removeEffect(effectInstance, player);
+            }
+        }
+
+        if (!reviveInstances.isEmpty() && !player.level().isClientSide) {
+            for (IncapEffectData effectInstance : Incapacitated.reviveInstances) {
+                giveEffect(effectInstance, player);
             }
         }
 
@@ -397,10 +414,17 @@ public class AbstractedIncapacitation {
                     player.removeEffect(BuiltInRegistries.MOB_EFFECT.wrapAsHolder(Services.PLATFORM.getWeakEffect()));
 
                     if (!effectInstances.isEmpty()) {
-                        for (MobEffectInstance effectInstance : effectInstances) {
-                            player.removeEffect(effectInstance.getEffect());
+                        for (IncapEffectData effectInstance : effectInstances) {
+                            removeEffect(effectInstance, player);
                         }
                     }
+
+                    if (!reviveInstances.isEmpty() && !player.level().isClientSide) {
+                        for (IncapEffectData effectInstance : Incapacitated.reviveInstances) {
+                            giveEffect(effectInstance, player);
+                        }
+                    }
+
                     healPlayerWhenReviving(player);
                     player.level().playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.NOTE_BLOCK_PLING.value(), SoundSource.PLAYERS, 1, 1);
                 }
@@ -602,6 +626,36 @@ public class AbstractedIncapacitation {
             playerData.setTicksUntilDeath(Incapacitated.configData.getDownTicks());
             Services.PLATFORM.writePlayerData(player, playerData);
             Services.PLATFORM.sendIncapPacket((ServerPlayer) player, player.getId(), playerData.isIncapacitated(), (short) playerData.getDownsUntilDeath());
+        }
+    }
+
+    private static void giveEffect(IncapEffectData data, Player player) {
+        try {
+            int duration = -1;
+            if (!data.isInfinite()) duration = data.getTicksActive();
+            MobEffectInstance instance = new MobEffectInstance(
+                    BuiltInRegistries.MOB_EFFECT.wrapAsHolder(BuiltInRegistries.MOB_EFFECT.get(ResourceLocation.parse(data.getEffectID()))),
+                    duration,
+                    data.getAmplifier(),
+                    !data.isAmbient(),
+                    !data.isAmbient()
+            );
+            player.addEffect(instance);
+        } catch (Exception e) {
+            Constants.LOG.error("Failed to load effect: " + data.getEffectID());
+            e.printStackTrace();
+        }
+    }
+
+    private static void removeEffect(IncapEffectData data, Player player) {
+        try {
+            Holder<MobEffect> holder = BuiltInRegistries.MOB_EFFECT.wrapAsHolder(BuiltInRegistries.MOB_EFFECT.get(ResourceLocation.parse(data.getEffectID())));
+            if (player.hasEffect(holder)) {
+                player.removeEffect(holder);
+            }
+        } catch (Exception e) {
+            Constants.LOG.error("Failed to remove effect: " + data.getEffectID());
+            e.printStackTrace();
         }
     }
 }

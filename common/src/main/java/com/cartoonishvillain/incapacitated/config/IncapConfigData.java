@@ -41,6 +41,7 @@ public class IncapConfigData implements Serializable {
     Boolean shouldDieOnTimeout;
     Boolean shouldDieOnOverkillDamage;
     ArrayList<IncapEffectData> incapEffectData;
+    ArrayList<IncapEffectData> reviveEffectData;
     Boolean DANGERDisableGiveUp;
     Boolean DANGERDisableIncapPlayerDamage;
     Boolean DANGERManipulateGoalToAvoidDownPlayers;
@@ -49,7 +50,7 @@ public class IncapConfigData implements Serializable {
     public static IncapConfigData defaultData = buildDefaultConfig();
 
     public IncapConfigData(Integer merciful, Boolean hunter, Boolean canBreakOrInteractWithBlocks, Boolean canJumpWhileDown, Boolean slow, Boolean weakened, Boolean regenerating, Boolean unlimitedDowns, Boolean downLogging, Boolean reviveMessage, String foodReviveList, String foodAdrenalineList, String foodHealList, Integer downTicks, Integer reviveTicks, Integer downCounter, Boolean someInstantKills, String instantKills, Boolean globalIncapMessage, Boolean globalReviveMessage, Boolean useSecondsForRevive,
-    Boolean healPercentageOfMaxHealth, float reviveHealth, Integer reviveHunger, float reviveSaturation, Boolean shouldDownTimeReset, Boolean shouldDieOnTimeout, Boolean shouldDieOnOverkillDamage, ArrayList<IncapEffectData> incapEffectData, Boolean DANGERDisableGiveUp, Boolean DANGERDisableIncapPlayerDamage, Boolean shouldDisableFallFlying, Boolean DANGERManipulateGoalToAvoidDownPlayers, Boolean DANGERFullServerKill) {
+    Boolean healPercentageOfMaxHealth, float reviveHealth, Integer reviveHunger, float reviveSaturation, Boolean shouldDownTimeReset, Boolean shouldDieOnTimeout, Boolean shouldDieOnOverkillDamage, ArrayList<IncapEffectData> incapEffectData, ArrayList<IncapEffectData> reviveEffectData, Boolean DANGERDisableGiveUp, Boolean DANGERDisableIncapPlayerDamage, Boolean shouldDisableFallFlying, Boolean DANGERManipulateGoalToAvoidDownPlayers, Boolean DANGERFullServerKill) {
         this.info = "For documentation on what each item does, see the readme file on github: https://github.com/CartoonishVillain/Incapacitated";
         this.merciful = merciful;
         this.hunter = hunter;
@@ -81,6 +82,7 @@ public class IncapConfigData implements Serializable {
         this.shouldDieOnTimeout = shouldDieOnTimeout;
         this.shouldDieOnOverkillDamage = shouldDieOnOverkillDamage;
         this.incapEffectData = incapEffectData;
+        this.reviveEffectData = reviveEffectData;
         this.DANGERDisableGiveUp = DANGERDisableGiveUp;
         this.DANGERDisableIncapPlayerDamage = DANGERDisableIncapPlayerDamage;
         this.DANGERManipulateGoalToAvoidDownPlayers = DANGERManipulateGoalToAvoidDownPlayers;
@@ -93,7 +95,9 @@ public class IncapConfigData implements Serializable {
                 new IncapEffectData(
                         "minecraft:glowing",
                         70,
-                        true
+                        true,
+                        true,
+                        0
                 )
         );
 
@@ -127,6 +131,7 @@ public class IncapConfigData implements Serializable {
                 true, //shouldDieOnTimeout
                 true, //shouldDieOnOverkillDamage
                 downEffectData, //incapEffectData
+                new ArrayList<>(), //reviveEffectData
                 false, //DANGERDisableGiveUp
                 false, //DANGERDisableIncapPlayerDamage
                 false, //shouldDisableFallFlying
@@ -384,6 +389,15 @@ public class IncapConfigData implements Serializable {
             Constants.LOG.warn("Warning - incapEffectData config not set. Using default value.");
             incapEffectData = defaultData.incapEffectData;
             return defaultData.incapEffectData;
+        }
+    }
+
+    public ArrayList<IncapEffectData> getReviveEffectData() {
+        if (reviveEffectData != null) return reviveEffectData;
+        else {
+            Constants.LOG.warn("Warning - reviveEffectData config not set. Using default value.");
+            reviveEffectData = defaultData.reviveEffectData;
+            return defaultData.reviveEffectData;
         }
     }
 
