@@ -20,6 +20,8 @@ public class IncapacitatedPlayerData implements Serializable {
     int ticksUntilDeath = Incapacitated.configData.getDownTicks();
     int downsUntilDeath = Incapacitated.configData.getDownCounter();
     int reviveCounter = Incapacitated.configData.getReviveTicks();
+    float lastDmgTaken = 0f;
+    float lastHealthBeforeDamage = 20f;
     DamageSource originalSource = null;
 
     public boolean isIncapacitated() {
@@ -52,6 +54,22 @@ public class IncapacitatedPlayerData implements Serializable {
 
     public void setReviveCounter(int reviveCounter) {
         this.reviveCounter = reviveCounter;
+    }
+
+    public float getLastDmgTaken() {
+        return lastDmgTaken;
+    }
+
+    public void setLastDmgTaken(float lastDmgTaken) {
+        this.lastDmgTaken = lastDmgTaken;
+    }
+
+    public float getLastHealthBeforeDamage() {
+        return lastHealthBeforeDamage;
+    }
+
+    public void setLastHealthBeforeDamage(float lastHealthBeforeDamage) {
+        this.lastHealthBeforeDamage = lastHealthBeforeDamage;
     }
 
     public DamageSource getDamageSource(Level level, Player player) {

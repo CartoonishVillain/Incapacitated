@@ -10,15 +10,32 @@ import net.minecraft.world.entity.player.Player;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-@Mixin(LivingEntity.class)
+import java.util.Objects;
+
+@Mixin(value = Player.class, priority = 999999)
 public class LivingEntityHurtMixin {
     @Inject(at = @At("HEAD"), method = "hurt", cancellable = true)
-    private void incapacitatedHurt(DamageSource damageSource, float f, CallbackInfoReturnable<Boolean> cir){
-        LivingEntity entity = ((LivingEntity) (Object) this);
-        if(checkIfDamageIsValid(damageSource, cir) && entity instanceof Player && !entity.level().isClientSide)
+    private void incapacitatedHurtReturn(DamageSource damageSource, float f, CallbackInfoReturnable<Boolean> cir){
+        ServerPlayer entity = ((ServerPlayer) (Object) this);
+        if(checkIfDamageIsValid(damageSource, cir) && entity instanceof Player && !entity.level().isClientSide) {
+            //handled in a neoforge event, don't want to overwrite
             AbstractedIncapacitation.hurt((Player) entity, damageSource, cir, f);
+        }
+    }
+
+    @Inject(at = @At("HEAD"), method = "actuallyHurt", cancellable = true)
+    private void incapacitatedHurt(DamageSource damageSource, float f, CallbackInfo cir){
+        ServerPlayer entity = ((ServerPlayer) (Object) this);
+        if(entity instanceof Player && !entity.level().isClientSide) {
+            //handled in a neoforge event, don't want to overwrite
+            if (!Objects.equals(Services.PLATFORM.getPlatformName(), "NeoForge")) {
+                Services.PLATFORM.setLastHealthBeforeDamage(entity.getHealth(), (Player) entity);
+                Services.PLATFORM.setLastDmgTaken(f, (Player) entity);
+            }
+        }
     }
 
     /**

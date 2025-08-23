@@ -65,6 +65,8 @@ You can reload your config at any time with /incap config reload
 
 * ShouldDieOnTimeout - true or false, should players die when the incap timer runs out? Defaults to true.
 
+* ShouldDieOnOverkillDamage - true or false, should players when taking a significant amount of damage in the hit leading to 0 health be instantly killed? Defaults to true.
+
 * IncapEffectData - custom json array, see below for more details on how to set up. Adds additional potion effects to users while they're incapacitated.
 
 * DANGERDisableGiveUp - true or false, disable the give up command. Not recommended.

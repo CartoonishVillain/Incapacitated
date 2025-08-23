@@ -19,6 +19,8 @@ public class NeoForgeIncapacitatedPlayerData implements Serializable {
     int ticksUntilDeath = Incapacitated.configData.getDownTicks();
     int downsUntilDeath = Incapacitated.configData.getDownCounter();
     int reviveCounter = Incapacitated.configData.getReviveTicks();
+    float lastDmgTaken = 0f;
+    float lastHealthBeforeDamage = 20f;
     DamageSource damageSource = null;
 
 
@@ -52,6 +54,22 @@ public class NeoForgeIncapacitatedPlayerData implements Serializable {
 
     public void setReviveCounter(int reviveCounter) {
         this.reviveCounter = reviveCounter;
+    }
+
+    public float getLastHealthBeforeDamage() {
+        return lastHealthBeforeDamage;
+    }
+
+    public void setLastHealthBeforeDamage(float lastHealthBeforeDamage) {
+        this.lastHealthBeforeDamage = lastHealthBeforeDamage;
+    }
+
+    public float getLastDmgTaken() {
+        return lastDmgTaken;
+    }
+
+    public void setLastDmgTaken(float lastDmgTaken) {
+        this.lastDmgTaken = lastDmgTaken;
     }
 
     public DamageSource getDamageSource(Level level) {

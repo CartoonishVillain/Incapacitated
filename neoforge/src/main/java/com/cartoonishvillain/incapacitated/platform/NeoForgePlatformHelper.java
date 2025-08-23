@@ -57,12 +57,12 @@ public class NeoForgePlatformHelper implements IPlatformHelper {
     public IncapacitatedPlayerData getPlayerData(Player player) {
         NeoForgeIncapacitatedPlayerData neoForgedPlayerData = player.getData(INCAP_DATA);
         IncapacitatedPlayerData incapacitatedPlayerData = new IncapacitatedPlayerData();
-
         incapacitatedPlayerData.setIncapacitated(neoForgedPlayerData.isIncapacitated());
         incapacitatedPlayerData.setReviveCounter(neoForgedPlayerData.getReviveCounter());
         incapacitatedPlayerData.setDownsUntilDeath(neoForgedPlayerData.getDownsUntilDeath());
         incapacitatedPlayerData.setTicksUntilDeath(neoForgedPlayerData.getTicksUntilDeath());
-
+        incapacitatedPlayerData.setLastDmgTaken(neoForgedPlayerData.getLastDmgTaken());
+        incapacitatedPlayerData.setLastHealthBeforeDamage(neoForgedPlayerData.getLastHealthBeforeDamage());
         return incapacitatedPlayerData;
     }
 
@@ -73,6 +73,8 @@ public class NeoForgePlatformHelper implements IPlatformHelper {
         neoForgedPlayerData.setReviveCounter(playerData.getReviveCounter());
         neoForgedPlayerData.setTicksUntilDeath(playerData.getTicksUntilDeath());
         neoForgedPlayerData.setDownsUntilDeath(playerData.getDownsUntilDeath());
+        neoForgedPlayerData.setLastHealthBeforeDamage(playerData.getLastHealthBeforeDamage());
+        neoForgedPlayerData.setLastDmgTaken(playerData.getLastDmgTaken());
         player.setData(INCAP_DATA, neoForgedPlayerData);
     }
 
@@ -85,6 +87,20 @@ public class NeoForgePlatformHelper implements IPlatformHelper {
         NeoForgeIncapacitatedPlayerData neoForgedPlayerData = player.getData(INCAP_DATA);
         neoForgedPlayerData.setDamageSource(level, source);
         player.setData(INCAP_DATA, neoForgedPlayerData);
+    }
+
+    @Override
+    public void setLastDmgTaken(float lastDmgTaken, Player player) {
+        NeoForgeIncapacitatedPlayerData neoForgeIncapacitatedPlayerData = player.getData(INCAP_DATA);
+        neoForgeIncapacitatedPlayerData.setLastDmgTaken(lastDmgTaken);
+        player.setData(INCAP_DATA, neoForgeIncapacitatedPlayerData);
+    }
+
+    @Override
+    public void setLastHealthBeforeDamage(float lastHealthBeforeDamage, Player player) {
+        NeoForgeIncapacitatedPlayerData neoForgeIncapacitatedPlayerData = player.getData(INCAP_DATA);
+        neoForgeIncapacitatedPlayerData.setLastHealthBeforeDamage(lastHealthBeforeDamage);
+        player.setData(INCAP_DATA, neoForgeIncapacitatedPlayerData);
     }
 
     @Override

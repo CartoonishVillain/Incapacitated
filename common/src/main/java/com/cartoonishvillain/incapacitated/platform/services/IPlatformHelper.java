@@ -60,6 +60,10 @@ public interface IPlatformHelper {
 
     void setDamageSource(Level level, DamageSource source, Player player);
 
+    void setLastDmgTaken(float lastDmgTaken, Player pLayer);
+
+    void setLastHealthBeforeDamage(float lastHealthBeforeDamage, Player player);
+
     /*
       INCAPACITATED COMMAND METHODS HERE.
      */

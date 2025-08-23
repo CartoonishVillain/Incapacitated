@@ -25,6 +25,8 @@ public class IncapacitatedComponent implements IncapacitatedInterface, AutoSynce
     protected int downsUntilDeath = Incapacitated.configData.getDownCounter();
     protected int reviveCounter = Incapacitated.configData.getReviveTicks();
     protected boolean isShader = false;
+    float lastDmgTaken = 0f;
+    float lastHealthBeforeDamage = 20f;
     private DamageSource originalSource;
 
     public IncapacitatedComponent(Object provider){this.provider = provider;}
@@ -110,6 +112,25 @@ public class IncapacitatedComponent implements IncapacitatedInterface, AutoSynce
         ComponentStarter.INCAPACITATEDCOMPONENTINSTANCE.sync(this.provider);
     }
 
+    @Override
+    public float getLastDmgTaken() {
+        return lastDmgTaken;
+    }
+
+    @Override
+    public void setLastDmgTaken(float lastDmgTaken) {
+        this.lastDmgTaken = lastDmgTaken;
+    }
+
+    @Override
+    public float getLastHealthBeforeDamage() {
+        return lastHealthBeforeDamage;
+    }
+
+    @Override
+    public void setLastHealthBeforeDamage(float lastHealthBeforeDamage) {
+        this.lastHealthBeforeDamage = lastHealthBeforeDamage;
+    }
 
     @Override
     public void writeSyncPacket(RegistryFriendlyByteBuf buf, ServerPlayer recipient) {

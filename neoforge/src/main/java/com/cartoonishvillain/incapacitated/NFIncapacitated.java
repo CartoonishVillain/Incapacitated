@@ -18,6 +18,7 @@ import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.GameType;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -33,6 +34,7 @@ import net.neoforged.neoforge.client.event.RegisterKeyMappingsEvent;
 import net.neoforged.neoforge.client.gui.VanillaGuiLayers;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.RegisterCommandsEvent;
+import net.neoforged.neoforge.event.entity.living.LivingDamageEvent;
 import net.neoforged.neoforge.event.tick.ServerTickEvent;
 import net.neoforged.neoforge.network.PacketDistributor;
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
@@ -59,6 +61,14 @@ public class NFIncapacitated {
     @SubscribeEvent
     public void serverTick(ServerTickEvent.Post event) {
         server = event.getServer();
+    }
+
+    @SubscribeEvent
+    public void playerDmg(LivingDamageEvent.Pre event) {
+        if (event.getEntity() instanceof Player && !event.getEntity().level().isClientSide) {
+            Services.PLATFORM.setLastHealthBeforeDamage(event.getEntity().getHealth(), (Player) event.getEntity());
+            Services.PLATFORM.setLastDmgTaken(event.getNewDamage(), (Player) event.getEntity());
+        }
     }
 
     @SubscribeEvent
@@ -109,7 +119,6 @@ public class NFIncapacitated {
                         if (Services.PLATFORM.shouldShowGUIDownCounter() && !minecraft.options.hideGui && (minecraft.gameMode.getPlayerMode() == GameType.SURVIVAL || minecraft.gameMode.getPlayerMode() == GameType.ADVENTURE)) {
                             IncapacitatedOverlay.renderOverlay(guiGraphics);
                         }
-                        //TODO CONFIG CHECK
                     })
             );
         }

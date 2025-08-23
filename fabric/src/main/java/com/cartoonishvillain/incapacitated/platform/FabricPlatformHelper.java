@@ -48,6 +48,8 @@ public class FabricPlatformHelper implements IPlatformHelper {
         data.setIncapacitated(h.getIsIncapacitated());
         data.setDownsUntilDeath(h.getDownsUntilDeath());
         data.setTicksUntilDeath(h.getTicksUntilDeath());
+        data.setLastDmgTaken(h.getLastDmgTaken());
+        data.setLastHealthBeforeDamage(h.getLastHealthBeforeDamage());
         return data;
     }
 
@@ -58,6 +60,8 @@ public class FabricPlatformHelper implements IPlatformHelper {
         h.setTicksUntilDeath(playerData.getTicksUntilDeath());
         h.setIsIncapacitated(playerData.isIncapacitated());
         h.setReviveCount(playerData.getReviveCounter());
+        h.setLastHealthBeforeDamage(playerData.getLastHealthBeforeDamage());
+        h.setLastDmgTaken(playerData.getLastDmgTaken());
     }
 
     @Override
@@ -70,6 +74,18 @@ public class FabricPlatformHelper implements IPlatformHelper {
     public void setDamageSource(Level level, DamageSource source, Player player) {
         IncapacitatedComponent h = INCAPACITATEDCOMPONENTINSTANCE.get(player);
         h.setSourceOfDeath(level, source);
+    }
+
+    @Override
+    public void setLastDmgTaken(float lastDmgTaken, Player player) {
+        IncapacitatedComponent h = INCAPACITATEDCOMPONENTINSTANCE.get(player);
+        h.setLastDmgTaken(lastDmgTaken);
+    }
+
+    @Override
+    public void setLastHealthBeforeDamage(float lastHealthBeforeDamage, Player player) {
+        IncapacitatedComponent h = INCAPACITATEDCOMPONENTINSTANCE.get(player);
+        h.setLastHealthBeforeDamage(lastHealthBeforeDamage);
     }
 
     @Override

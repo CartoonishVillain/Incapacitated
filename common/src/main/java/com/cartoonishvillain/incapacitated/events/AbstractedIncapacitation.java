@@ -92,7 +92,7 @@ public class AbstractedIncapacitation {
         IncapacitatedPlayerData incapacitatedPlayerData = Services.PLATFORM.getPlayerData(player);
         Boolean allKillCheck = allKill(player);
             //if the player is not already incapacitated
-            if (!incapacitatedPlayerData.isIncapacitated() && !(Incapacitated.configData.isSomeInstantKills()) && !allKillCheck) {
+            if (!incapacitatedPlayerData.isIncapacitated() && !(Incapacitated.configData.isSomeInstantKills() || configData.getShouldDieOnOverkillDamage()) && !allKillCheck) {
                 //reduce downs until KillPlayer, unless unlimitedDowns is on.
                 if (!Incapacitated.configData.isUnlimitedDowns()) {
                     incapacitatedPlayerData.setDownsUntilDeath(incapacitatedPlayerData.getDownsUntilDeath() - 1);
@@ -134,14 +134,23 @@ public class AbstractedIncapacitation {
                     }
                     Services.PLATFORM.writePlayerData(player, incapacitatedPlayerData);
                 }
-            } else if (!incapacitatedPlayerData.isIncapacitated() && (Incapacitated.configData.isSomeInstantKills()) && !allKillCheck) {
+            } else if (!incapacitatedPlayerData.isIncapacitated() && (Incapacitated.configData.isSomeInstantKills() || configData.getShouldDieOnOverkillDamage()) && !allKillCheck) {
                 boolean notInstantKill = true;
-                //check if the damage type is in the instant kill list, if it does, don't cancel KillPlayer event.
-                for (String damageType : Incapacitated.instantKillDamageSourcesMessageID) {
-                    if (damageType.contains(damageSource.getMsgId())) {
-                        notInstantKill = false;
+
+                if (Incapacitated.configData.isSomeInstantKills()) {
+                    //check if the damage type is in the instant kill list, if it does, don't cancel KillPlayer event.
+                    for (String damageType : Incapacitated.instantKillDamageSourcesMessageID) {
+                        if (damageType.contains(damageSource.getMsgId())) {
+                            notInstantKill = false;
+                        }
                     }
                 }
+
+                if (configData.getShouldDieOnOverkillDamage() && notInstantKill) {
+                    //check if the last damage amount taken is greater than the amount of health the player had + their max health. If so, don't cancel KillPlayer event
+                    notInstantKill = !(incapacitatedPlayerData.getLastDmgTaken() >= incapacitatedPlayerData.getLastHealthBeforeDamage() + player.getMaxHealth());
+                }
+
                 if (notInstantKill) {
                     //reduce downs until KillPlayer, unless unlimitedDowns is on.
                     if (!Incapacitated.configData.isUnlimitedDowns()) {
