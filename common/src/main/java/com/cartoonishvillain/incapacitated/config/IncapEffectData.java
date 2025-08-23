@@ -7,6 +7,11 @@ public class IncapEffectData implements Serializable {
     int amplifier;
     boolean ambient;
 
+    public IncapEffectData(String effectID, int amplifier, boolean ambient) {
+        this.effectID = effectID;
+        this.amplifier = amplifier;
+        this.ambient = ambient;
+    }
 
     public String getEffectID() {
         return effectID;

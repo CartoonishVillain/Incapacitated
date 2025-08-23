@@ -6,6 +6,7 @@ import net.minecraft.world.entity.monster.Zombie;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.function.Predicate;
 
 public class IncapConfigData implements Serializable {
@@ -26,7 +27,6 @@ public class IncapConfigData implements Serializable {
     Integer downTicks;
     Integer reviveTicks;
     Integer downCounter;
-    Boolean glowingWhileDowned;
     Boolean someInstantKills;
     String instantKills;
     Boolean globalIncapMessage;
@@ -48,7 +48,7 @@ public class IncapConfigData implements Serializable {
     
     public static IncapConfigData defaultData = buildDefaultConfig();
 
-    public IncapConfigData(Integer merciful, Boolean hunter, Boolean canBreakOrInteractWithBlocks, Boolean canJumpWhileDown, Boolean slow, Boolean weakened, Boolean regenerating, Boolean unlimitedDowns, Boolean downLogging, Boolean reviveMessage, String foodReviveList, String foodAdrenalineList, String foodHealList, Integer downTicks, Integer reviveTicks, Integer downCounter, Boolean glowingWhileDowned, Boolean someInstantKills, String instantKills, Boolean globalIncapMessage, Boolean globalReviveMessage, Boolean useSecondsForRevive,
+    public IncapConfigData(Integer merciful, Boolean hunter, Boolean canBreakOrInteractWithBlocks, Boolean canJumpWhileDown, Boolean slow, Boolean weakened, Boolean regenerating, Boolean unlimitedDowns, Boolean downLogging, Boolean reviveMessage, String foodReviveList, String foodAdrenalineList, String foodHealList, Integer downTicks, Integer reviveTicks, Integer downCounter, Boolean someInstantKills, String instantKills, Boolean globalIncapMessage, Boolean globalReviveMessage, Boolean useSecondsForRevive,
     Boolean healPercentageOfMaxHealth, float reviveHealth, Integer reviveHunger, float reviveSaturation, Boolean shouldDownTimeReset, Boolean shouldDieOnTimeout, Boolean shouldDieOnOverkillDamage, ArrayList<IncapEffectData> incapEffectData, Boolean DANGERDisableGiveUp, Boolean DANGERDisableIncapPlayerDamage, Boolean shouldDisableFallFlying, Boolean DANGERManipulateGoalToAvoidDownPlayers, Boolean DANGERFullServerKill) {
         this.info = "For documentation on what each item does, see the readme file on github: https://github.com/CartoonishVillain/Incapacitated";
         this.merciful = merciful;
@@ -67,7 +67,6 @@ public class IncapConfigData implements Serializable {
         this.downTicks = downTicks;
         this.reviveTicks = reviveTicks;
         this.downCounter = downCounter;
-        this.glowingWhileDowned = glowingWhileDowned;
         this.someInstantKills = someInstantKills;
         this.instantKills = instantKills;
         this.globalIncapMessage = globalIncapMessage;
@@ -89,6 +88,15 @@ public class IncapConfigData implements Serializable {
     }
 
     public static IncapConfigData buildDefaultConfig() {
+        ArrayList<IncapEffectData> downEffectData = new ArrayList<>();
+        downEffectData.add(
+                new IncapEffectData(
+                        "minecraft:glowing",
+                        70,
+                        true
+                )
+        );
+
         return new IncapConfigData(
                 0, //merciful
                 false, //hunter
@@ -106,7 +114,6 @@ public class IncapConfigData implements Serializable {
                 2000, //downTicks
                 150, //reviveTicks
                 3, //downCounter
-                true, //glowingWhileDowned
                 true, //someInstantKills
                 "wither,lava,outOfWorld",
                 true, //globalIncapMessage
@@ -119,7 +126,7 @@ public class IncapConfigData implements Serializable {
                 false, //shouldDownTimeReset
                 true, //shouldDieOnTimeout
                 true, //shouldDieOnOverkillDamage
-                new ArrayList<>(), //incapEffectData
+                downEffectData, //incapEffectData
                 false, //DANGERDisableGiveUp
                 false, //DANGERDisableIncapPlayerDamage
                 false, //shouldDisableFallFlying
@@ -278,15 +285,6 @@ public class IncapConfigData implements Serializable {
             Constants.LOG.warn("Warning - downCounter config not set. Using default value.");
             downCounter = defaultData.downCounter;
             return defaultData.downCounter;
-        }
-    }
-
-    public Boolean isGlowingWhileDowned() {
-        if (glowingWhileDowned != null) return glowingWhileDowned;
-        else {
-            Constants.LOG.warn("Warning - glowingWhileDowned config not set. Using default value.");
-            glowingWhileDowned = defaultData.glowingWhileDowned;
-            return defaultData.glowingWhileDowned;
         }
     }
 

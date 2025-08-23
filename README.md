@@ -39,8 +39,6 @@ You can reload your config at any time with /incap config reload
 
 * DownCounter - whole number, how many times can a player be revived without some form of proper healing, before they instantly die if they reach 0 HP again.
 
-* GlowingWhileDowned - true or false, does the player have the glowing effect when incapacitated to be found easier?
-
 * SomeInstantKills - true or false, do some damage types instantly kill the player when they reach 0 hp, regardless of how many downs they have left?
 
 * InstantKills - string, names of damage types that should be a part of "SomeInstantKills". The name used is the translation ID of the death message (such as death.attack.wither -> "wither"). Comma separated, no spaces.

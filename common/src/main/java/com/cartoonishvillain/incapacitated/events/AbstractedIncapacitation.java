@@ -49,8 +49,6 @@ public class AbstractedIncapacitation {
                     if (player instanceof ServerPlayer) player.awardStat(Services.PLATFORM.getIncappedStat());
                     incapacitatedPlayerData.setIncapacitated(true);
                     player.setHealth(player.getMaxHealth());
-                    if (Incapacitated.configData.isGlowingWhileDowned())
-                        player.addEffect(new MobEffectInstance(MobEffects.GLOWING, -1, 0, true, false));
 
                     Services.PLATFORM.sendIncapPacket((ServerPlayer) player, player.getId(), true, (short) incapacitatedPlayerData.getDownsUntilDeath());
 
@@ -104,9 +102,6 @@ public class AbstractedIncapacitation {
                     Services.PLATFORM.setDamageSource(player.level(), damageSource, player);
                     event.cancel();
                     player.setHealth(player.getMaxHealth());
-
-                    if (Incapacitated.configData.isGlowingWhileDowned())
-                        player.addEffect(new MobEffectInstance(MobEffects.GLOWING, -1, 0, true, false));
 
                     Services.PLATFORM.sendIncapPacket((ServerPlayer) player, player.getId(), true, (short) incapacitatedPlayerData.getDownsUntilDeath());
 
@@ -163,8 +158,6 @@ public class AbstractedIncapacitation {
                         Services.PLATFORM.setDamageSource(player.level(), damageSource, player);
                         event.cancel();
                         player.setHealth(player.getMaxHealth());
-                        if (Incapacitated.configData.isGlowingWhileDowned())
-                            player.addEffect(new MobEffectInstance(MobEffects.GLOWING, -1, 0, true, false));
 
                         Services.PLATFORM.sendIncapPacket((ServerPlayer) player, player.getId(), true, (short) incapacitatedPlayerData.getDownsUntilDeath());
 
