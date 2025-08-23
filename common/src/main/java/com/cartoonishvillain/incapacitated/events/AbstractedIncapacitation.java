@@ -71,11 +71,11 @@ public class AbstractedIncapacitation {
                     }
 
                     if (Incapacitated.configData.isGlobalIncapMessage()) {
-                        broadcast(player.getServer(), Component.translatable("message.incap.message", player.getScoreboardName()));
+                        broadcast(player.getServer(), getBroadcastIncapMessage(player));
                     } else {
                         ArrayList<Player> playerEntities = (ArrayList<Player>) player.level().getEntitiesOfClass(Player.class, player.getBoundingBox().inflate(50));
                         for (Player players : playerEntities) {
-                            players.displayClientMessage(Component.translatable("message.incap.message", player.getScoreboardName()), false);
+                            players.displayClientMessage(getBroadcastIncapMessage(player), false);
                         }
                     }
                     Services.PLATFORM.writePlayerData(player, incapacitatedPlayerData);
@@ -124,11 +124,11 @@ public class AbstractedIncapacitation {
                     }
 
                     if (Incapacitated.configData.isGlobalIncapMessage()) {
-                        broadcast(player.getServer(), Component.translatable("message.incap.message", player.getScoreboardName()));
+                        broadcast(player.getServer(), getBroadcastIncapMessage(damageSource, player));
                     } else {
                         ArrayList<Player> playerEntities = (ArrayList<Player>) player.level().getEntitiesOfClass(Player.class, player.getBoundingBox().inflate(50));
                         for (Player players : playerEntities) {
-                            players.displayClientMessage(Component.translatable("message.incap.message", player.getScoreboardName()), false);
+                            players.displayClientMessage(getBroadcastIncapMessage(damageSource, player), false);
                         }
                     }
                     Services.PLATFORM.writePlayerData(player, incapacitatedPlayerData);
@@ -180,11 +180,11 @@ public class AbstractedIncapacitation {
                         }
 
                         if (Incapacitated.configData.isGlobalIncapMessage()) {
-                            broadcast(player.getServer(), Component.translatable("message.incap.message", player.getScoreboardName()));
+                            broadcast(player.getServer(), getBroadcastIncapMessage(damageSource, player));
                         } else {
                             ArrayList<Player> playerEntities = (ArrayList<Player>) player.level().getEntitiesOfClass(Player.class, player.getBoundingBox().inflate(50));
                             for (Player players : playerEntities) {
-                                players.displayClientMessage(Component.translatable("message.incap.message", player.getScoreboardName()), false);
+                                players.displayClientMessage(getBroadcastIncapMessage(damageSource, player), false);
                             }
                         }
                     }
@@ -657,5 +657,17 @@ public class AbstractedIncapacitation {
             Constants.LOG.error("Failed to remove effect: " + data.getEffectID());
             e.printStackTrace();
         }
+    }
+
+    private static Component getBroadcastIncapMessage(DamageSource source, Player victim) {
+        if (source.getEntity() != null) {
+            return Component.translatable("message.incap.messageblamed", victim.getScoreboardName(), source.getEntity().getDisplayName());
+        } else {
+            return Component.translatable("message.incap.message", victim.getScoreboardName());
+        }
+    }
+
+    private static Component getBroadcastIncapMessage(Player victim) {
+        return Component.translatable("message.incap.message", victim.getScoreboardName());
     }
 }
