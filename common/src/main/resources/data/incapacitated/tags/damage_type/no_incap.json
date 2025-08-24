@@ -1,0 +1,8 @@
+{
+  "values": [
+    "minecraft:wither",
+    "minecraft:lava",
+    "minecraft:out_of_world"
+  ],
+  "replace": false
+}

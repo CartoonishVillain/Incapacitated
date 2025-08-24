@@ -7,9 +7,14 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.stream.JsonReader;
 import net.minecraft.ResourceLocationException;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.tags.TagKey;
+import net.minecraft.world.damagesource.DamageType;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.item.Item;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -30,13 +35,16 @@ public class Incapacitated {
 
     public static boolean devMode = false;
     public static IncapConfigData configData = null;
-    public static ArrayList<String> instantKillDamageSourcesMessageID;
-    public static ArrayList<String> noMercyDamageSourcesMessageID;
-    public static List<String> reviveFoods;
-    public static List<String> adrenalineFoods;
-    public static List<String> healingFoods;
+
     public static ArrayList<IncapEffectData> effectInstances = new ArrayList<>();
     public static ArrayList<IncapEffectData> reviveInstances = new ArrayList<>();
+    public static final TagKey<EntityType<?>> NOTFORHUNTING = TagKey.create(Registries.ENTITY_TYPE, ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "not_for_hunting"));
+    public static final TagKey<DamageType> instantKillDamageSources = TagKey.create(Registries.DAMAGE_TYPE, ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "no_incap"));
+    public static final TagKey<DamageType> noMercyDamageSources = TagKey.create(Registries.DAMAGE_TYPE, ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "no_mercy"));;
+    public static final TagKey<Item> reviveFoods = TagKey.create(Registries.ITEM, ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "revive_food"));
+    public static final TagKey<Item> healingFoods = TagKey.create(Registries.ITEM, ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "healing_food"));
+    public static final TagKey<Item> adrenalineFoods = TagKey.create(Registries.ITEM, ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "adrenaline_food"));
+
     public static void init() {
         loadConfig();
         // It is common for all supported loaders to provide a similar feature that can not be used directly in the
@@ -44,11 +52,6 @@ public class Incapacitated {
         // your own abstraction layer. You can learn more about this in our provided services class. In this example
         // we have an interface in the common code and use a loader specific implementation to delegate our call to
         // the platform specific approach.
-
-        //I _hate_ this implementation of needing to use these strings, but for some reason the damage type resource keys and the damage sources themselves are desynced, and that's just _the worst_.
-        //And I don't know how to get that internal string from the keys so. Here we are, I guess.
-        noMercyDamageSourcesMessageID = new ArrayList<>(List.of(BLEEDOUT.location().getPath(), "outOfWorld", "generic", "genericKill", "outsideBorder"));
-
     }
 
     public static void loadConfig() {
@@ -57,93 +60,19 @@ public class Incapacitated {
             JsonReader reader = new JsonReader(new FileReader("config/incapacitated.json"));
             configData = gson.fromJson(reader, IncapConfigData.class);
             if (configData != null) {
-                reviveFoods = getFoodForReviving();
-                adrenalineFoods = getFoodForAdrenaline();
-                healingFoods = getFoodForHealing();
-                instantKillDamageSourcesMessageID = getInstantKills();
                 getEffectInstances();
             }
         } catch (FileNotFoundException e) {
             try (Writer writer = new FileWriter("config/incapacitated.json")) {
                 writer.flush();
                 gson.toJson(IncapConfigData.buildDefaultConfig(), writer);
-                configData = IncapConfigData.buildDefaultConfig();
-                reviveFoods = getFoodForReviving();
-                healingFoods = getFoodForHealing();
-                instantKillDamageSourcesMessageID = getInstantKills();
+                configData = IncapConfigData.buildDefaultConfig();;
                 getEffectInstances();
             } catch (IOException ex) {
                 Constants.LOG.error("Incapacitated: Failed to write default data!");
                 throw new RuntimeException(ex);
             }
         }
-    }
-
-
-    private static ArrayList<String> getFoodForReviving() {
-        final String FoodList = configData.getFoodReviveList();
-        String[] reviveFoods = FoodList.split(",");
-        ArrayList<String> reviveFoodList = new ArrayList<>();
-        try {
-            for(String string : reviveFoods){
-                String food = ResourceLocation.parse(string).toString();
-                reviveFoodList.add(food);
-            }
-        } catch(ResourceLocationException e){
-            Constants.LOG.error("Incapacitation: Revive foods not parsed. Non [a-z0-9_.-] character in config! Using default...");
-            return new ArrayList<>(List.of("minecraft:enchanted_golden_apple"));
-        }
-        return reviveFoodList;
-    }
-
-    private static ArrayList<String> getFoodForAdrenaline() {
-        try {
-            final String FoodList = configData.getFoodAdrenalineList();
-            String[] reviveFoods = FoodList.split(",");
-            ArrayList<String> reviveFoodList = new ArrayList<>();
-            try {
-                for (String string : reviveFoods) {
-                    String food = ResourceLocation.parse(string).toString();
-                    reviveFoodList.add(food);
-                }
-            } catch (ResourceLocationException e) {
-                Constants.LOG.error("Incapacitation: Adrenaline foods not parsed. Non [a-z0-9_.-] character in config! Using default...");
-                return new ArrayList<>(List.of());
-            }
-            return reviveFoodList;
-        } catch (NullPointerException e) {
-            Constants.LOG.error("Incapacitation: Adrenaline foods not parsed. It is likely this value is not in your config file! Using default...");
-            return new ArrayList<>(List.of());
-        }
-    }
-
-    private static ArrayList<String> getFoodForHealing() {
-        final String FoodList = configData.getFoodHealList();
-        String[] healFoods = FoodList.split(",");
-        ArrayList<String> healFoodList = new ArrayList<>();
-        try {
-            for(String string : healFoods){
-                String food = ResourceLocation.parse(string).toString();
-                healFoodList.add(food);
-            }
-        } catch(ResourceLocationException e){
-            Constants.LOG.error("Incapacitation: Healing foods not parsed. Non [a-z0-9_.-] character in config! Using default...");
-            return new ArrayList<>(List.of("minecraft:golden_apple"));
-        }
-        return healFoodList;
-    }
-
-    private static ArrayList<String> getInstantKills() {
-        final String instantKillsString = configData.getInstantKills();
-        String[] damageTypes = instantKillsString.split(",");
-        ArrayList<String> instantKills;
-        try {
-            instantKills = new ArrayList<>(Arrays.asList(damageTypes));
-        } catch(ResourceLocationException e){
-            Constants.LOG.error("Incapacitation: Instant Kills. Non [a-z0-9_.-] character in config! Using default...");
-            return new ArrayList<>(List.of("wither", "lava", "outOfWorld"));
-        }
-        return instantKills;
     }
 
     private static void getEffectInstances() {

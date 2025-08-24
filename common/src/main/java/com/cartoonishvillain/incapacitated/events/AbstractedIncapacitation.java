@@ -8,6 +8,7 @@ import com.cartoonishvillain.incapacitated.mixin.IncapacitatedItemAccessor;
 import com.cartoonishvillain.incapacitated.platform.Services;
 import com.mojang.datafixers.util.Either;
 import net.minecraft.ChatFormatting;
+import net.minecraft.client.telemetry.TelemetryProperty;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
@@ -15,6 +16,7 @@ import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.server.level.ServerPlayerGameMode;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Unit;
@@ -27,8 +29,10 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Pose;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.food.FoodData;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.UseOnContext;
+import net.minecraft.world.level.GameType;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
@@ -95,9 +99,8 @@ public class AbstractedIncapacitation {
 
     public static void downOrKill(Player player, CallbackInfo event, DamageSource damageSource) {
         IncapacitatedPlayerData incapacitatedPlayerData = Services.PLATFORM.getPlayerData(player);
-        Boolean allKillCheck = allKill(player);
             //if the player is not already incapacitated
-            if (!incapacitatedPlayerData.isIncapacitated() && !(Incapacitated.configData.isSomeInstantKills() || configData.getShouldDieOnOverkillDamage()) && !allKillCheck) {
+            if (!incapacitatedPlayerData.isIncapacitated() && !(Incapacitated.configData.isSomeInstantKills() || configData.getShouldDieOnOverkillDamage())) {
                 //reduce downs until KillPlayer, unless unlimitedDowns is on.
                 if (!Incapacitated.configData.isUnlimitedDowns()) {
                     incapacitatedPlayerData.setDownsUntilDeath(incapacitatedPlayerData.getDownsUntilDeath() - 1);
@@ -138,15 +141,13 @@ public class AbstractedIncapacitation {
                     }
                     Services.PLATFORM.writePlayerData(player, incapacitatedPlayerData);
                 }
-            } else if (!incapacitatedPlayerData.isIncapacitated() && (Incapacitated.configData.isSomeInstantKills() || configData.getShouldDieOnOverkillDamage()) && !allKillCheck) {
+            } else if (!incapacitatedPlayerData.isIncapacitated() && (Incapacitated.configData.isSomeInstantKills() || configData.getShouldDieOnOverkillDamage())) {
                 boolean notInstantKill = true;
 
                 if (Incapacitated.configData.isSomeInstantKills()) {
                     //check if the damage type is in the instant kill list, if it does, don't cancel KillPlayer event.
-                    for (String damageType : Incapacitated.instantKillDamageSourcesMessageID) {
-                        if (damageType.contains(damageSource.getMsgId())) {
-                            notInstantKill = false;
-                        }
+                    if (damageSource.is(instantKillDamageSources)) {
+                        notInstantKill = false;
                     }
                 }
 
@@ -197,13 +198,10 @@ public class AbstractedIncapacitation {
                     }
                     Services.PLATFORM.writePlayerData(player, incapacitatedPlayerData);
                 }
-            }
-            else if (!incapacitatedPlayerData.isIncapacitated() && allKillCheck) {
-                killAllPlayers(player);
-            }
-            else {
-                player.kill();
-            }
+            } else {
+            player.kill();
+        }
+        if (allKill(player)) killAllPlayers(player);
     }
 
     private static void killAllPlayers(Player player) {
@@ -222,23 +220,20 @@ public class AbstractedIncapacitation {
             List<ServerPlayer> players = server.getPlayerList().getPlayers();
             boolean everyoneIsDown = true;
             for (ServerPlayer playerChecked : players) {
-                if (!playerChecked.isDeadOrDying() && !playerChecked.isSpectator()) { //don't inventory check or whatever if the player is dead or spectating.
+                if (!playerChecked.isDeadOrDying() && !(playerChecked.gameMode.getGameModeForPlayer() != GameType.SPECTATOR)) { //don't inventory check or whatever if the player is dead or spectating.
                     for (ItemStack items : playerChecked.getInventory().items) {
-                        String item = ((IncapacitatedItemAccessor) items.getItem()).getBuiltInRegistryHolder().key().location().toString();
-                        if (Incapacitated.reviveFoods.contains(item) || adrenalineFoods.contains(item)) {
+                        if (items.is(reviveFoods) || items.is(adrenalineFoods)) {
                             everyoneIsDown = false; //The player can revive themselves with an item in their inventory. Not all hope is lost.
                             break;
                         }
                     }
 
                     if (!player.getInventory().offhand.isEmpty()) {
-                        String offhand = ((IncapacitatedItemAccessor) playerChecked.getInventory().offhand.getFirst().getItem()).getBuiltInRegistryHolder().key().location().toString();
-                        if (reviveFoods.contains(offhand) || adrenalineFoods.contains(offhand)) {
+                        if (player.getInventory().offhand.getFirst().is(reviveFoods) || player.getInventory().offhand.getFirst().is(adrenalineFoods)) {
                             everyoneIsDown = false; //The player can revive themselves with an item in their inventory. Not all hope is lost.
                             break;
                         }
                     }
-
 
                     IncapacitatedPlayerData incapacitatedPlayerData = Services.PLATFORM.getPlayerData(playerChecked);
                     if (!incapacitatedPlayerData.isIncapacitated() && playerChecked != player) {
@@ -402,20 +397,19 @@ public class AbstractedIncapacitation {
 
     public static void eat(LivingEntity entity, ItemStack itemStack){
         if(entity instanceof Player player && !entity.level().isClientSide()){
-            String item = ((IncapacitatedItemAccessor) itemStack.getItem()).getBuiltInRegistryHolder().key().location().toString();
             IncapacitatedPlayerData incapacitatedPlayerData = Services.PLATFORM.getPlayerData(player);
-            if(Incapacitated.healingFoods.contains(item)) {
+            if(itemStack.is(healingFoods)) {
                 incapacitatedPlayerData.setDownsUntilDeath(Incapacitated.configData.getDownCounter());
                 incapacitatedPlayerData.setTicksUntilDeath(Incapacitated.configData.getDownTicks());
             }
 
             if(incapacitatedPlayerData.isIncapacitated()) {
-                if(Incapacitated.reviveFoods.contains(item) || Incapacitated.adrenalineFoods.contains(item)){
+                if(itemStack.is(reviveFoods) || itemStack.is(adrenalineFoods)){
                     if (player instanceof ServerPlayer) player.awardStat(Services.PLATFORM.getSelfReviveStat(), 1);
                     incapacitatedPlayerData.setIncapacitated(false);
                     incapacitatedPlayerData.setReviveCounter(Incapacitated.configData.getReviveTicks());
 
-                    if (Incapacitated.reviveFoods.contains(item)) {
+                    if (itemStack.is(reviveFoods)) {
                         incapacitatedPlayerData.setDownsUntilDeath(Incapacitated.configData.getDownCounter());
                         incapacitatedPlayerData.setTicksUntilDeath(Incapacitated.configData.getDownTicks());
                     }
@@ -438,7 +432,7 @@ public class AbstractedIncapacitation {
                     healPlayerWhenReviving(player);
                     player.level().playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.NOTE_BLOCK_PLING.value(), SoundSource.PLAYERS, 1, 1);
                 }
-            } else if(Incapacitated.reviveFoods.contains(item)) {
+            } else if(itemStack.is(reviveFoods)) {
                 incapacitatedPlayerData.setDownsUntilDeath(Incapacitated.configData.getDownCounter());
                 incapacitatedPlayerData.setTicksUntilDeath(Incapacitated.configData.getDownTicks());
             }
@@ -458,13 +452,8 @@ public class AbstractedIncapacitation {
                 Services.PLATFORM.writePlayerData(player, data);
             }
 
-            boolean doDamageRegardless = false;
-            for (String damageType : noMercyDamageSourcesMessageID) {
-                if (damageType.contains(damageSource.getMsgId())) {
-                    doDamageRegardless = true;
-                    break;
-                }
-            }
+            boolean doDamageRegardless = damageSource.is(noMercyDamageSources);
+
             if (data.getTicksUntilDeath() > 0 && !doDamageRegardless)
                 cir.cancel();
         }

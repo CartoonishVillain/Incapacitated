@@ -16,6 +16,8 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
+import static com.cartoonishvillain.incapacitated.Incapacitated.NOTFORHUNTING;
+
 @Mixin(LivingEntity.class)
 public class LivingEntityDieMixin {
     @Inject(at = @At("HEAD"), method = "die")
@@ -23,7 +25,7 @@ public class LivingEntityDieMixin {
         LivingEntity entity = ((LivingEntity) (Object) this);
         if(!(entity instanceof Player) && !entity.level().isClientSide && damageSource.getEntity() instanceof Player) {
             IncapacitatedPlayerData data = Services.PLATFORM.getPlayerData((Player) damageSource.getEntity());
-            if (data.isIncapacitated() && Incapacitated.configData.isHunter()) {
+            if (data.isIncapacitated() && Incapacitated.configData.isHunter() && !entity.getType().is(NOTFORHUNTING)) {
                 Player player = ((Player) damageSource.getEntity());
                 if (player instanceof ServerPlayer) player.awardStat(Services.PLATFORM.getSelfReviveStat(), 1);
                 AbstractedIncapacitation.revive(player, null);

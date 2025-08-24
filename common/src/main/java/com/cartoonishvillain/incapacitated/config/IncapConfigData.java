@@ -21,14 +21,10 @@ public class IncapConfigData implements Serializable {
     Boolean unlimitedDowns;
     Boolean downLogging;
     Boolean reviveMessage;
-    String foodReviveList;
-    String foodAdrenalineList;
-    String foodHealList;
     Integer downTicks;
     Integer reviveTicks;
     Integer downCounter;
     Boolean someInstantKills;
-    String instantKills;
     Boolean globalIncapMessage;
     Boolean globalReviveMessage;
     Boolean useSecondsForRevive;
@@ -51,7 +47,7 @@ public class IncapConfigData implements Serializable {
     
     public static IncapConfigData defaultData = buildDefaultConfig();
 
-    public IncapConfigData(Integer merciful, Boolean hunter, Boolean canBreakOrInteractWithBlocks, Boolean canJumpWhileDown, Boolean slow, Boolean weakened, Boolean regenerating, Boolean unlimitedDowns, Boolean downLogging, Boolean reviveMessage, String foodReviveList, String foodAdrenalineList, String foodHealList, Integer downTicks, Integer reviveTicks, Integer downCounter, Boolean someInstantKills, String instantKills, Boolean globalIncapMessage, Boolean globalReviveMessage, Boolean useSecondsForRevive,
+    public IncapConfigData(Integer merciful, Boolean hunter, Boolean canBreakOrInteractWithBlocks, Boolean canJumpWhileDown, Boolean slow, Boolean weakened, Boolean regenerating, Boolean unlimitedDowns, Boolean downLogging, Boolean reviveMessage, Integer downTicks, Integer reviveTicks, Integer downCounter, Boolean someInstantKills, Boolean globalIncapMessage, Boolean globalReviveMessage, Boolean useSecondsForRevive,
     Boolean healPercentageOfMaxHealth, float reviveHealth, Integer reviveHunger, float reviveSaturation, Boolean shouldDownTimeReset, Boolean shouldDieOnTimeout, Boolean shouldDieOnOverkillDamage, ArrayList<IncapEffectData> incapEffectData, ArrayList<IncapEffectData> reviveEffectData, Boolean DANGERDisableGiveUp, Boolean DANGERDisableIncapPlayerDamage, Boolean shouldDisableFallFlying, Boolean shouldBlameIncapacitations, Boolean shouldBlameRevives, Boolean DANGERManipulateGoalToAvoidDownPlayers, Boolean DANGERFullServerKill) {
         this.info = "For documentation on what each item does, see the readme file on github: https://github.com/CartoonishVillain/Incapacitated";
         this.merciful = merciful;
@@ -64,14 +60,10 @@ public class IncapConfigData implements Serializable {
         this.unlimitedDowns = unlimitedDowns;
         this.downLogging = downLogging;
         this.reviveMessage = reviveMessage;
-        this.foodReviveList = foodReviveList;
-        this.foodAdrenalineList = foodAdrenalineList;
-        this.foodHealList = foodHealList;
         this.downTicks = downTicks;
         this.reviveTicks = reviveTicks;
         this.downCounter = downCounter;
         this.someInstantKills = someInstantKills;
-        this.instantKills = instantKills;
         this.globalIncapMessage = globalIncapMessage;
         this.globalReviveMessage = globalReviveMessage;
         this.useSecondsForRevive = useSecondsForRevive;
@@ -116,14 +108,10 @@ public class IncapConfigData implements Serializable {
                 false, //unlimitedDowns
                 false, //downLogging
                 true, //reviveMessage
-                "minecraft:enchanted_golden_apple", //food revive list
-                "", //foodAdrenalineList
-                "minecraft:golden_apple", //food heal list
                 2000, //downTicks
                 150, //reviveTicks
                 3, //downCounter
                 true, //someInstantKills
-                "wither,lava,outOfWorld",
                 true, //globalIncapMessage
                 true, //globalReviveMessage
                 false, //useSecondsForRevive
@@ -263,33 +251,6 @@ public class IncapConfigData implements Serializable {
         }
     }
 
-    public String getFoodReviveList() {
-        if (foodReviveList != null) return foodReviveList;
-        else {
-            Constants.LOG.warn("Warning - foodReviveList config not set. Using default value.");
-            foodReviveList = defaultData.foodReviveList;
-            return defaultData.foodReviveList;
-        }
-    }
-
-    public String getFoodAdrenalineList() {
-        if (foodAdrenalineList != null) return foodAdrenalineList;
-        else {
-            Constants.LOG.warn("Warning - foodAdrenalineList config not set. Using default value.");
-            foodAdrenalineList = defaultData.foodAdrenalineList;
-            return defaultData.foodAdrenalineList;
-        }
-    }
-
-    public String getFoodHealList() {
-        if (foodHealList != null) return foodHealList;
-        else {
-            Constants.LOG.warn("Warning - foodHealList config not set. Using default value.");
-            foodHealList = defaultData.foodHealList;
-            return defaultData.foodHealList;
-        }
-    }
-
     public Integer getDownTicks() {
         if (downTicks != null) return downTicks;
         else {
@@ -395,15 +356,6 @@ public class IncapConfigData implements Serializable {
             Constants.LOG.warn("Warning - reviveSaturation config not set. Using default value.");
             reviveSaturation = defaultData.reviveSaturation;
             return defaultData.reviveSaturation;
-        }
-    }
-
-    public String getInstantKills() {
-        if (instantKills != null) return instantKills;
-        else {
-            Constants.LOG.warn("Warning - instantKills config not set. Using default value.");
-            instantKills = defaultData.instantKills;
-            return defaultData.instantKills;
         }
     }
 

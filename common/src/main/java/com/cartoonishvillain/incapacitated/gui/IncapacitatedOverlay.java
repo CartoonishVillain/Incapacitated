@@ -35,12 +35,12 @@ public class IncapacitatedOverlay {
             }
         }
 
-        guiGraphics.blit(downHolder, xPos-12+Services.PLATFORM.GUIDownCounterXModifier(), yPos-2+Services.PLATFORM.GUIDownCounterYModifier(), 0.0F, 0.0f, 10, 10, 10, 10 );
+        guiGraphics.blit(downHolder, xPos-16+Services.PLATFORM.GUIDownCounterXModifier(), yPos-2+Services.PLATFORM.GUIDownCounterYModifier(), 0.0F, 0.0f, 10, 10, 10, 10 );
+        guiGraphics.drawCenteredString(minecraft.font, Component.literal(String.valueOf(downCount)), xPos-1+Services.PLATFORM.GUIDownCounterXModifier(), yPos-1+Services.PLATFORM.GUIDownCounterYModifier(), 0);
         guiGraphics.drawCenteredString(minecraft.font, Component.literal(String.valueOf(downCount)), xPos+1+Services.PLATFORM.GUIDownCounterXModifier(), yPos-1+Services.PLATFORM.GUIDownCounterYModifier(), 0);
-        guiGraphics.drawCenteredString(minecraft.font, Component.literal(String.valueOf(downCount)), xPos+3+Services.PLATFORM.GUIDownCounterXModifier(), yPos-1+Services.PLATFORM.GUIDownCounterYModifier(), 0);
-        guiGraphics.drawCenteredString(minecraft.font, Component.literal(String.valueOf(downCount)), xPos+2+Services.PLATFORM.GUIDownCounterXModifier(), yPos-2+Services.PLATFORM.GUIDownCounterYModifier(), 0);
-        guiGraphics.drawCenteredString(minecraft.font, Component.literal(String.valueOf(downCount)), xPos+2+Services.PLATFORM.GUIDownCounterXModifier(), yPos+Services.PLATFORM.GUIDownCounterYModifier(), 0);
-        guiGraphics.drawCenteredString(minecraft.font, Component.literal(String.valueOf(downCount)), xPos+2+Services.PLATFORM.GUIDownCounterXModifier(), yPos-1+Services.PLATFORM.GUIDownCounterYModifier(), color);
+        guiGraphics.drawCenteredString(minecraft.font, Component.literal(String.valueOf(downCount)), xPos+Services.PLATFORM.GUIDownCounterXModifier(), yPos-2+Services.PLATFORM.GUIDownCounterYModifier(), 0);
+        guiGraphics.drawCenteredString(minecraft.font, Component.literal(String.valueOf(downCount)), xPos+Services.PLATFORM.GUIDownCounterXModifier(), yPos+Services.PLATFORM.GUIDownCounterYModifier(), 0);
+        guiGraphics.drawCenteredString(minecraft.font, Component.literal(String.valueOf(downCount)), xPos+Services.PLATFORM.GUIDownCounterXModifier(), yPos-1+Services.PLATFORM.GUIDownCounterYModifier(), color);
     }
 
     public static void renderOverlay(GuiGraphics guiGraphics, DeltaTracker deltaTracker) {

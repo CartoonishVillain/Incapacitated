@@ -1,8 +1,23 @@
-# Config details
+# Incapacitated
+Incapacitated is a mod that adds a state between life and death, where the player is incapacitated on the ground, in need of a revive. The tags and configs are designed to make the mod as configurable as reasonably possible.
+
+The default configurations are meant to replicate a system similar to Left 4 Dead's, with a couple tweaks as they make sense (Enchanted golden apples auto revive on consumption while healing the user's down counter, normal golden apples heals down counter. Significant enough damage will instant kill, as will damage sources that would destroy the body)
+You can recreate a variety of games or make your own custom blend of mechanics with this system.
+
+## Tags
+
+incapacitated > tags > damage_type > no_incap.json - Damage types that, when they are the final hit on a player, will just kill the player outright instead of incapacitating them
+incapacitated > tags > damage_type > no_mercy.json - Damage types that, when the merciful config is enabled, will bypass it. This is recommended for damage types that should never be ignored, such as falling out of the world, or /kill
+incapacitated > tags > entity_type > not_for_hunting.json -  Entities that when killed, should not contribute to reviving with the hunter config enabled.
+incapacitated > tags > item > revive_food.json - Food items that when eaten, should revive the player and restore the player's down counter.
+incapacitated > tags > item > adrenaline_food.json - Food items that when eaten, should revive the player but *not* restore the player's down counter.
+incapacitated > tags > item > healing_food.json - Food items that when eaten, should *not* revive the player, but should restore the player's down counter.
+
+## Config details
 
 The following is a description of all of the configs you can change to modify how incapacitated works.
 Note: This does not include client specific configs. Those are their own file.
-You can reload your config at any time with /incap config reload
+You can reload your non-client config at any time with /incap config reload
 
 * Merciless - Can be filled with a 0, 1, or a 2, determines if players are immune to damage while downed.
     * 0 - No, players are not immune to damage while downed.
@@ -26,12 +41,6 @@ You can reload your config at any time with /incap config reload
 * DownLogging - true or false, does the player die when they log out, if they are incapacitated.
 
 * ReviveMessage - true or false, does the player receive information in the chat when revived about their stats?
-
-* FoodReviveList - string, a list of items ids of items that, when consumed, will revive the player (ex: minecraft:enchanted_golden_apple)
-
-* FoodAdrenalineList - string, a list of item ids of items that, when consumed, will revive the player, but not heal them (no resetting down timers or counts)
-
-* FoodHealList - string, a list of items ids of items that, when consumed, will reset the amount of times a player can go down before instant death (ex: minecraft:golden_apple)
 
 * DownTicks - whole number, how many ticks (20 per second if not lagging) can a player persist incapacitated before dying?
 
@@ -88,7 +97,7 @@ This checks every time someone goes down or dies.
 * If everyone is down, dead, or in spectator mode, everyone not in spectator or creative mode is instantly killed.
 
 
-# IncapEffectData
+### IncapEffectData
 IncapEffectData is an array of objects defined as   
 {  
 effectID: String  
@@ -113,3 +122,13 @@ ambient:false
 }  
 ]  
 
+## Client configs
+* lastDownDesaturate - true or false, should your screen get a desaturation effect when you have no downs remaining.
+
+* renderDownCounter - true or false, should the GUI down counter be displayed?
+
+* downCounterColorful - true or false, should the number for the down counter be colorful?
+
+* downCounterModX - integer, a modifier for the X position of the gui. Negative numbers go left, positive numbers go right.
+
+* downCounterModY - integer, a modifier for the Y position of the gui. Negative numbers go up, positive numbers go down
