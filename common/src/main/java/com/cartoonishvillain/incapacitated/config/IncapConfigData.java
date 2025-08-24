@@ -14,7 +14,7 @@ public class IncapConfigData implements Serializable {
     Integer merciful;
     Boolean canBreakOrInteractWithBlocks;
     Boolean canJumpWhileDown;
-    Boolean hunter;
+    Integer hunter;
     Boolean slow;
     Boolean weakened;
     Boolean regenerating;
@@ -47,7 +47,7 @@ public class IncapConfigData implements Serializable {
     
     public static IncapConfigData defaultData = buildDefaultConfig();
 
-    public IncapConfigData(Integer merciful, Boolean hunter, Boolean canBreakOrInteractWithBlocks, Boolean canJumpWhileDown, Boolean slow, Boolean weakened, Boolean regenerating, Boolean unlimitedDowns, Boolean downLogging, Boolean reviveMessage, Integer downTicks, Integer reviveTicks, Integer downCounter, Boolean someInstantKills, Boolean globalIncapMessage, Boolean globalReviveMessage, Boolean useSecondsForRevive,
+    public IncapConfigData(Integer merciful, Integer hunter, Boolean canBreakOrInteractWithBlocks, Boolean canJumpWhileDown, Boolean slow, Boolean weakened, Boolean regenerating, Boolean unlimitedDowns, Boolean downLogging, Boolean reviveMessage, Integer downTicks, Integer reviveTicks, Integer downCounter, Boolean someInstantKills, Boolean globalIncapMessage, Boolean globalReviveMessage, Boolean useSecondsForRevive,
     Boolean healPercentageOfMaxHealth, float reviveHealth, Integer reviveHunger, float reviveSaturation, Boolean shouldDownTimeReset, Boolean shouldDieOnTimeout, Boolean shouldDieOnOverkillDamage, ArrayList<IncapEffectData> incapEffectData, ArrayList<IncapEffectData> reviveEffectData, Boolean DANGERDisableGiveUp, Boolean DANGERDisableIncapPlayerDamage, Boolean shouldDisableFallFlying, Boolean shouldBlameIncapacitations, Boolean shouldBlameRevives, Boolean DANGERManipulateGoalToAvoidDownPlayers, Boolean DANGERFullServerKill) {
         this.info = "For documentation on what each item does, see the readme file on github: https://github.com/CartoonishVillain/Incapacitated";
         this.merciful = merciful;
@@ -99,7 +99,7 @@ public class IncapConfigData implements Serializable {
 
         return new IncapConfigData(
                 0, //merciful
-                false, //hunter
+                0, //hunter
                 false, //canBreakOrInteractWithBlocks
                 false, //canJumpWhileDown
                 false, //slow
@@ -188,7 +188,7 @@ public class IncapConfigData implements Serializable {
         }
     }
 
-    public Boolean isHunter() {
+    public Integer isHunter() {
         if (hunter != null) return hunter;
         else {
             Constants.LOG.warn("Warning - hunter config not set. Using default value.");

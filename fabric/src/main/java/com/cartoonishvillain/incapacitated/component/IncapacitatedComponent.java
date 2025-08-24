@@ -24,6 +24,7 @@ public class IncapacitatedComponent implements IncapacitatedInterface, AutoSynce
     protected int ticksUntilDeath = Incapacitated.configData.getDownTicks();
     protected int downsUntilDeath = Incapacitated.configData.getDownCounter();
     protected int reviveCounter = Incapacitated.configData.getReviveTicks();
+    int killsRequiredForRevive = Incapacitated.configData.isHunter();
     protected boolean isShader = false;
     float lastDmgTaken = 0f;
     float lastHealthBeforeDamage = 20f;
@@ -110,6 +111,16 @@ public class IncapacitatedComponent implements IncapacitatedInterface, AutoSynce
 
         originalSource = new BleedOutDamage(damageType, causeOfDeath);
         ComponentStarter.INCAPACITATEDCOMPONENTINSTANCE.sync(this.provider);
+    }
+
+    @Override
+    public int getKillsRequiredForRevive() {
+        return killsRequiredForRevive;
+    }
+
+    @Override
+    public void setKillsRequiredForRevive(int killsRequiredForRevive) {
+        this.killsRequiredForRevive = killsRequiredForRevive;
     }
 
     @Override

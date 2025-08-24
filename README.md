@@ -24,19 +24,19 @@ You can reload your non-client config at any time with /incap config reload
     * 1 - Yes, players are immune to damage while downed, but part of the damage is removed from their time to live.
     * 2 - Yes, players are fully immune to damage while downed.
 
-* Hunter - true or false, can players revive themselves with a (non-player) kill
+* Hunter - Integer, the number of non-player kills a player needs to make before they revive themselves. 0 disables the feature altogether.
 
-* CanBreakOrInteractWithBlocks - true or false, can players while downed break or interact with blocks
+* CanBreakOrInteractWithBlocks - true or false, can players while downed break or interact with blocks.
 
-* CanJumpWhileDown - true or false, can players while downed jump
+* CanJumpWhileDown - true or false, can players while downed jump.
 
-* Slow - true or false, are incapacitated players slowed down dramatically
+* Slow - true or false, are incapacitated players slowed down dramatically.
 
-* Weakened - true or false, are incapacitated players weakened dramatically
+* Weakened - true or false, are incapacitated players weakened dramatically.
 
-* Regenerating - true or false, does sleeping in a bed successfully award players with being able to go down again? (Not above maximum)
+* Regenerating - true or false, does sleeping in a bed successfully award players with being able to go down again? (Not above maximum).
 
-* UnlimitedDowns - true or false, does the player have unlimited downs
+* UnlimitedDowns - true or false, does the player have unlimited downs.
 
 * DownLogging - true or false, does the player die when they log out, if they are incapacitated.
 
@@ -72,7 +72,7 @@ You can reload your non-client config at any time with /incap config reload
 
 * ShouldBlameIncapacitations - true or false, should incap messages announce who or what incapacitated a player if the information is available?
 
-* ShouldBlameRevives - true or false, should revive message announce who revived a player if 
+* ShouldBlameRevives - true or false, should revive message announce who revived a player if another player did so.
 
 * ShouldDieOnTimeout - true or false, should players die when the incap timer runs out? Defaults to true.
 
@@ -86,15 +86,17 @@ You can reload your non-client config at any time with /incap config reload
 
 * DANGERDisableIncapPlayerDamage - true or false, should any damage attributed to an incapacitated player be canceled?
 
+
 * DANGERManipulateGoalToAvoidDownPlayers - true or false, should entities ignore players while they're incapacitated.
-* WARNING WARNING WARNING WARNING - This is achieved by faking that the player is in spectator mode. This shouldn't effect their capabilities in a vanilla sense, but may have weird effects when paired with other mods that check for spectators!
-* Like all DANGER items, use this at your own risk, but seriously USE THIS AT YOUR OWN RISK
+  * WARNING WARNING WARNING WARNING - This is achieved by faking that the player is in spectator mode. This shouldn't effect their capabilities in a vanilla sense, but may have weird effects when paired with other mods that check for spectators!
+  * Like all DANGER items, use this at your own risk, but seriously USE THIS AT YOUR OWN RISK
+
 
 * DANGERFullServerKill - true or false, if all players are down, should everyone die? 
 This checks every time someone goes down or dies.
-* If the Hunter config is on, this will never run, as players could possibly revive themselves
-* Inventories are scanned for any items on the FoodReviveList, if such an item is present in any live player's inventory, this won't count.
-* If everyone is down, dead, or in spectator mode, everyone not in spectator or creative mode is instantly killed.
+  * If the Hunter config is on, this will never run, as players could possibly revive themselves
+  * Inventories are scanned for any items on the FoodReviveList, if such an item is present in any live player's inventory, this won't count.
+  * If everyone is down, dead, or in spectator mode, everyone not in spectator or creative mode is instantly killed.
 
 
 ### IncapEffectData

@@ -50,6 +50,7 @@ public class FabricPlatformHelper implements IPlatformHelper {
         data.setTicksUntilDeath(h.getTicksUntilDeath());
         data.setLastDmgTaken(h.getLastDmgTaken());
         data.setLastHealthBeforeDamage(h.getLastHealthBeforeDamage());
+        data.setKillsRequiredForRevive(h.getKillsRequiredForRevive());
         return data;
     }
 
@@ -62,6 +63,7 @@ public class FabricPlatformHelper implements IPlatformHelper {
         h.setReviveCount(playerData.getReviveCounter());
         h.setLastHealthBeforeDamage(playerData.getLastHealthBeforeDamage());
         h.setLastDmgTaken(playerData.getLastDmgTaken());
+        h.setKillsRequiredForRevive(playerData.getKillsRequiredForRevive());
     }
 
     @Override

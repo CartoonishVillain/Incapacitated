@@ -63,6 +63,7 @@ public class NeoForgePlatformHelper implements IPlatformHelper {
         incapacitatedPlayerData.setTicksUntilDeath(neoForgedPlayerData.getTicksUntilDeath());
         incapacitatedPlayerData.setLastDmgTaken(neoForgedPlayerData.getLastDmgTaken());
         incapacitatedPlayerData.setLastHealthBeforeDamage(neoForgedPlayerData.getLastHealthBeforeDamage());
+        incapacitatedPlayerData.setKillsRequiredForRevive(neoForgedPlayerData.getKillsRequiredForRevive());
         return incapacitatedPlayerData;
     }
 
@@ -75,6 +76,7 @@ public class NeoForgePlatformHelper implements IPlatformHelper {
         neoForgedPlayerData.setDownsUntilDeath(playerData.getDownsUntilDeath());
         neoForgedPlayerData.setLastHealthBeforeDamage(playerData.getLastHealthBeforeDamage());
         neoForgedPlayerData.setLastDmgTaken(playerData.getLastDmgTaken());
+        neoForgedPlayerData.setKillsRequiredForRevive(playerData.getKillsRequiredForRevive());
         player.setData(INCAP_DATA, neoForgedPlayerData);
     }
 

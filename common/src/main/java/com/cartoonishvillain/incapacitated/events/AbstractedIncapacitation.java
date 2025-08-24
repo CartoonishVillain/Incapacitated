@@ -57,6 +57,7 @@ public class AbstractedIncapacitation {
                 if (incapacitatedPlayerData.getDownsUntilDeath() > -1) {
                     if (player instanceof ServerPlayer) player.awardStat(Services.PLATFORM.getIncappedStat());
                     incapacitatedPlayerData.setIncapacitated(true);
+                    incapacitatedPlayerData.setKillsRequiredForRevive(configData.isHunter());
                     player.setHealth(player.getMaxHealth());
 
                     Services.PLATFORM.sendIncapPacket((ServerPlayer) player, player.getId(), true, (short) incapacitatedPlayerData.getDownsUntilDeath());
@@ -109,6 +110,7 @@ public class AbstractedIncapacitation {
                 if (incapacitatedPlayerData.getDownsUntilDeath() > -1) {
                     if (player instanceof ServerPlayer) player.awardStat(Services.PLATFORM.getIncappedStat());
                     incapacitatedPlayerData.setIncapacitated(true);
+                    incapacitatedPlayerData.setKillsRequiredForRevive(configData.isHunter());
                     Services.PLATFORM.setDamageSource(player.level(), damageSource, player);
                     event.cancel();
                     player.setHealth(player.getMaxHealth());
@@ -165,6 +167,7 @@ public class AbstractedIncapacitation {
                     if (incapacitatedPlayerData.getDownsUntilDeath() > -1) {
                         if (player instanceof ServerPlayer) player.awardStat(Services.PLATFORM.getIncappedStat());
                         incapacitatedPlayerData.setIncapacitated(true);
+                        incapacitatedPlayerData.setKillsRequiredForRevive(configData.isHunter());
                         Services.PLATFORM.setDamageSource(player.level(), damageSource, player);
                         event.cancel();
                         player.setHealth(player.getMaxHealth());
@@ -215,7 +218,7 @@ public class AbstractedIncapacitation {
 
     private static boolean allKill(Player player) {
         boolean shouldEveryoneDie = false;
-        if (configData.getDANGERFullServerKill() && !configData.isHunter()) { //Hunter is a hard conflict as players can easily revive themselves with it.
+        if (configData.getDANGERFullServerKill() && !(configData.isHunter() < 1)) { //Hunter is a hard conflict as players can easily revive themselves with it.
             MinecraftServer server = player.getServer();
             List<ServerPlayer> players = server.getPlayerList().getPlayers();
             boolean everyoneIsDown = true;

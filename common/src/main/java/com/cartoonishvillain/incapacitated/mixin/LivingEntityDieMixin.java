@@ -25,10 +25,16 @@ public class LivingEntityDieMixin {
         LivingEntity entity = ((LivingEntity) (Object) this);
         if(!(entity instanceof Player) && !entity.level().isClientSide && damageSource.getEntity() instanceof Player) {
             IncapacitatedPlayerData data = Services.PLATFORM.getPlayerData((Player) damageSource.getEntity());
-            if (data.isIncapacitated() && Incapacitated.configData.isHunter() && !entity.getType().is(NOTFORHUNTING)) {
+            if (data.isIncapacitated() && (Incapacitated.configData.isHunter() > 0) && !entity.getType().is(NOTFORHUNTING)) {
                 Player player = ((Player) damageSource.getEntity());
-                if (player instanceof ServerPlayer) player.awardStat(Services.PLATFORM.getSelfReviveStat(), 1);
-                AbstractedIncapacitation.revive(player, null);
+
+                data.setKillsRequiredForRevive(data.getKillsRequiredForRevive() - 1);
+                Services.PLATFORM.writePlayerData(player, data);
+
+                if (data.getKillsRequiredForRevive() <= 0) {
+                    if (player instanceof ServerPlayer) player.awardStat(Services.PLATFORM.getSelfReviveStat(), 1);
+                    AbstractedIncapacitation.revive(player, null);
+                }
             }
         }
     }

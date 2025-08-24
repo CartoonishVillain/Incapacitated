@@ -20,4 +20,6 @@ public interface IncapacitatedInterface extends Component {
     void setLastHealthBeforeDamage(float lastHealthBeforeDamage);
     DamageSource getSourceOfDeath(Level level);
     void setSourceOfDeath(Level level, DamageSource causeOfDeath);
+    int getKillsRequiredForRevive();
+    void setKillsRequiredForRevive(int killsRequiredForRevive);
 }

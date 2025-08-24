@@ -19,6 +19,7 @@ public class NeoForgeIncapacitatedPlayerData implements Serializable {
     int ticksUntilDeath = Incapacitated.configData.getDownTicks();
     int downsUntilDeath = Incapacitated.configData.getDownCounter();
     int reviveCounter = Incapacitated.configData.getReviveTicks();
+    int killsRequiredForRevive = Incapacitated.configData.isHunter();
     float lastDmgTaken = 0f;
     float lastHealthBeforeDamage = 20f;
     DamageSource damageSource = null;
@@ -26,6 +27,14 @@ public class NeoForgeIncapacitatedPlayerData implements Serializable {
 
     public boolean isIncapacitated() {
         return incapacitated;
+    }
+
+    public int getKillsRequiredForRevive() {
+        return killsRequiredForRevive;
+    }
+
+    public void setKillsRequiredForRevive(int killsRequiredForRevive) {
+        this.killsRequiredForRevive = killsRequiredForRevive;
     }
 
     public void setIncapacitated(boolean incapacitated) {

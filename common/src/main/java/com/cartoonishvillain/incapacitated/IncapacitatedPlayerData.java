@@ -20,6 +20,7 @@ public class IncapacitatedPlayerData implements Serializable {
     int ticksUntilDeath = Incapacitated.configData.getDownTicks();
     int downsUntilDeath = Incapacitated.configData.getDownCounter();
     int reviveCounter = Incapacitated.configData.getReviveTicks();
+    int killsRequiredForRevive = Incapacitated.configData.isHunter();
     float lastDmgTaken = 0f;
     float lastHealthBeforeDamage = 20f;
     DamageSource originalSource = null;
@@ -30,6 +31,14 @@ public class IncapacitatedPlayerData implements Serializable {
 
     public void setIncapacitated(boolean incapacitated) {
         this.incapacitated = incapacitated;
+    }
+
+    public int getKillsRequiredForRevive() {
+        return killsRequiredForRevive;
+    }
+
+    public void setKillsRequiredForRevive(int killsRequiredForRevive) {
+        this.killsRequiredForRevive = killsRequiredForRevive;
     }
 
     public int getTicksUntilDeath() {
