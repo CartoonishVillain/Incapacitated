@@ -50,8 +50,6 @@ You can reload your non-client config at any time with /incap config reload
 
 * SomeInstantKills - true or false, do some damage types instantly kill the player when they reach 0 hp, regardless of how many downs they have left?
 
-* InstantKills - string, names of damage types that should be a part of "SomeInstantKills". The name used is the translation ID of the death message (such as death.attack.wither -> "wither"). Comma separated, no spaces.
-
 * GlobalIncapMessage - true or false, do messages about players being incapacitated get broadcast globally?
 
 * GlobalReviveMessage - true or false, do messages about players being revived get broadcast globally?
