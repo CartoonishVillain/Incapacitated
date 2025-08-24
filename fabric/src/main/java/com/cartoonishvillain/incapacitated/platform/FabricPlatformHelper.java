@@ -133,11 +133,6 @@ public class FabricPlatformHelper implements IPlatformHelper {
     }
 
     @Override
-    public Component getGiveUpKeybindTranslated() {
-        return giveUpKeybind.getTranslatedKeyMessage();
-    }
-
-    @Override
     public Boolean shouldShowGUIDownCounter() {
         return FabricIncapacitated.renderDownCounter;
     }

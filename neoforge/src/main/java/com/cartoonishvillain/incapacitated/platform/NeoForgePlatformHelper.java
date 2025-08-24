@@ -149,11 +149,6 @@ public class NeoForgePlatformHelper implements IPlatformHelper {
     }
 
     @Override
-    public Component getGiveUpKeybindTranslated() {
-        return NFIncapKeybind.GiveUpKeybind.getTranslatedKeyMessage();
-    }
-
-    @Override
     public Boolean shouldShowGUIDownCounter() {
         return IncapacitatedClientConfig.DOWNCOUNTERENABLED.get();
     }

@@ -510,7 +510,7 @@ public class AbstractedIncapacitation {
                     } else if (playerData.getTicksUntilDeath() % 2 == 0) {
                         //Otherwise, every 20 ticks (1 second) send the dying player a message about how long, in seconds, they have until death.
                        if (Incapacitated.configData.getShouldDieOnTimeout()) downPlayer.displayClientMessage(Component.translatable("message.downindicator.norevive").withStyle(ChatFormatting.RED).append(
-                                       Component.literal(" " + Services.PLATFORM.getGiveUpKeybindTranslated().getString() + " ").withStyle(ChatFormatting.GOLD)
+                                       Component.literal(" /incap die ").withStyle(ChatFormatting.GOLD)
                                ).append(Component.translatable("message.downindicator.norevive2", (float) playerData.getTicksUntilDeath() /20f).withStyle(ChatFormatting.RED)), true);
                         else downPlayer.displayClientMessage(Component.translatable("message.downindicator.norevivesafe", (float) playerData.getTicksUntilDeath() /20f).withStyle(ChatFormatting.LIGHT_PURPLE), true);
                     }

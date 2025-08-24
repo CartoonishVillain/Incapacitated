@@ -20,6 +20,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.GameType;
+import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.ModContainer;
@@ -85,15 +86,6 @@ public class NFIncapacitated {
         }
     }
 
-    @SubscribeEvent
-    public void keybindCheck(ClientTickEvent.Post event) {
-        while (NFIncapKeybind.GiveUpKeybind.consumeClick()) {
-            if (Services.PLATFORM.getPlayerData(Minecraft.getInstance().player).isIncapacitated()) {
-                PacketDistributor.sendToServer(new NFIncapacitated.IncapGiveupPayload(Minecraft.getInstance().player.getId(), Minecraft.getInstance().player.getGameProfile()));
-            }
-        }
-    }
-
     //@SubscribeEvent
     public void creativeCheckExampleEvent(ReviveCheckEvent event) {
         if (!event.getRevivingPlayer().isCreative()) {
@@ -102,17 +94,21 @@ public class NFIncapacitated {
         }
     }
 
-    @EventBusSubscriber(modid = Constants.MOD_ID)
-    public static class ModEvents {
+    @EventBusSubscriber(value = Dist.CLIENT, modid = Constants.MOD_ID)
+    public static class ClientModEvents {
         @SubscribeEvent
-        public static void registerBindings(RegisterKeyMappingsEvent event) {
-            event.register(NFIncapKeybind.GiveUpKeybind);
+        public static void keybindCheck(ClientTickEvent.Post event) {
+            while (NFIncapKeybind.GiveUpKeybind.consumeClick()) {
+                if (Services.PLATFORM.getPlayerData(Minecraft.getInstance().player).isIncapacitated()) {
+                    PacketDistributor.sendToServer(new NFIncapacitated.IncapGiveupPayload(Minecraft.getInstance().player.getId(), Minecraft.getInstance().player.getGameProfile()));
+                }
+            }
         }
 
         @SubscribeEvent
         public static void registerOverlay(final RegisterGuiLayersEvent event) {
             event.registerBelow(
-                   VanillaGuiLayers.HOTBAR,
+                    VanillaGuiLayers.HOTBAR,
                     ResourceLocation.parse("incapacitated:down_counter"),
                     ((guiGraphics, deltaTracker) -> {
                         Minecraft minecraft = Minecraft.getInstance();
@@ -122,6 +118,15 @@ public class NFIncapacitated {
                     })
             );
         }
+
+        @SubscribeEvent
+        public static void registerBindings(RegisterKeyMappingsEvent event) {
+            event.register(NFIncapKeybind.GiveUpKeybind);
+        }
+    }
+
+    @EventBusSubscriber(modid = Constants.MOD_ID)
+    public static class ModEvents {
 
         @SubscribeEvent
         public static void commonSetup(FMLCommonSetupEvent event) {
