@@ -1,7 +1,6 @@
 package com.cartoonishvillain.incapacitated;
 
 import com.cartoonishvillain.incapacitated.damage.BleedOutDamage;
-import com.cartoonishvillain.incapacitated.platform.Services;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.damagesource.DamageSource;

@@ -9,7 +9,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
-import net.neoforged.neoforge.network.handling.ServerPayloadContext;
+
 import static com.cartoonishvillain.incapacitated.capability.PlayerCapability.INCAP_DATA;
 
 public class IncapPacketServerHandler {

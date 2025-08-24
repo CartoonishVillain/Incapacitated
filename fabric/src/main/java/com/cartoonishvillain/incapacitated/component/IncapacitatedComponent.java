@@ -1,8 +1,6 @@
 package com.cartoonishvillain.incapacitated.component;
 
-import com.cartoonishvillain.incapacitated.FabricIncapacitated;
 import com.cartoonishvillain.incapacitated.Incapacitated;
-import com.cartoonishvillain.incapacitated.config.IncapConfigData;
 import com.cartoonishvillain.incapacitated.damage.BleedOutDamage;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderLookup;

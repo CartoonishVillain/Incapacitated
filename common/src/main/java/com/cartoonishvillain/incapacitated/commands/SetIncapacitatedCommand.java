@@ -8,15 +8,11 @@ import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.builder.RequiredArgumentBuilder;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
-import net.minecraft.commands.arguments.EntityArgument;
-import net.minecraft.commands.arguments.GameModeArgument;
 import net.minecraft.commands.arguments.GameProfileArgument;
 import net.minecraft.network.chat.Component;
-import net.minecraft.server.commands.GameModeCommand;
 import net.minecraft.server.level.ServerPlayer;
 
 import java.util.Collection;
-import java.util.Collections;
 
 public class SetIncapacitatedCommand {
     public static void register(CommandDispatcher<CommandSourceStack> dispatcher) {

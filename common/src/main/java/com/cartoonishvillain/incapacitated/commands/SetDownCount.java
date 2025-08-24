@@ -1,7 +1,6 @@
 package com.cartoonishvillain.incapacitated.commands;
 
 import com.cartoonishvillain.incapacitated.events.AbstractedIncapacitation;
-import com.cartoonishvillain.incapacitated.platform.Services;
 import com.mojang.authlib.GameProfile;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.IntegerArgumentType;

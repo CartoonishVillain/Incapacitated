@@ -1,13 +1,9 @@
 package com.cartoonishvillain.incapacitated.config;
 
 import com.cartoonishvillain.incapacitated.Constants;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.monster.Zombie;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.List;
-import java.util.function.Predicate;
 
 public class IncapConfigData implements Serializable {
     String info;

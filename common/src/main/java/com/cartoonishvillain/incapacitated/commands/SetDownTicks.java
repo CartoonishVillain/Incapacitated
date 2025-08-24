@@ -3,7 +3,6 @@ package com.cartoonishvillain.incapacitated.commands;
 import com.cartoonishvillain.incapacitated.events.AbstractedIncapacitation;
 import com.mojang.authlib.GameProfile;
 import com.mojang.brigadier.CommandDispatcher;
-import com.mojang.brigadier.arguments.BoolArgumentType;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.builder.RequiredArgumentBuilder;
