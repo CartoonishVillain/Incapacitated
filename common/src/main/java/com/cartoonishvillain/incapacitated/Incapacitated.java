@@ -4,6 +4,7 @@ import com.cartoonishvillain.incapacitated.config.IncapConfigData;
 import com.cartoonishvillain.incapacitated.config.IncapEffectData;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonSyntaxException;
 import com.google.gson.stream.JsonReader;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
@@ -64,6 +65,11 @@ public class Incapacitated {
                 Constants.LOG.error("Incapacitated: Failed to write default data!");
                 throw new RuntimeException(ex);
             }
+        } catch (JsonSyntaxException e) {
+            Constants.LOG.error("Incapacitated: YOUR CONFIGS ARE NOT PARSING CORRECTLY!\nIf you recently updated to 2.0.0 from an older version, the config is incompatible, and it's recommended you delete the file to regenerate it!");
+            e.printStackTrace();
+            Constants.LOG.error("Incapacitated: YOUR CONFIGS ARE NOT PARSING CORRECTLY!\nIf you recently updated to 2.0.0 from an older version, the config is incompatible, and it's recommended you delete the file to regenerate it!");
+            configData = IncapConfigData.buildDefaultConfig();
         }
     }
 
