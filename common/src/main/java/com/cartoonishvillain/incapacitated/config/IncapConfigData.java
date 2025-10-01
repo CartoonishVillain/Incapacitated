@@ -97,7 +97,7 @@ public class IncapConfigData implements Serializable {
                 0, //merciful
                 0, //hunter
                 false, //canBreakOrInteractWithBlocks
-                false, //canJumpWhileDown
+                true, //canJumpWhileDown
                 false, //slow
                 false, //weakened
                 false, //regenerating

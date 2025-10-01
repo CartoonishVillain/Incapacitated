@@ -20,11 +20,11 @@ public class LocalPlayerTickMixin {
     private void incapacitatedLocalTick(CallbackInfo ci){
         IncapacitatedComponent playerData = INCAPACITATEDCOMPONENTINSTANCE.get((LocalPlayer) (Object) this);
         if (FabricIncapacitated.lastDownDesaturate && playerData.getDownsUntilDeath() <= 0 && !playerData.isShader()) {
-            ResourceLocation resourceLocation = ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "shaders/post/desaturate.json");
+            ResourceLocation resourceLocation = ResourceLocation.withDefaultNamespace("desaturate");
             ((LoadEffectInvoker) Minecraft.getInstance().gameRenderer).incapacitatedLoadEffect(resourceLocation);
             playerData.setShader(true);
         } else if ((!FabricIncapacitated.lastDownDesaturate || !(playerData.getDownsUntilDeath() <= 0)) && playerData.isShader()) {
-            Minecraft.getInstance().gameRenderer.shutdownEffect();
+            Minecraft.getInstance().gameRenderer.togglePostEffect();
             playerData.setShader(false);
         }
     }

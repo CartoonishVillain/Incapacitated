@@ -82,12 +82,12 @@ public class IncapacitatedPlayerData implements Serializable {
 
     public DamageSource getDamageSource(Level level, Player player) {
         Holder.Reference<DamageType> damageType = level.registryAccess()
-                .registryOrThrow(Registries.DAMAGE_TYPE)
-                .getHolderOrThrow(BLEEDOUT);
+                .getOrThrow(Registries.DAMAGE_TYPE)
+                .value().getOrThrow(BLEEDOUT);
 
         Holder.Reference<DamageType> fallOutOfWorld = level.registryAccess()
-                .registryOrThrow(Registries.DAMAGE_TYPE)
-                .getHolderOrThrow(DamageTypes.FELL_OUT_OF_WORLD);
+                .getOrThrow(Registries.DAMAGE_TYPE)
+                .value().getOrThrow(DamageTypes.FELL_OUT_OF_WORLD);
 
         return originalSource != null
                 ? originalSource
@@ -96,8 +96,8 @@ public class IncapacitatedPlayerData implements Serializable {
 
     public void setDamageSource(Level level, DamageSource damageSource, Player player) {
         Holder.Reference<DamageType> damageType = level.registryAccess()
-                .registryOrThrow(Registries.DAMAGE_TYPE)
-                .getHolderOrThrow(BLEEDOUT);
+                .getOrThrow(Registries.DAMAGE_TYPE)
+                .value().getOrThrow(BLEEDOUT);
 
         originalSource = new BleedOutDamage(damageType, damageSource);
     }

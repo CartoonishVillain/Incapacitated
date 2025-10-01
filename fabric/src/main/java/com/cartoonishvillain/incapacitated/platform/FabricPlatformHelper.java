@@ -95,7 +95,7 @@ public class FabricPlatformHelper implements IPlatformHelper {
         IncapacitatedComponent playerData = INCAPACITATEDCOMPONENTINSTANCE.get(player);
         if (playerData.getIsIncapacitated()) {
             player.hurt(playerData.getSourceOfDeath(player.level()), player.getMaxHealth() * 10);
-            player.kill();
+            player.kill(player.level());
             playerData.setReviveCount(Incapacitated.configData.getDownCounter());
             playerData.setIsIncapacitated(false);
             player.removeEffect(MobEffects.GLOWING);

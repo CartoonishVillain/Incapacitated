@@ -20,10 +20,10 @@
         "BreakBlocksMixin",
         "SleepMixin",
         "UseOnBlockItemMixin",
-        "JumpMixin",
         "ServerPlayerGoalFixerMixin"
     ],
     "client": [
+        "JumpMixin"
     ],
     "server": [
     ],

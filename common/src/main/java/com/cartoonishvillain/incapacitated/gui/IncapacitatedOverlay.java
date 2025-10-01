@@ -5,8 +5,10 @@ import com.cartoonishvillain.incapacitated.platform.Services;
 import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.ARGB;
 import net.minecraft.world.level.GameType;
 
 public class IncapacitatedOverlay {
@@ -35,12 +37,12 @@ public class IncapacitatedOverlay {
             }
         }
 
-        guiGraphics.blit(downHolder, xPos-16+Services.PLATFORM.GUIDownCounterXModifier(), yPos-2+Services.PLATFORM.GUIDownCounterYModifier(), 0.0F, 0.0f, 10, 10, 10, 10 );
-        guiGraphics.drawCenteredString(minecraft.font, Component.literal(String.valueOf(downCount)), xPos-1+Services.PLATFORM.GUIDownCounterXModifier(), yPos-1+Services.PLATFORM.GUIDownCounterYModifier(), 0);
-        guiGraphics.drawCenteredString(minecraft.font, Component.literal(String.valueOf(downCount)), xPos+1+Services.PLATFORM.GUIDownCounterXModifier(), yPos-1+Services.PLATFORM.GUIDownCounterYModifier(), 0);
-        guiGraphics.drawCenteredString(minecraft.font, Component.literal(String.valueOf(downCount)), xPos+Services.PLATFORM.GUIDownCounterXModifier(), yPos-2+Services.PLATFORM.GUIDownCounterYModifier(), 0);
-        guiGraphics.drawCenteredString(minecraft.font, Component.literal(String.valueOf(downCount)), xPos+Services.PLATFORM.GUIDownCounterXModifier(), yPos+Services.PLATFORM.GUIDownCounterYModifier(), 0);
-        guiGraphics.drawCenteredString(minecraft.font, Component.literal(String.valueOf(downCount)), xPos+Services.PLATFORM.GUIDownCounterXModifier(), yPos-1+Services.PLATFORM.GUIDownCounterYModifier(), color);
+        guiGraphics.blit(RenderPipelines.GUI_TEXTURED, downHolder, xPos-16+Services.PLATFORM.GUIDownCounterXModifier(), yPos-2+Services.PLATFORM.GUIDownCounterYModifier(), 0, 0, 10, 10, 10, 10 );
+        guiGraphics.drawCenteredString(minecraft.font, Component.literal(String.valueOf(downCount)), xPos-1+Services.PLATFORM.GUIDownCounterXModifier(), yPos-1+Services.PLATFORM.GUIDownCounterYModifier(), ARGB.color(255, 0));
+        guiGraphics.drawCenteredString(minecraft.font, Component.literal(String.valueOf(downCount)), xPos+1+Services.PLATFORM.GUIDownCounterXModifier(), yPos-1+Services.PLATFORM.GUIDownCounterYModifier(), ARGB.color(255, 0));
+        guiGraphics.drawCenteredString(minecraft.font, Component.literal(String.valueOf(downCount)), xPos+Services.PLATFORM.GUIDownCounterXModifier(), yPos-2+Services.PLATFORM.GUIDownCounterYModifier(), ARGB.color(255, 0));
+        guiGraphics.drawCenteredString(minecraft.font, Component.literal(String.valueOf(downCount)), xPos+Services.PLATFORM.GUIDownCounterXModifier(), yPos+Services.PLATFORM.GUIDownCounterYModifier(), ARGB.color(255, 0));
+        guiGraphics.drawCenteredString(minecraft.font, Component.literal(String.valueOf(downCount)), xPos+Services.PLATFORM.GUIDownCounterXModifier(), yPos-1+Services.PLATFORM.GUIDownCounterYModifier(), ARGB.color(255, color));
     }
 
     public static void renderOverlay(GuiGraphics guiGraphics, DeltaTracker deltaTracker) {

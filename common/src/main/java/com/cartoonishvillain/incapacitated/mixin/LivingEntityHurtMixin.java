@@ -3,6 +3,7 @@ package com.cartoonishvillain.incapacitated.mixin;
 import com.cartoonishvillain.incapacitated.Incapacitated;
 import com.cartoonishvillain.incapacitated.events.AbstractedIncapacitation;
 import com.cartoonishvillain.incapacitated.platform.Services;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.player.Player;
@@ -16,17 +17,9 @@ import java.util.Objects;
 
 @Mixin(value = Player.class, priority = 999999)
 public class LivingEntityHurtMixin {
-    @Inject(at = @At("HEAD"), method = "hurt", cancellable = true)
-    private void incapacitatedHurtReturn(DamageSource damageSource, float f, CallbackInfoReturnable<Boolean> cir){
-        ServerPlayer entity = ((ServerPlayer) (Object) this);
-        if(checkIfDamageIsValid(damageSource, cir) && entity instanceof Player && !entity.level().isClientSide) {
-            //handled in a neoforge event, don't want to overwrite
-            AbstractedIncapacitation.hurt((Player) entity, damageSource, cir, f);
-        }
-    }
 
     @Inject(at = @At("HEAD"), method = "actuallyHurt", cancellable = true)
-    private void incapacitatedHurt(DamageSource damageSource, float f, CallbackInfo cir){
+    private void incapacitatedHurt(ServerLevel level, DamageSource damageSource, float f, CallbackInfo cir){
         ServerPlayer entity = ((ServerPlayer) (Object) this);
         if(entity instanceof Player && !entity.level().isClientSide) {
             //handled in a neoforge event, don't want to overwrite

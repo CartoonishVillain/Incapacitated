@@ -13,6 +13,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -24,6 +25,7 @@ import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Pose;
+import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.food.FoodData;
 import net.minecraft.world.item.ItemStack;
@@ -84,13 +86,13 @@ public class AbstractedIncapacitation {
                     }
                     Services.PLATFORM.writePlayerData(player, incapacitatedPlayerData);
                 } else {
-                    player.kill();
+                    player.kill((ServerLevel) player.level());
                 }
             } else if(!incapacitatedPlayerData.isIncapacitated()) { //if the player is incapacitated, and everyone is with no chance of revive
                 killAllPlayers(player);
             }
             else {
-                player.kill();
+                player.kill((ServerLevel) player.level());
             }
     }
 
@@ -198,7 +200,7 @@ public class AbstractedIncapacitation {
                     Services.PLATFORM.writePlayerData(player, incapacitatedPlayerData);
                 }
             } else {
-            player.kill();
+            player.kill((ServerLevel)  player.level());
         }
         if (allKill(player)) killAllPlayers(player);
     }
@@ -207,7 +209,7 @@ public class AbstractedIncapacitation {
         for (ServerPlayer deadPlayer : player.getServer().getPlayerList().getPlayers()) {
             if (deadPlayer.isSpectator() || deadPlayer.isCreative()) {} //don't kill dead or creative players.
             else {
-                deadPlayer.kill();
+                deadPlayer.kill(deadPlayer.level());
             }
         }
     }
@@ -220,15 +222,14 @@ public class AbstractedIncapacitation {
             boolean everyoneIsDown = true;
             for (ServerPlayer playerChecked : players) {
                 if (!playerChecked.isDeadOrDying() && !(playerChecked.gameMode.getGameModeForPlayer() != GameType.SPECTATOR)) { //don't inventory check or whatever if the player is dead or spectating.
-                    for (ItemStack items : playerChecked.getInventory().items) {
-                        if (items.is(reviveFoods) || items.is(adrenalineFoods)) {
+                        if (playerChecked.getInventory().contains(reviveFoods) || playerChecked.getInventory().contains(adrenalineFoods)) {
                             everyoneIsDown = false; //The player can revive themselves with an item in their inventory. Not all hope is lost.
                             break;
                         }
-                    }
 
-                    if (!player.getInventory().offhand.isEmpty()) {
-                        if (player.getInventory().offhand.getFirst().is(reviveFoods) || player.getInventory().offhand.getFirst().is(adrenalineFoods)) {
+
+                    if (!player.getInventory().getItem(Inventory.SLOT_OFFHAND).isEmpty()) {
+                        if (player.getInventory().getItem(Inventory.SLOT_OFFHAND).is(reviveFoods) || player.getInventory().getItem(Inventory.SLOT_OFFHAND).is(adrenalineFoods)) {
                             everyoneIsDown = false; //The player can revive themselves with an item in their inventory. Not all hope is lost.
                             break;
                         }
@@ -632,7 +633,8 @@ public class AbstractedIncapacitation {
             int duration = -1;
             if (!data.isInfinite()) duration = data.getTicksActive();
             MobEffectInstance instance = new MobEffectInstance(
-                    BuiltInRegistries.MOB_EFFECT.wrapAsHolder(BuiltInRegistries.MOB_EFFECT.get(ResourceLocation.parse(data.getEffectID()))),
+                    BuiltInRegistries.MOB_EFFECT.wrapAsHolder(
+                            BuiltInRegistries.MOB_EFFECT.getValue(ResourceLocation.parse(data.getEffectID()))),
                     duration,
                     data.getAmplifier(),
                     !data.isAmbient(),
@@ -647,7 +649,7 @@ public class AbstractedIncapacitation {
 
     private static void removeEffect(IncapEffectData data, Player player) {
         try {
-            Holder<MobEffect> holder = BuiltInRegistries.MOB_EFFECT.wrapAsHolder(BuiltInRegistries.MOB_EFFECT.get(ResourceLocation.parse(data.getEffectID())));
+            Holder<MobEffect> holder = BuiltInRegistries.MOB_EFFECT.wrapAsHolder(BuiltInRegistries.MOB_EFFECT.getValue(ResourceLocation.parse(data.getEffectID())));
             if (player.hasEffect(holder)) {
                 player.removeEffect(holder);
             }

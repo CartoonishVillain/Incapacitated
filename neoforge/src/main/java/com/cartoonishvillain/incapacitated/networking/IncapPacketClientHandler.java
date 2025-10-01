@@ -40,7 +40,7 @@ public class IncapPacketClientHandler implements IPayloadHandler<NFIncapacitated
 
                 if (IncapacitatedClientConfig.GRAYSCREEN.get()) {
                     if (incapPacket.downCount() <= 0) {
-                        ResourceLocation resourceLocation = ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "shaders/post/desaturate.json");
+                        ResourceLocation resourceLocation = ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "desaturate.json");
                         Minecraft.getInstance().gameRenderer.loadEffect(resourceLocation);
                     } else {
                         Minecraft.getInstance().gameRenderer.shutdownEffect();
@@ -71,7 +71,7 @@ public class IncapPacketClientHandler implements IPayloadHandler<NFIncapacitated
 
                 if (IncapacitatedClientConfig.GRAYSCREEN.get()) {
                     if (incapPacket.downCount() <= 0) {
-                        ResourceLocation resourceLocation = ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "shaders/post/desaturate.json");
+                        ResourceLocation resourceLocation = ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "desaturate.json");
                         Minecraft.getInstance().gameRenderer.loadEffect(resourceLocation);
                     } else {
                         Minecraft.getInstance().gameRenderer.shutdownEffect();

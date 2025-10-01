@@ -9,16 +9,17 @@ import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback;
+import net.fabricmc.fabric.api.client.rendering.v1.hud.HudElementRegistry;
+import net.fabricmc.fabric.api.client.rendering.v1.hud.VanillaHudElements;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.Gui;
+import net.minecraft.resources.ResourceLocation;
 import org.lwjgl.glfw.GLFW;
 
 import static com.cartoonishvillain.incapacitated.FabricKeybind.giveUpKeybind;
 
 public class ClientFabricIncapacitated implements ClientModInitializer {
-
-
-
     @Override
     public void onInitializeClient() {
         giveUpKeybind = KeyBindingHelper.registerKeyBinding(
@@ -29,8 +30,7 @@ public class ClientFabricIncapacitated implements ClientModInitializer {
                         "key.incapacitated.category"
                 )
         );
-
-        HudRenderCallback.EVENT.register(IncapacitatedOverlay::renderOverlay);
+        HudElementRegistry.attachElementAfter(VanillaHudElements.HELD_ITEM_TOOLTIP, ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, "before_health"), IncapacitatedOverlay::renderOverlay);
 
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
             while (giveUpKeybind.consumeClick()) {

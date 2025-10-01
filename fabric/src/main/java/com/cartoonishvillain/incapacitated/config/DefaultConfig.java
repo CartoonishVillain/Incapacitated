@@ -6,7 +6,7 @@ public class DefaultConfig {
                 # Incapacitated client config.
                 # For the remainder of the configuration, use incapacitated.json.
                 # Does the player screen desaturate on their last down?
-                lastDownDesaturate=true
+                lastDownDesaturate=false
                 # Should the down counter render?"
                 renderDownCounter=true
                 # Should the down counter be colored based on the remaining downs?

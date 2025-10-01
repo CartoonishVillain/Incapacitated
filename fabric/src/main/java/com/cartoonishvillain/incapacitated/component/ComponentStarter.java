@@ -20,17 +20,5 @@ public class ComponentStarter implements EntityComponentInitializer {
     public void registerEntityComponentFactories(EntityComponentFactoryRegistry registry) {
         registry.registerForPlayers(INCAPACITATEDCOMPONENTINSTANCE, IncapacitatedComponent::new, LOSSLESS_ONLY);
     }
-
-    RespawnCopyStrategy<Component> LOSSLESS_PLUS = (from, to, registryLookup, lossless, keepInventory, sameCharacter) -> {
-        if (lossless) {
-            copy(from, to, registryLookup);
-        } else {
-            CompoundTag donorTag = new CompoundTag();
-            from.writeToNbt(donorTag, registryLookup);
-            CompoundTag finalTag = new CompoundTag();
-            finalTag.putBoolean("incapShader", donorTag.getBoolean("incapShader"));
-            to.readFromNbt(finalTag, registryLookup);
-        }
-    };
 }
 

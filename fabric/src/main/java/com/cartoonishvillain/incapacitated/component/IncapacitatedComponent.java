@@ -4,6 +4,7 @@ import com.cartoonishvillain.incapacitated.Incapacitated;
 import com.cartoonishvillain.incapacitated.damage.BleedOutDamage;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderLookup;
+import net.minecraft.core.Registry;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.RegistryFriendlyByteBuf;
@@ -12,6 +13,8 @@ import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.damagesource.DamageType;
 import net.minecraft.world.damagesource.DamageTypes;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 import org.ladysnake.cca.api.v3.component.sync.AutoSyncedComponent;
 
 import static com.cartoonishvillain.incapacitated.damage.IncapacitatedDamageSources.BLEEDOUT;
@@ -89,12 +92,12 @@ public class IncapacitatedComponent implements IncapacitatedInterface, AutoSynce
     @Override
     public DamageSource getSourceOfDeath(Level level) {
         Holder.Reference<DamageType> damageType = level.registryAccess()
-                .registryOrThrow(Registries.DAMAGE_TYPE)
-                .getHolderOrThrow(BLEEDOUT);
+                .lookupOrThrow(Registries.DAMAGE_TYPE)
+                .getOrThrow(BLEEDOUT);
 
         Holder.Reference<DamageType> fallOutOfWorld = level.registryAccess()
-                .registryOrThrow(Registries.DAMAGE_TYPE)
-                .getHolderOrThrow(DamageTypes.FELL_OUT_OF_WORLD);
+                .lookupOrThrow(Registries.DAMAGE_TYPE)
+                .getOrThrow(DamageTypes.FELL_OUT_OF_WORLD);
 
         return originalSource != null
                 ? originalSource
@@ -104,10 +107,11 @@ public class IncapacitatedComponent implements IncapacitatedInterface, AutoSynce
     @Override
     public void setSourceOfDeath(Level level, DamageSource causeOfDeath) {
         Holder.Reference<DamageType> damageType = level.registryAccess()
-                .registryOrThrow(Registries.DAMAGE_TYPE)
-                .getHolderOrThrow(BLEEDOUT);
+                .lookupOrThrow(Registries.DAMAGE_TYPE)
+                .getOrThrow(BLEEDOUT);
 
-        originalSource = new BleedOutDamage(damageType, causeOfDeath);
+
+        originalSource = new BleedOutDamage(damageType, causeOfDeath);;
         ComponentStarter.INCAPACITATEDCOMPONENTINSTANCE.sync(this.provider);
     }
 
@@ -156,18 +160,18 @@ public class IncapacitatedComponent implements IncapacitatedInterface, AutoSynce
     }
 
     @Override
-    public void readFromNbt(CompoundTag tag, HolderLookup.Provider registryLookup) {
-        incapacitated = tag.getBoolean("incapacitation");
-        ticksUntilDeath = tag.getInt("incapTimer");
-        downsUntilDeath = tag.getInt("incapCounter");
-        isShader = tag.getBoolean("incapShader");
+    public void readData(ValueInput valueInput) {
+        incapacitated = valueInput.getBooleanOr("incapacitation", false);
+        ticksUntilDeath = valueInput.getIntOr("incapTimer", 100);
+        downsUntilDeath = valueInput.getIntOr("incapCounter", 3);
+        isShader = valueInput.getBooleanOr("incapShader", false);
     }
 
     @Override
-    public void writeToNbt(CompoundTag tag, HolderLookup.Provider registryLookup) {
-        tag.putBoolean("incapacitation", incapacitated);
-        tag.putInt("incapTimer", ticksUntilDeath);
-        tag.putInt("incapCounter", downsUntilDeath);
-        tag.putBoolean("incapShader", isShader);
+    public void writeData(ValueOutput valueOutput) {
+        valueOutput.putBoolean("incapacitation", incapacitated);
+        valueOutput.putInt("incapTimer", ticksUntilDeath);
+        valueOutput.putInt("incapCounter", downsUntilDeath);
+        valueOutput.putBoolean("incapShader", isShader);
     }
 }
