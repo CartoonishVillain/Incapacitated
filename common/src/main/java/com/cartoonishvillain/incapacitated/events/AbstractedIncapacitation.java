@@ -56,7 +56,7 @@ public class AbstractedIncapacitation {
                     incapacitatedPlayerData.setKillsRequiredForRevive(configData.isHunter());
                     player.setHealth(player.getMaxHealth());
 
-                    Services.PLATFORM.sendIncapPacket((ServerPlayer) player, player.getId(), true, (short) incapacitatedPlayerData.getDownsUntilDeath());
+                    if (player instanceof ServerPlayer) Services.PLATFORM.sendIncapPacket((ServerPlayer) player, player.getId(), true, (short) incapacitatedPlayerData.getDownsUntilDeath());
 
                     if (Incapacitated.configData.isSlow()) {
                         player.addEffect(new MobEffectInstance(BuiltInRegistries.MOB_EFFECT.wrapAsHolder(Services.PLATFORM.getSlowEffect()), -1, 6, true, false));
@@ -111,21 +111,21 @@ public class AbstractedIncapacitation {
                     event.cancel();
                     player.setHealth(player.getMaxHealth());
 
-                    Services.PLATFORM.sendIncapPacket((ServerPlayer) player, player.getId(), true, (short) incapacitatedPlayerData.getDownsUntilDeath());
+                   if (player instanceof ServerPlayer) Services.PLATFORM.sendIncapPacket((ServerPlayer) player, player.getId(), true, (short) incapacitatedPlayerData.getDownsUntilDeath());
 
-                    if (Incapacitated.configData.isSlow()) {
-                        player.addEffect(new MobEffectInstance(BuiltInRegistries.MOB_EFFECT.wrapAsHolder(Services.PLATFORM.getSlowEffect()), -1, 6, true, false));
-                    }
+                   if (Incapacitated.configData.isSlow()) {
+                       player.addEffect(new MobEffectInstance(BuiltInRegistries.MOB_EFFECT.wrapAsHolder(Services.PLATFORM.getSlowEffect()), -1, 6, true, false));
+                   }
 
-                    if (Incapacitated.configData.isWeakened()) {
-                        player.addEffect(new MobEffectInstance(BuiltInRegistries.MOB_EFFECT.wrapAsHolder(Services.PLATFORM.getWeakEffect()), -1, 100, true, false));
-                    }
+                   if (Incapacitated.configData.isWeakened()) {
+                       player.addEffect(new MobEffectInstance(BuiltInRegistries.MOB_EFFECT.wrapAsHolder(Services.PLATFORM.getWeakEffect()), -1, 100, true, false));
+                   }
 
-                    if (!Incapacitated.effectInstances.isEmpty()) {
-                        for (IncapEffectData effectInstance : Incapacitated.effectInstances) {
-                            giveEffect(effectInstance, player);
-                        }
-                    }
+                   if (!Incapacitated.effectInstances.isEmpty()) {
+                       for (IncapEffectData effectInstance : Incapacitated.effectInstances) {
+                           giveEffect(effectInstance, player);
+                       }
+                   }
 
                     if (player.getServer().getGameRules().getBoolean(RULE_SHOWDEATHMESSAGES)) {
                         if (Incapacitated.configData.isGlobalIncapMessage()) {
@@ -168,7 +168,7 @@ public class AbstractedIncapacitation {
                         event.cancel();
                         player.setHealth(player.getMaxHealth());
 
-                        Services.PLATFORM.sendIncapPacket((ServerPlayer) player, player.getId(), true, (short) incapacitatedPlayerData.getDownsUntilDeath());
+                        if (player instanceof ServerPlayer) Services.PLATFORM.sendIncapPacket((ServerPlayer) player, player.getId(), true, (short) incapacitatedPlayerData.getDownsUntilDeath());
 
                         if (Incapacitated.configData.isSlow()) {
                             player.addEffect(new MobEffectInstance(BuiltInRegistries.MOB_EFFECT.wrapAsHolder(Services.PLATFORM.getSlowEffect()), -1, 6, true, false));
@@ -278,7 +278,7 @@ public class AbstractedIncapacitation {
 
         Services.PLATFORM.writePlayerData(player, incapacitatedPlayerData);
         if (!player.level().isClientSide) {
-            Services.PLATFORM.sendIncapPacket((ServerPlayer) player, player.getId(), false, (short) incapacitatedPlayerData.getDownsUntilDeath());
+            if (player instanceof ServerPlayer) Services.PLATFORM.sendIncapPacket((ServerPlayer) player, player.getId(), false, (short) incapacitatedPlayerData.getDownsUntilDeath());
         }
         healPlayerWhenReviving(player);
         player.level().playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.NOTE_BLOCK_PLING.value(), SoundSource.PLAYERS, 1, 1);
@@ -329,7 +329,7 @@ public class AbstractedIncapacitation {
 
         Services.PLATFORM.writePlayerData(player, incapacitatedPlayerData);
         if (!player.level().isClientSide) {
-            Services.PLATFORM.sendIncapPacket((ServerPlayer) player, player.getId(), false, (short) incapacitatedPlayerData.getDownsUntilDeath());
+            if (player instanceof ServerPlayer) Services.PLATFORM.sendIncapPacket((ServerPlayer) player, player.getId(), false, (short) incapacitatedPlayerData.getDownsUntilDeath());
         }
         healPlayerWhenReviving(player);
         player.level().playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.NOTE_BLOCK_PLING.value(), SoundSource.PLAYERS, 1, 1);
@@ -362,14 +362,14 @@ public class AbstractedIncapacitation {
         IncapacitatedPlayerData incapacitatedPlayerData = Services.PLATFORM.getPlayerData(player);
         incapacitatedPlayerData.setDownsUntilDeath(value);
         Services.PLATFORM.writePlayerData(player, incapacitatedPlayerData);
-        Services.PLATFORM.sendIncapPacket((ServerPlayer) player, player.getId(), incapacitatedPlayerData.isIncapacitated(), (short) incapacitatedPlayerData.getDownsUntilDeath());
+        if (player instanceof ServerPlayer) Services.PLATFORM.sendIncapPacket((ServerPlayer) player, player.getId(), incapacitatedPlayerData.isIncapacitated(), (short) incapacitatedPlayerData.getDownsUntilDeath());
     }
 
     public static void setDownTicks(Player player, int value) {
         IncapacitatedPlayerData incapacitatedPlayerData = Services.PLATFORM.getPlayerData(player);
         incapacitatedPlayerData.setTicksUntilDeath(value);
         Services.PLATFORM.writePlayerData(player, incapacitatedPlayerData);
-        Services.PLATFORM.sendIncapPacket((ServerPlayer) player, player.getId(), incapacitatedPlayerData.isIncapacitated(), (short) incapacitatedPlayerData.getDownsUntilDeath());
+        if (player instanceof ServerPlayer) Services.PLATFORM.sendIncapPacket((ServerPlayer) player, player.getId(), incapacitatedPlayerData.isIncapacitated(), (short) incapacitatedPlayerData.getDownsUntilDeath());
     }
 
     public static short getDownCount(Player player) {
@@ -435,7 +435,7 @@ public class AbstractedIncapacitation {
                 incapacitatedPlayerData.setDownsUntilDeath(Incapacitated.configData.getDownCounter());
                 incapacitatedPlayerData.setTicksUntilDeath(Incapacitated.configData.getDownTicks());
             }
-            Services.PLATFORM.sendIncapPacket((ServerPlayer) player, player.getId(), incapacitatedPlayerData.isIncapacitated(), (short) incapacitatedPlayerData.getDownsUntilDeath());
+            if (player instanceof ServerPlayer) Services.PLATFORM.sendIncapPacket((ServerPlayer) player, player.getId(), incapacitatedPlayerData.isIncapacitated(), (short) incapacitatedPlayerData.getDownsUntilDeath());
             Services.PLATFORM.writePlayerData(player, incapacitatedPlayerData);
         }
     }
@@ -447,7 +447,7 @@ public class AbstractedIncapacitation {
                 int timeToRemove = (int) amount;
                 if (timeToRemove > 2000) timeToRemove = 2000;
                 data.setTicksUntilDeath(data.getTicksUntilDeath() - timeToRemove);
-                Services.PLATFORM.sendIncapPacket((ServerPlayer) player, player.getId(), data.isIncapacitated(), (short) data.getDownsUntilDeath(), data.getTicksUntilDeath());
+                if (player instanceof ServerPlayer) Services.PLATFORM.sendIncapPacket((ServerPlayer) player, player.getId(), data.isIncapacitated(), (short) data.getDownsUntilDeath(), data.getTicksUntilDeath());
                 Services.PLATFORM.writePlayerData(player, data);
             }
 
@@ -461,7 +461,7 @@ public class AbstractedIncapacitation {
     public static void tick(Player downPlayer) {
         //Given event player's data
         IncapacitatedPlayerData playerData = Services.PLATFORM.getPlayerData(downPlayer);
-        if (downPlayer.tickCount == 10) Services.PLATFORM.sendIncapPacket((ServerPlayer) downPlayer, downPlayer.getId(), playerData.isIncapacitated(), (short) playerData.getDownsUntilDeath());
+        if (downPlayer instanceof ServerPlayer) if (downPlayer.tickCount == 10) Services.PLATFORM.sendIncapPacket((ServerPlayer) downPlayer, downPlayer.getId(), playerData.isIncapacitated(), (short) playerData.getDownsUntilDeath());
 
         //If the player is down, run all the code associated every tick, otherwise don't.
         if(playerData.isIncapacitated()) {
@@ -531,7 +531,7 @@ public class AbstractedIncapacitation {
         downPlayer.removeEffect(MobEffects.GLOWING);
         playerData.setIncapacitated(false);
         Services.PLATFORM.writePlayerData(downPlayer, playerData);
-        Services.PLATFORM.sendIncapPacket((ServerPlayer) downPlayer, downPlayer.getId(), false, (short) playerData.getDownsUntilDeath());
+        if (downPlayer instanceof ServerPlayer) Services.PLATFORM.sendIncapPacket((ServerPlayer) downPlayer, downPlayer.getId(), false, (short) playerData.getDownsUntilDeath());
     }
 
     public static void downLogging(Player player) {
@@ -623,7 +623,7 @@ public class AbstractedIncapacitation {
         if (Incapacitated.configData.isShouldDownTimeReset()) {
             playerData.setTicksUntilDeath(Incapacitated.configData.getDownTicks());
             Services.PLATFORM.writePlayerData(player, playerData);
-            Services.PLATFORM.sendIncapPacket((ServerPlayer) player, player.getId(), playerData.isIncapacitated(), (short) playerData.getDownsUntilDeath());
+            if (player instanceof ServerPlayer) Services.PLATFORM.sendIncapPacket((ServerPlayer) player, player.getId(), playerData.isIncapacitated(), (short) playerData.getDownsUntilDeath());
         }
     }
 
@@ -640,7 +640,12 @@ public class AbstractedIncapacitation {
             );
             player.addEffect(instance);
         } catch (Exception e) {
-            Constants.LOG.error("Failed to load effect: " + data.getEffectID());
+            try {
+                Constants.LOG.error("Failed to load effect: " + data.getEffectID());
+            } catch (NullPointerException npe) {
+                Constants.LOG.error("NPE - If you're reading this, one of your effects blocks in the Incapacitated config are broken.. try a JSON parser?");
+            }
+
             e.printStackTrace();
         }
     }
@@ -652,7 +657,11 @@ public class AbstractedIncapacitation {
                 player.removeEffect(holder);
             }
         } catch (Exception e) {
-            Constants.LOG.error("Failed to remove effect: " + data.getEffectID());
+            try {
+                Constants.LOG.error("Failed to load effect: " + data.getEffectID());
+            } catch (NullPointerException npe) {
+                Constants.LOG.error("NPE - If you're reading this, one of your effects blocks in the Incapacitated config are broken.. try a JSON parser?");
+            }
             e.printStackTrace();
         }
     }

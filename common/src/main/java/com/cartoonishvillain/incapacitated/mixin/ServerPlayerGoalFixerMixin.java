@@ -13,8 +13,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 public class ServerPlayerGoalFixerMixin {
     @Inject(at = @At("RETURN"), method = "isSpectator", cancellable = true)
     private void incapacitatedRespawnedPlayer(CallbackInfoReturnable<Boolean> info) {
-        ServerPlayer player = ((ServerPlayer) (Object) this);
         if (!info.getReturnValue() && Incapacitated.configData.getDANGERManipulateGoalToAvoidDownPlayers()) { //if not already in spectator and feature is enabled
+            ServerPlayer player = ((ServerPlayer) (Object) this);
             IncapacitatedPlayerData data = Services.PLATFORM.getPlayerData(player);
             info.setReturnValue(data.isIncapacitated()); // set spectator flag to true
         }

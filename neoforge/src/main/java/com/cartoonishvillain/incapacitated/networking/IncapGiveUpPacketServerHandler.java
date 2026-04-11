@@ -23,7 +23,7 @@ public class IncapGiveUpPacketServerHandler implements IPayloadHandler<NFIncapac
             if (player == null && entity instanceof Player) {
                 player = (Player) entity;
             }
-            if (player != null) {
+            if (player instanceof ServerPlayer) {
                 if (!Incapacitated.configData.isDANGERDisableGiveUp()) {
                     Services.PLATFORM.killPlayerIfIncappedCommand((ServerPlayer) player);
                 }

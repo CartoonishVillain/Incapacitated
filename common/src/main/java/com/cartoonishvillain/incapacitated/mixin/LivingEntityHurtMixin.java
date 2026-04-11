@@ -18,7 +18,7 @@ import java.util.Objects;
 public class LivingEntityHurtMixin {
     @Inject(at = @At("HEAD"), method = "hurt", cancellable = true)
     private void incapacitatedHurtReturn(DamageSource damageSource, float f, CallbackInfoReturnable<Boolean> cir){
-        ServerPlayer entity = ((ServerPlayer) (Object) this);
+        Player entity = ((Player) (Object) this);
         if(checkIfDamageIsValid(damageSource, cir) && entity instanceof Player && !entity.level().isClientSide) {
             //handled in a neoforge event, don't want to overwrite
             AbstractedIncapacitation.hurt((Player) entity, damageSource, cir, f);
@@ -27,7 +27,7 @@ public class LivingEntityHurtMixin {
 
     @Inject(at = @At("HEAD"), method = "actuallyHurt", cancellable = true)
     private void incapacitatedHurt(DamageSource damageSource, float f, CallbackInfo cir){
-        ServerPlayer entity = ((ServerPlayer) (Object) this);
+        Player entity = ((Player) (Object) this);
         if(entity instanceof Player && !entity.level().isClientSide) {
             //handled in a neoforge event, don't want to overwrite
             if (!Objects.equals(Services.PLATFORM.getPlatformName(), "NeoForge")) {

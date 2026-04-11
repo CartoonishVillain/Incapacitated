@@ -63,7 +63,7 @@ public class FabricIncapacitated implements ModInitializer {
                 if (player == null && entity instanceof Player) {
                     player = (Player) entity;
                 }
-                if (player != null) {
+                if (player instanceof ServerPlayer) {
                     if (!Incapacitated.configData.isDANGERDisableGiveUp()) {
                         Services.PLATFORM.killPlayerIfIncappedCommand((ServerPlayer) player);
                     }
